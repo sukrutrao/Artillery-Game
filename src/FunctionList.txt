@@ -1,0 +1,14 @@
+Graphics
+
+DisplayCallback = {
+Create Tile Map :
+	Function to read from file This will also create the Tile Matrix
+	
+
+Create Tanks, Power, Health ..
+}
+
+Function to create Default Tank
+Function to create a specific Tank
+
+
