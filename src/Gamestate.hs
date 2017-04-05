@@ -1,9 +1,9 @@
-data Turret = Turret { angle :: IORef GLfloat  
+data Turret = Turret { angle :: IORef GLfloat
                      , power :: Double  
                      }   
 
-data Position = Position { x :: Double
-                         , y :: Double  
+data Position = Position { x :: IORef GLfloat
+                         , y :: IORef GLfloat  
                          }   
 
 data Acceleration = Acceleration { a_x :: Double
@@ -23,8 +23,17 @@ data TankState = { state :: State
                  , turret :: Turret
                  }
 
-data tank = { tankState :: TankState
+data Tank = { tankState :: TankState
             , radius :: Double
             , score :: Integer
-            } 
+            }
+
+data Tile = { x :: IORef GLfloat
+            , y :: IORef GLfloat
+            , z :: IORef GLfloat
+            , isObstacle :: Bool  
+            }
+
+data Bullet = { }
+
 
