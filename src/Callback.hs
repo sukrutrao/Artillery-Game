@@ -2,18 +2,24 @@ module Callback (idle, display , reshape , keyboard) where
 
 import Graphics.UI.GLUT
 import Control.Monad
-import Data.IORefs
-import Display
+import Data.IORef
+import qualified Gamestate
+import qualified Display
 
-display :: IORef GLfloat -> IORef (GLfloat, GLfloat) -> DisplayCallback
-display angle pos = do
-  clear [ColorBuffer, DepthBuffer]
+display :: IORef GLfloat -> IORef GLfloat -> DisplayCallback
+display bulletFired angle = do
+  clear [ColorBuffer]
   loadIdentity
-  createTileMap tileMatrix
-  createTank tankMatrix
-  createBullet bulletMatrix
-  createPowerBar powerMatrix
-  createPoint pointMatrix
+ -- Display.createTileMap tileMatrix
+ -- Display.createTank tankMatrix
+  bulletRotationAngle <- get angle
+  
+  if bulletFired < 0
+    then  Display.createBullet (4,5) bulletRotationAngle
+    else  return ()
+
+  --Display.createPowerBar powerMatrix
+  --Display.createScore scoreMatrix
   swapBuffers
 
 
@@ -21,23 +27,16 @@ reshape :: ReshapeCallback
 reshape size = do
   viewport $= (Position 0 0, size)
  
-keyboardMouse :: IORef GLfloat -> IORef (GLfloat, GLfloat) -> KeyboardMouseCallback
-keyboardMouse a p key Down _ _ = case key of
-  (Char ' ') -> a $~! negate
-  (Char '+') -> a $~! (* 2)
-  (Char '-') -> a $~! (/ 2)
-  (SpecialKey KeyLeft ) -> p $~! \(x,y) -> (x-0.1,y)
-  (SpecialKey KeyRight) -> p $~! \(x,y) -> (x+0.1,y)
-  (SpecialKey KeyUp   ) -> p $~! \(x,y) -> (x,y+0.1)
-  (SpecialKey KeyDown ) -> p $~! \(x,y) -> (x,y-0.1)
+keyboardMouse :: IORef GLfloat -> KeyboardMouseCallback
+keyboardMouse bulletFired key Down _ _ = case key of
+  (Char ' ') -> bulletFired $~! negate
   _ -> return ()
 
 keyboardMouse _ _ _ _ _ _ = return ()
 
 
-
-idle :: IdleCallback
-idle = do
+idle :: IORef GLfloat -> IdleCallback
+idle angle = do
+  angle $~! (+ 1)
   postRedisplay Nothing
-  
 
