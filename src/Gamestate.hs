@@ -1,9 +1,20 @@
-data Turret = Turret { angle :: IORef GLfloat
+module Gamestate   
+( Turret(..)
+, Position(..)  
+, Acceleration(..)  
+, Velocity(..)    
+, State(..)    
+, TankState(..)   
+, Tank(..)  
+, Tile(..)  
+) where  
+
+data Turret = Turret { angle :: Double
                      , power :: Double  
                      }   
 
-data Position = Position { x :: IORef GLfloat
-                         , y :: IORef GLfloat  
+data Position = Position { x :: Double
+                         , y :: Double
                          }   
 
 data Acceleration = Acceleration { a_x :: Double
@@ -15,25 +26,21 @@ data Velocity = Velocity { v_x :: Double
                          } 
 
 data State = Left | Right  
-           deriving (Enum)
+            deriving (Enum)
 
-data TankState = { state :: State
-                 , position :: Position
-                 , velocity :: Velocity
-                 , turret :: Turret
+data TankState = TankState { state :: State
+                           , position :: Position
+                           , velocity :: Velocity
+                           , turret :: Turret
+                           }
+
+data Tank  = Tank { tankState :: TankState
+                  , radius :: Double
+                  , score :: Integer
+                  }
+
+data Tile = Tile { tile_x :: Double
+                 , tile_y :: Double
+                 , tile_z :: Double
+                 , isObstacle :: Bool  
                  }
-
-data Tank = { tankState :: TankState
-            , radius :: Double
-            , score :: Integer
-            }
-
-data Tile = { x :: IORef GLfloat
-            , y :: IORef GLfloat
-            , z :: IORef GLfloat
-            , isObstacle :: Bool  
-            }
-
-data Bullet = { }
-
-
