@@ -14,17 +14,24 @@ data Velocity = Velocity { v_x :: Double
                          , v_y :: Double  
                          } 
 
-data State = Left | Right  
+data Direction = FacingLeft | FacingRight  
            deriving (Enum)
 
-data TankState = { state :: State
+data TankState = TankState { direction :: Direction
                  , position :: Position
                  , velocity :: Velocity
                  , turret :: Turret
                  }
 
-data tank = { tankState :: TankState
+data Tank = Tank { tankState :: TankState
             , radius :: Double
             , score :: Integer
-            } 
+            }
+
+powerIncrement :: Double
+powerIncrement = 1
+
+angleIncrement :: Double
+angleIncrement = 1
+
 
