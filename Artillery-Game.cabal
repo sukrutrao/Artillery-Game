@@ -6,7 +6,7 @@ name:                Artillery-Game
 
 -- The package version.  See the Haskell package versioning policy (PVP) 
 -- for standards guiding when and how versions should be incremented.
--- http://www.haskell.org/haskellwiki/Package_versioning_policy
+-- https://wiki.haskell.org/Package_versioning_policy
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
@@ -38,20 +38,30 @@ category:            Game
 
 build-type:          Simple
 
+-- Extra files to be distributed with the package, such as examples or a 
+-- README.
+extra-source-files:  ChangeLog.md, README.md
+
 -- Constraint on the version of Cabal needed to build this package.
-cabal-version:       >=1.8
+cabal-version:       >=1.10
 
 
 executable Artillery-Game
   -- .hs or .lhs file containing the Main module.
-  main-is:       Main.hs           
+  main-is:             Main.hs
   
   -- Modules included in this executable, other than Main.
   -- other-modules:       
   
+  -- LANGUAGE extensions used by modules in this package.
+  -- other-extensions:    
+  
   -- Other library packages from which modules are imported.
-  build-depends:       base ==4.6.*
+  build-depends:       base >=4.9 && <4.10
   
   -- Directories containing source files.
   hs-source-dirs:      src
+  
+  -- Base language which the package is written in.
+  default-language:    Haskell2010
   
