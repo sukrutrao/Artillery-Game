@@ -51,13 +51,13 @@ executable Artillery-Game
   main-is:             Main.hs
   
   -- Modules included in this executable, other than Main.
-  -- other-modules:       
+  other-modules:       Physics      
   
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:    
   
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.9 && <4.10
+  build-depends:       base >=4.9 && <4.10, GLUT
   
   -- Directories containing source files.
   hs-source-dirs:      src
