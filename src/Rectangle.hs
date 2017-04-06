@@ -4,8 +4,11 @@ import Graphics.UI.GLUT
 
 vertex3f :: (GLfloat, GLfloat, GLfloat) -> IO ()
 vertex3f (x, y, z) = vertex $ Vertex3 x y z
+color3f :: GLfloat -> GLfloat -> GLfloat -> Color3 GLfloat
+color3f r g b = Color3 r g b
  
-rectangle :: GLfloat -> GLfloat -> GLfloat -> IO ()
+rectangle :: GLfloat -> GLfloat -> GLfloat -> GLfloat -> GLfloat -> GLfloat -> GLfloat -> IO ()
 
-rectangle bottomLeft width height = renderPrimitive Quads $ mapM_ vertex3f
-  [ ( bottomLeft, bottomLeft, 0), ( bottomLeft, bottomLeft+height, 0), ( bottomLeft+width, bottomLeft+height, 0), ( bottomLeft+width, bottomLeft , 0)]
+rectangle bottomLeftX bottomLeftY width height r g b = do
+  currentColor $= Color4 r g b 1
+  renderPrimitive Quads $ mapM_ vertex3f [ ( bottomLeftX, bottomLeftY, 0), ( bottomLeftX, bottomLeftY+height, 0), ( bottomLeftX+width, bottomLeftY+height, 0), ( bottomLeftX+width, bottomLeftY , 0)]
