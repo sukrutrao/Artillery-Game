@@ -21,8 +21,15 @@ newPosition :: Point -> Point -> Point -> Float -> Point
 newPosition (Position x y) (Velocity vx vy) (Acceleration ax ay) time = 
 	(Position (newOneDPosition x vx ax time) (newOneDPosition y vy ay time))
 	
+newVelocity :: Point -> Point -> Float
+newVelocity (Velocity vx vy) (Acceleration ax ay) time = 
+	(Velocity (newOneDVelocity vx ax time) (newOneDVelocity vy ay time))
+	
 newOneDPosition :: Float -> Float -> Float -> Float -> Float
 newOneDPosition x v a time = x + v * time + 0.5 * a * time * time
+
+newOneDVelocity :: Float -> Float -> Float -> Float
+newOneDVelocity v a time = u + a * time
 	
 cosComponent :: Float -> Float -> Float
 cosComponent quantity theta = quantity * cos(theta)
