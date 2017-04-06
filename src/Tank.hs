@@ -57,5 +57,8 @@ launchWeapon
 		score = s
 	}) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True)
 
+updatePositionTank
+updatePositionTank
+
                   
                      
