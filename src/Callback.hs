@@ -30,6 +30,13 @@ display gamestate = do
                 rectangle widthOfTile heightOfTile
                 flush
 
+        --Drawing The White power Button
+        loadIdentity
+        currentColor $= Color4 1 1 1 1              -- white power background
+        translate $ Vector3 (-0.375) (-0.9) (0::Float)
+        rectangle 0.75 0.1
+        flush
+
         --Drawing The Tanks
         print "Drawing The Tanks"
         forM_ (tankList game) $ \(Tank.Tank { Tank.tankState = (Tank.TankState {
@@ -46,7 +53,7 @@ display gamestate = do
                                         Tank.score = s
                                     }) -> do
             loadIdentity
-            currentColor $= Color4 1 0 0 1               -- red tank
+            currentColor $= Color4 0.5 0.5 0.1 1              -- red tank
             translate $ Vector3 x y 0
             rectangle Tank.widthOfTank Tank.heightOfTank
 
@@ -57,6 +64,13 @@ display gamestate = do
             translate $ Vector3 (x+(Tank.widthOfTank/2)) (y+Tank.heightOfTank) 0
             rotate (turret_theta+incline_theta) $ Vector3 0 0 1 
             line Tank.baseOfTurret Tank.perpendicularOfTurret
+            flush
+
+            --Drawing The Red Power Bar
+            loadIdentity
+            currentColor $= Color4 1 0 0 1              -- red power background
+            translate $ Vector3 (-0.375) (-0.9) (0::Float)
+            rectangle (if(turret_power > 100) then (0.75) else((turret_power*0.75)/100)) 0.1
             flush
 
         swapBuffers
