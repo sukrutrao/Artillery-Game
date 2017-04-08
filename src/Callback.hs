@@ -46,13 +46,14 @@ display gamestate = do
                                         Tank.score = s
                                     }) -> do
             loadIdentity
-            currentColor $= Color4 1 0 0 1           	-- red tank
+            currentColor $= Color4 1 0 0 1               -- red tank
             translate $ Vector3 x y 0
             rectangle Tank.widthOfTank Tank.heightOfTank
 
+            --Drawing The Turret
             loadIdentity
             lineWidth $= 5
-            currentColor $= Color4 0.34 0.34 0.1686 1 	-- grey turret
+            currentColor $= Color4 0.34 0.34 0.1686 1     -- grey turret
             translate $ Vector3 (x+(Tank.widthOfTank/2)) (y+Tank.heightOfTank) 0
             rotate (turret_theta+incline_theta) $ Vector3 0 0 1 
             line Tank.baseOfTurret Tank.perpendicularOfTurret
