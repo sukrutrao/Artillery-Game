@@ -56,9 +56,37 @@ launchWeapon
 		tankWeapons = w,
 		score = s
 	}) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True)
-
---updatePositionTank
---updatePositionTank
+	
+updatePositionTank
+updatePositionTank 
+	(Tank {
+		tankState = (TankState {
+			direction = d,
+			position = (Position x y),
+			velocity = (Velocity vx vy),
+			inclineAngle = incline_theta,
+			turret = (Turret {
+				angle = turret_theta, 
+    			power = turret_power
+			})
+		}),
+		tankWeapons = w,
+		score = s
+	})
+	Key key = (Tank {
+		tankState = (TankState {
+			direction = d,
+			position = (Position x y),
+			velocity = (Velocity vx vy),
+			inclineAngle = incline_theta,
+			turret = (Turret {
+				angle = turret_theta, 
+    			power = turret_power
+			})
+		}),
+		tankWeapons = w,
+		score = s
+	})
 
                   
-                     
+                  
