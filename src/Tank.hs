@@ -34,6 +34,12 @@ widthOfTank = 0.2
 heightOfTank :: Float
 heightOfTank = 0.15
 
+baseOfTurret :: Float
+baseOfTurret = 0.1
+
+perpendicularOfTurret :: Float
+perpendicularOfTurret = 0.1
+
 powerIncrement :: Float
 powerIncrement = 1
 
@@ -41,7 +47,7 @@ angleIncrement :: Float
 angleIncrement = 1
 
 initializeTankState :: Float -> Float -> TankState
-initializeTankState x y = TankState {direction = FacingRight, position = (originPosition x y) , velocity = restVelocity , inclineAngle = 0 , turret = Turret {angle = 0 , power = 0}}
+initializeTankState x y = TankState {direction = FacingRight, position = (originPosition x y) , velocity = restVelocity , inclineAngle = 0 , turret = Turret {angle = 10 , power = 0}}
 
 initializeTank :: Float -> Float -> Tank
 initializeTank x y = Tank {tankState = (initializeTankState x y), tankWeapons = [initializeWeapon x y], score = 30}

@@ -5,6 +5,7 @@ import Control.Monad
 import Data.IORef
 import Gamestate
 import Rectangle
+import Line
 import qualified Tank
 import qualified Physics
 
@@ -14,7 +15,6 @@ reshape size = do
 
 display :: IORef GameState -> DisplayCallback
 display gamestate = do
-        --clearColor $= Color4 0.6 0.8 1 1        --background color
         clear [ColorBuffer, DepthBuffer]
         game <- get gamestate
 
@@ -46,10 +46,18 @@ display gamestate = do
                                         Tank.score = s
                                     }) -> do
             loadIdentity
-            currentColor $= Color4 1 0 0 1            -- red tank
+            currentColor $= Color4 1 0 0 1           	-- red tank
             translate $ Vector3 x y 0
             rectangle Tank.widthOfTank Tank.heightOfTank
+
+            loadIdentity
+            lineWidth $= 5
+            currentColor $= Color4 0.34 0.34 0.1686 1 	-- grey turret
+            translate $ Vector3 (x+(Tank.widthOfTank/2)) (y+Tank.heightOfTank) 0
+            rotate (turret_theta+incline_theta) $ Vector3 0 0 1 
+            line Tank.baseOfTurret Tank.perpendicularOfTurret
             flush
+
         swapBuffers
         flush
  
