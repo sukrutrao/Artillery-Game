@@ -12,11 +12,3 @@ data Weapon = GenericWeapon {
 
 defaultStartVelocity :: Float
 defaultStartVelocity = 10
-
-
-
-	
-
-	
-
-
