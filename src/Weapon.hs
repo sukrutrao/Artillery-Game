@@ -8,7 +8,7 @@ data Weapon = GenericWeapon {
     currentAngle :: Float, 
     impactRadius :: Float,
     isLaunched :: Bool
-}
+} deriving (Show)
 
 defaultStartVelocity :: Float
 defaultStartVelocity = 10

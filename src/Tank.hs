@@ -9,10 +9,10 @@ import Data.IORef
 data Turret = Turret {
     angle :: Float, 
     power :: Float  
-}
+} deriving (Show)
 
 data Direction = FacingLeft | FacingRight  
-           deriving (Enum)
+           deriving (Enum , Show)
 
 data TankState = TankState {
     direction :: Direction,
@@ -20,13 +20,13 @@ data TankState = TankState {
     velocity :: Point,
     inclineAngle :: Float,
     turret :: Turret
-}
+} deriving (Show)
 
 data Tank = Tank {
     tankState :: TankState,
     tankWeapons :: [Weapon],
     score :: Integer
-}
+} deriving (Show)
 
 powerIncrement :: Float
 powerIncrement = 1
@@ -149,7 +149,7 @@ stopTank (Tank {
         score = s
     })
     
-
+{-
 
 updateTank :: Tank -> Key -> Tank
 updateTank
@@ -180,3 +180,4 @@ updateTank
         tankWeapons = w,
         score = s
     })
+-}
