@@ -5,7 +5,7 @@ import Tank
 import Weapon
 
 data Tile = Tile {
-    position :: Point,
+    tileposition :: Point,
     isObstacle :: Bool
 }
 
@@ -22,9 +22,9 @@ heightOfTile :: Float
 heightOfTile = 1
 
 getTileMatrix :: [[Tile]] 
-getTileMatrix = [[Tile {position : Position(-1 0),isObstacle : False } , Tile {position : Position(0 0),isObstacle : False } ] ,
-				 [Tile {position : Position(-1 -1),isObstacle : True } , Tile {position : Position(0 -1),isObstacle : True } ]
-				]
+getTileMatrix = [[Tile {tileposition = (Position (-1) 0),isObstacle = False } , Tile {tileposition = (Position 0 0),isObstacle = False } ] ,
+                 [Tile {tileposition = (Position (-1) (-1)),isObstacle = True } , Tile {tileposition = (Position 0 (-1)),isObstacle = True } ]
+                ]
 
 
 getTankList :: [(Float , Float)] -> [Tank]
