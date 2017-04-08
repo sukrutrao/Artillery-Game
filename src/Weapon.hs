@@ -12,3 +12,8 @@ data Weapon = GenericWeapon {
 
 defaultStartVelocity :: Float
 defaultStartVelocity = 10
+
+initializeWeapon :: Float -> Float -> Weapon
+initializeWeapon x y = GenericWeapon {currentPosition = (originPosition x y) , currentVelocity = defaultStartVelocity, currentAngle = 0 , impactRadius = 0 , isLaunched = False}
+
+
