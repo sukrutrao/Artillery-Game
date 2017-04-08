@@ -35,4 +35,4 @@ getWeaponList initialWeaponPosition = [(initializeWeapon x y) | (x,y) <- initial
 
 
 initializeGamestate::GameState
-initializeGamestate = GameState {tileMatrix = (getTileMatrix), tankList = (getTankList [(0 , 0) , (0.5 , 0)]), weapon = (getWeaponList [(0 , 0) , (0.5 , 0)]) ,chance = 0}
+initializeGamestate = GameState {tileMatrix = (getTileMatrix), tankList = (getTankList [((-0.5) , 0) , (0.5 , 0)]), weapon = (getWeaponList [(0 , 0) , (0.5 , 0)]) ,chance = 0}

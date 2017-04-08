@@ -28,6 +28,12 @@ data Tank = Tank {
     score :: Integer
 } deriving (Show)
 
+widthOfTank :: Float
+widthOfTank = 0.2
+
+heightOfTank :: Float
+heightOfTank = 0.15
+
 powerIncrement :: Float
 powerIncrement = 1
 
