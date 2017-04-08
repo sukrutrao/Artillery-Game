@@ -28,6 +28,9 @@ data Tank = Tank {
     score :: Integer
 } deriving (Show)
 
+widthOfTriangle :: Float
+widthOfTriangle = 0.075
+
 widthOfTank :: Float
 widthOfTank = 0.2
 

@@ -6,6 +6,7 @@ import Data.IORef
 import Gamestate
 import Rectangle
 import Line
+import Triangle
 import qualified Tank
 import qualified Physics
 
@@ -73,10 +74,20 @@ display gamestate = do
             rectangle (if(turret_power > 100) then (0.75) else((turret_power*0.75)/100)) 0.1
             flush
 
+            --Drawing The Current Triangle
+        loadIdentity
+        currentColor $= Color4 0.8588 0.3019 1 1              -- red tank
+
+        translate $ Vector3 (getPositionX (Tank.position ( Tank.tankState (((tankList game) !! (chance game))))) + (Tank.widthOfTank/2.0)) (getPositionY (Tank.position ( Tank.tankState (((tankList game) !! (chance game))))) + Tank.heightOfTank + 0.15) 0
+        triangle Tank.widthOfTriangle
         swapBuffers
         flush
  
+getPositionX:: Physics.Point -> Float
+getPositionX (Physics.Position x _) = x
 
+getPositionY:: Physics.Point -> Float
+getPositionY (Physics.Position _ y) = y
 {-
 
 keyboardMouse :: IORef Float -> IORef (Float, Float) -> KeyboardMouseCallback
