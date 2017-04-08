@@ -44,6 +44,9 @@ gravityNewPosition :: Point -> Point -> Float -> Point
 gravityNewPosition (Position x y) (Velocity vx vy) time =
 	newPosition (Position x y) (Velocity vx vy) gAcceleration time
 	
+newPositionVTheta :: Point -> Float -> Float -> Float
+newPositionVTheta position velocity acceleration theta = newPosition position velocity (Acceleration acceleration g) unitTime
+	
 gravityNewPositionFromRest :: Point -> Float -> Point
 gravityNewPositionFromRest (Position x y) time = gravityNewPosition (Position x y) restVelocity time
 
@@ -54,3 +57,8 @@ getNewPositionUnderGravity (Position x y) velocity theta time =
 newPositionGravityFrame :: Point -> Float -> Float -> Point
 newPositionGravityFrame (Position x y) velocity theta =
 	getNewPositionUnderGravity (Position x y) velocity theta unitTime
+	
+constantVelocityNewPosition :: Point -> Float -> Float -> Point
+constantVelocityNewPosition position velocity theta = newPosition position (getComponentsVelocity velocity theta) (0 0) unitTime
+
+
