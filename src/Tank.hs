@@ -63,6 +63,7 @@ launchWeapon
         currentAngle = theta, 
         impactRadius = r,
         isLaunched = l
+    	hasImpacted = i
     })
     (Tank {
         tankState = (TankState {
@@ -77,7 +78,7 @@ launchWeapon
         }),
         tankWeapons = w,
         score = s
-    }) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True)
+    }) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True False)
     
 tankVelocity :: Float
 tankVelocity = 10

@@ -6,7 +6,7 @@ g :: Float
 g = 9.8
 
 gAcceleration :: Point
-gAcceleration = (Acceleration 0 g)
+gAcceleration = (Acceleration 0 (-g))
 
 unitTime :: Float
 unitTime = 1
@@ -60,3 +60,12 @@ newPositionGravityFrame (Position x y) velocity theta =
 
 constantVelocityNewPosition :: Point -> Float -> Float ->  Point
 constantVelocityNewPosition position velocity theta = newPosition position (getComponentsVelocity velocity theta) (Acceleration 0 0) unitTime
+
+getAngleProjectile :: Float -> Float -> Float 
+getAngleProjectile velocity theta = atan(tan(theta) - (g * t * sec(theta))/u)
+
+getPositionProjectile :: Point -> FLoat -> Float -> Point 
+getPositionProjectile position velocity theta = getNewPositionUnderGravity position velocity theta unitTime
+
+getVelocityProjectile :: Float -> Float -> Float
+getVelocityProjectile velocity theta = sqrt((velocity * cos(theta))^2 + (velocity * sin(theta) - gt)^2)
