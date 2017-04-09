@@ -60,3 +60,9 @@ newPositionGravityFrame (Position x y) velocity theta =
 
 constantVelocityNewPosition :: Point -> Float -> Float ->  Point
 constantVelocityNewPosition position velocity theta = newPosition position (getComponentsVelocity velocity theta) (Acceleration 0 0) unitTime
+ 
+getPositionX:: Point -> Float
+getPositionX (Physics.Position x _) = x
+
+getPositionY:: Point -> Float
+getPositionY (Physics.Position _ y) = y

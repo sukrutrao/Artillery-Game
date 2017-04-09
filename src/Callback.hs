@@ -20,7 +20,6 @@ display gamestate = do
         game <- get gamestate
 
         --Drawing The Tiles
-        print "Drawing Tiles"
         forM_ (tileMatrix game) $ \(tileList) -> do
             forM_ (tileList) $ \(Tile {tileposition = (Physics.Position x y),isObstacle = w }) -> do
                 loadIdentity
@@ -38,8 +37,15 @@ display gamestate = do
         rectangle 0.75 0.1
         flush
 
+
+        --Drawing The White Health Of Tank 2
+        loadIdentity
+        currentColor $= Color4 1 1 1 1              -- white health background
+        translate $ Vector3 (0.5) (0.9) (0::Float)
+        rectangle 0.4 0.05
+        flush
+
         --Drawing The Tanks
-        print "Drawing The Tanks"
         forM_ (tankList game) $ \(Tank.Tank { Tank.tankState = (Tank.TankState {
                                             Tank.direction = d,
                                             Tank.position = (Physics.Position x y),
@@ -51,12 +57,29 @@ display gamestate = do
                                             })
                                         }),
                                         Tank.tankWeapons = w,
-                                        Tank.score = s
+                                        Tank.score = s,
+                                        Tank.color = tankcolor,
+                                        Tank.healthBarPosition = healthPos
                                     }) -> do
             loadIdentity
-            currentColor $= Color4 0.5 0.5 0.1 1              -- red tank
+            currentColor $= tankcolor
+            rotate incline_theta $ Vector3 0 0 1 
             translate $ Vector3 x y 0
             rectangle Tank.widthOfTank Tank.heightOfTank
+
+            --Drawing The White Health Of Tank
+            loadIdentity
+            currentColor $= Color4 1 1 1 1              -- white health background
+            translate $ Vector3 (Physics.getPositionX healthPos) (Physics.getPositionY healthPos) (0::Float)
+            rectangle 0.4 0.05
+            flush
+
+            --Drawing The Health Of Tank
+            loadIdentity
+            currentColor $= tankcolor              -- tank color power
+            translate $ Vector3 (Physics.getPositionX healthPos) (Physics.getPositionY healthPos) (0::Float)
+            rectangle (max (0.0)  (((fromIntegral s)*0.4) / 30)) 0.05
+            flush
 
             --Drawing The Turret
             loadIdentity
@@ -64,30 +87,26 @@ display gamestate = do
             currentColor $= Color4 0.34 0.34 0.1686 1     -- grey turret
             translate $ Vector3 (x+(Tank.widthOfTank/2)) (y+Tank.heightOfTank) 0
             rotate (turret_theta+incline_theta) $ Vector3 0 0 1 
-            line Tank.baseOfTurret Tank.perpendicularOfTurret
+            line Tank.lengthOfTurret
             flush
 
             --Drawing The Red Power Bar
             loadIdentity
             currentColor $= Color4 1 0 0 1              -- red power background
             translate $ Vector3 (-0.375) (-0.9) (0::Float)
-            rectangle (if(turret_power > 100) then (0.75) else((turret_power*0.75)/100)) 0.1
+            rectangle (min (0.75) ((turret_power*0.75)/100)) 0.1
             flush
 
             --Drawing The Current Triangle
+        let curTank = Tank.position (Tank.tankState (((tankList game) !! (chance game))))  
         loadIdentity
-        currentColor $= Color4 0.8588 0.3019 1 1              -- red tank
-
-        translate $ Vector3 (getPositionX (Tank.position ( Tank.tankState (((tankList game) !! (chance game))))) + (Tank.widthOfTank/2.0)) (getPositionY (Tank.position ( Tank.tankState (((tankList game) !! (chance game))))) + Tank.heightOfTank + 0.15) 0
-        triangle Tank.widthOfTriangle
+        currentColor $= Color4 0.8588 0.3019 1 1
+        translate $ Vector3 ((Physics.getPositionX curTank) + (Tank.widthOfTank/2.0))  ((Physics.getPositionY curTank) + Tank.heightOfTank + 0.15) 0
+        triangle Tank.edgeOfTriangle
         swapBuffers
         flush
- 
-getPositionX:: Physics.Point -> Float
-getPositionX (Physics.Position x _) = x
 
-getPositionY:: Physics.Point -> Float
-getPositionY (Physics.Position _ y) = y
+
 {-
 
 keyboardMouse :: IORef Float -> IORef (Float, Float) -> KeyboardMouseCallback

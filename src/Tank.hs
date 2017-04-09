@@ -25,11 +25,14 @@ data TankState = TankState {
 data Tank = Tank {
     tankState :: TankState,
     tankWeapons :: [Weapon],
-    score :: Integer
+    score :: Integer,
+    -- Attributes For Graphics
+    color :: Graphics.UI.GLUT.Color4 Float,
+    healthBarPosition :: Point
 } deriving (Show)
 
-widthOfTriangle :: Float
-widthOfTriangle = 0.075
+edgeOfTriangle :: Float
+edgeOfTriangle = 0.075
 
 widthOfTank :: Float
 widthOfTank = 0.2
@@ -37,11 +40,8 @@ widthOfTank = 0.2
 heightOfTank :: Float
 heightOfTank = 0.15
 
-baseOfTurret :: Float
-baseOfTurret = 0.1
-
-perpendicularOfTurret :: Float
-perpendicularOfTurret = 0.1
+lengthOfTurret :: Float
+lengthOfTurret = 0.1
 
 powerIncrement :: Float
 powerIncrement = 1
@@ -50,10 +50,10 @@ angleIncrement :: Float
 angleIncrement = 1
 
 initializeTankState :: Float -> Float -> TankState
-initializeTankState x y = TankState {direction = FacingRight, position = (originPosition x y) , velocity = restVelocity , inclineAngle = 0 , turret = Turret {angle = 10 , power = 40}}
+initializeTankState x y = TankState {direction = FacingRight, position = (originPosition x y) , velocity = restVelocity , inclineAngle = 0 , turret = Turret {angle = 45 , power = 40}}
 
-initializeTank :: Float -> Float -> Tank
-initializeTank x y = Tank {tankState = (initializeTankState x y), tankWeapons = [initializeWeapon x y], score = 30}
+initializeTank :: Float -> Float -> Graphics.UI.GLUT.Color4 Float -> Point -> Tank
+initializeTank x y z o = Tank {tankState = (initializeTankState x y), tankWeapons = [initializeWeapon x y], score = 25 , color = z , healthBarPosition = o} 
 
 launchWeapon :: Weapon -> Tank -> Float -> Float -> Weapon
 launchWeapon
@@ -76,7 +76,9 @@ launchWeapon
             })
         }),
         tankWeapons = w,
-        score = s
+        score = s,
+        color = _,
+        healthBarPosition = _
     }) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True)
     
 tankVelocity :: Float
@@ -148,7 +150,9 @@ stopTank (Tank {
             })
         }),
         tankWeapons = w,
-        score = s
+        score = s,
+        color = c,
+        healthBarPosition = p
     }) = (Tank {
         tankState = (TankState {
             direction = d,
@@ -161,7 +165,9 @@ stopTank (Tank {
             })
         }),
         tankWeapons = w,
-        score = s
+        score = s,
+        color = c,
+        healthBarPosition = p
     })
     
 {-
@@ -180,7 +186,9 @@ updateTank
             })
         }),
         tankWeapons = w,
-        score = s
+        score = s,
+        color = c,
+        healthBarPosition = p
     }) key = (Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
@@ -193,6 +201,8 @@ updateTank
             })
         }),
         tankWeapons = w,
-        score = s
+        score = s,
+        color = c,
+        healthBarPosition = p
     })
 -}
