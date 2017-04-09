@@ -123,8 +123,8 @@ getListOfPointsInRectangle (Position x y) length width
 	|	otherwise = ((getListOfPointsInLine (Position x y) length) : (getListOfPointsInRectangle (Position x (y-1)) length (width-1)))
 	
 flattenList :: [[Point]] -> [Point]
-	flattenList [[]] = []
-	flattenList (x:xs) = x ++ xs
+flattenList [[]] = []
+flattenList (x:xs) = (x ++ (flattenList xs))
 	
 commonPointsBetweenLists :: [Point] -> [Point] -> [Point]
 commonPointsBetweenLists [] [] = []
@@ -132,3 +132,7 @@ commonPointsBetweenLists (x:xs) [] = []
 commonPointsBetweenLists [] y = []
 commonPointsBetweenLists (x:xs) y = if (x `elem` y) then (x : (commonPointsBetweenLists xs y))
 									else (commonPointsBetweenLists xs y)
+									
+commonPointsBetweenCircleRectangle :: Point -> Float -> Point -> Float -> Float -> [Point]
+commonPointsBetweenCircleRectangle (Position cx cy) radius (Position x y) length width = 
+	(commonPointsBetweenLists (flattenList $ (getListOfPointsInRectangle (Position x y) length width)) (getListOfPointsInCircle (Position cx cy) radius (getListOfPointsInRectangle (Position (cx-radius) (cy-radius)) (2*radius) (2*radius) )))
