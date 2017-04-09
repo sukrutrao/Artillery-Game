@@ -1,7 +1,6 @@
 module Callback (reshape , display  , idle , keyboardMouse) where
  
 import Graphics.UI.GLUT
-import System.IO.Unsafe
 import Control.Monad
 import Data.IORef
 import qualified Types
@@ -25,9 +24,7 @@ display gamestate = do
         forM_ (Types.tileMatrix game) $ \(tileList) -> do
             forM_ (tileList) $ \(Types.Tile {Types.tilePosition = (Types.Position x y), Types.isObstacle = w }) -> do
                 loadIdentity
-                if (w == True)
-                    then currentColor $= Color4 0 0.5019 0 1            --green obstacle
-                    else currentColor $= Color4 0.6 0.8 1 1    --background color non obstacle
+                currentColor $= if(w) then Color4 0 0.5019 0 1 else Color4 0.6 0.8 1 1
                 translate $ Vector3 x y 0
                 rectangle widthOfTile heightOfTile
                 flush
@@ -35,7 +32,17 @@ display gamestate = do
         loadIdentity
         currentColor $= Color4 1 1 1 1              -- white power background
         translate $ Vector3 (-0.375) (-0.9) (0::Float)
-        rectangle 0.75 0.1
+        rectangle 0.75 0.01
+        flush
+
+
+        --Drawing The Red Power Bar
+
+        let currTankPower = Types.power(Types.turret (Types.tankState ((Types.tankList game) !! (Types.chance game))))
+        loadIdentity
+        currentColor $= Color4 1 0 0 1              -- red power background
+        translate $ Vector3 (-0.375) (-0.9) (0::Float)
+        rectangle ((currTankPower  *0.75)/100) 0.01
         flush
 
 
@@ -84,18 +91,10 @@ display gamestate = do
             line Tank.lengthOfTurret
             flush
 
-            --Drawing The Red Power Bar
-            putStr "Turret Power : "
-            print  turret_power
-            loadIdentity
-            currentColor $= Color4 1 0 0 1              -- red power background
-            translate $ Vector3 (-0.375) (-0.9) (0::Float)
-            rectangle (min (0.75) ((turret_power*0.75)/100)) 0.1
-            flush
 
             --Drawing The Current Triangle
 
-        let curTank = Types.position (Types.tankState (((Types.tankList game) !! (Types.chance game))))  
+        let curTank = Types.position (Types.tankState (((Types.tankList game) !! (Types.chance game))))
         loadIdentity
         currentColor $= Color4 0.8588 0.3019 1 1
         translate $ Vector3 ((Physics.getPositionX curTank) + (Tank.widthOfTank/2.0))  ((Physics.getPositionY curTank) + Tank.heightOfTank + 0.15) 0
@@ -108,11 +107,12 @@ display gamestate = do
 
 keyboardMouse :: IORef Types.GameState -> KeyboardMouseCallback
 keyboardMouse gamestate key Down _ _ = case key of
-  Char '+' -> gamestate $~! \x -> Tank.updateGameStateTank x Input.increasePower
-  Char '-' -> gamestate $~! \x -> Tank.updateGameStateTank x Input.decreasePower
-  (SpecialKey KeyLeft) -> gamestate $~! \x -> Tank.updateGameStateTank x Input.moveLeft
-  (SpecialKey KeyRight) -> gamestate $~! \x -> Tank.updateGameStateTank x Input.moveRight
-
+  Char '+' -> do
+            gamestate $~! \x -> Tank.updateGameStateTank x Input.increasePower
+            postRedisplay Nothing
+  Char '-' -> do
+            gamestate $~! \x -> Tank.updateGameStateTank x Input.decreasePower
+            postRedisplay Nothing
   _ -> return ()
 keyboardMouse _ _ _ _ _ = return ()
 

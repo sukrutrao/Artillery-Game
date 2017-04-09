@@ -161,7 +161,8 @@ updateTank
     }) key = Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
-            position = (updatePosition (Position x y) (getAngleAt (Position x y)) key),
+            position = (Position x y),
+          --  position = (updatePosition (Position x y) (getAngleAt (Position x y)) key),
             velocity = (Velocity vx vy),
             inclineAngle = incline_theta,
             turret = (Turret {

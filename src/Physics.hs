@@ -53,14 +53,14 @@ gravityNewPositionFromRest (Position x y) time = gravityNewPosition (Position x 
 getNewPositionUnderGravity :: Point -> Float -> Float -> Float -> Point
 getNewPositionUnderGravity (Position x y) velocity theta time =
     gravityNewPosition (Position x y) (getComponentsVelocity velocity theta) time
-
+    
 newPositionGravityFrame :: Point -> Float -> Float -> Point
 newPositionGravityFrame (Position x y) velocity theta =
     getNewPositionUnderGravity (Position x y) velocity theta unitTime
 
 constantVelocityNewPosition :: Point -> Float -> Float ->  Point
 constantVelocityNewPosition position velocity theta = newPosition position (getComponentsVelocity velocity theta) (Acceleration 0 0) unitTime
-
+	
 getTileIsObstacle:: GameState -> Int -> Int -> Bool
 getTileIsObstacle (GameState{tileMatrix = l}) row col = (isObstacle ((l !! row) !! col))
 
@@ -141,7 +141,9 @@ commonPointsBetweenLists (x:xs) [] = []
 commonPointsBetweenLists [] y = []
 commonPointsBetweenLists (x:xs) y = if (x `elem` y) then (x : (commonPointsBetweenLists xs y))
 									else (commonPointsBetweenLists xs y)
-									
+
+{-									
 commonPointsBetweenCircleRectangle :: Point -> Float -> Point -> Float -> Float -> [Point]
 commonPointsBetweenCircleRectangle (Position cx cy) radius (Position x y) length width = 
 	(commonPointsBetweenLists (flattenList $ (getListOfPointsInRectangle (Position x y) length width)) (getListOfPointsInCircle (Position cx cy) radius (getListOfPointsInRectangle (Position (cx-radius) (cy-radius)) (2*radius) (2*radius) )))
+	-}

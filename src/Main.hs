@@ -16,5 +16,5 @@ main = do
     reshapeCallback $= Just reshape
     displayCallback $= display gamestate
     keyboardMouseCallback $= Just (keyboardMouse gamestate)
-    idleCallback $= Just (idle)
+   -- idleCallback $= Just (idle)
     mainLoop
