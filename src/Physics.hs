@@ -121,3 +121,14 @@ getListOfPointsInRectangle :: Point -> Integer -> Integer -> [[Point]]
 getListOfPointsInRectangle (Position x y) length width
 	|	width == 0 = [[]]
 	|	otherwise = ((getListOfPointsInLine (Position x y) length) : (getListOfPointsInRectangle (Position x (y-1)) length (width-1)))
+	
+flattenList :: [[Point]] -> [Point]
+	flattenList [[]] = []
+	flattenList (x:xs) = x ++ xs
+	
+commonPointsBetweenLists :: [Point] -> [Point] -> [Point]
+commonPointsBetweenLists [] [] = []
+commonPointsBetweenLists (x:xs) [] = []
+commonPointsBetweenLists [] y = []
+commonPointsBetweenLists (x:xs) y = if (x `elem` y) then (x : (commonPointsBetweenLists xs y))
+									else (commonPointsBetweenLists xs y)
