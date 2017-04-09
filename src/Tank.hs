@@ -165,8 +165,6 @@ stopTank (Tank {
         score = s
     })
     
-{-
-
 updateTank :: Tank -> Key -> Tank
 updateTank
     (Tank {
@@ -182,7 +180,7 @@ updateTank
         }),
         tankWeapons = w,
         score = s
-    }) key = (Tank {
+    }) (Key key) = (Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
             position = (updatePosition (Position x y) (getAngleAt (Position x y)) key),
@@ -196,4 +194,5 @@ updateTank
         tankWeapons = w,
         score = s
     })
--}
+    
+-- check for theta = pi/2!

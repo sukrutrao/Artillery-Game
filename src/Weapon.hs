@@ -56,5 +56,8 @@ updatePositionWeapon (GenericWeapon {
     					hasImpacted = hasimpacted
 					})
 					
+updateWeapon :: Weapon -> Weapon 
+updateWeapon (GenericWeapon weapon) = if (not $ hasImpacted weapon)
+										then (updatePositionWeapon weapon) 
+										else weapon
 
-							
