@@ -1,6 +1,6 @@
 module Physics where
 
-data Point = Position Float Float | Velocity Float Float | Acceleration Float Float deriving (Show, Eq)
+import Types
 
 g :: Float
 g = 9.8
@@ -62,16 +62,16 @@ constantVelocityNewPosition :: Point -> Float -> Float ->  Point
 constantVelocityNewPosition position velocity theta = newPosition position (getComponentsVelocity velocity theta) (Acceleration 0 0) unitTime
  
 getPositionX:: Point -> Float
-getPositionX (Physics.Position x _) = x
+getPositionX (Position x _) = x
 
 getPositionY:: Point -> Float
-getPositionY (Physics.Position _ y) = y
+getPositionY (Position _ y) = y
 
 getAngleProjectile :: Float -> Float -> Float 
-getAngleProjectile velocity theta = atan(tan(theta) - (g * t * sec(theta))/u)
+getAngleProjectile velocity theta = atan(tan(theta) - (g * unitTime * (1 / (cos(theta)))/velocity))
 
-getPositionProjectile :: Point -> FLoat -> Float -> Point 
+getPositionProjectile :: Point -> Float -> Float -> Point 
 getPositionProjectile position velocity theta = getNewPositionUnderGravity position velocity theta unitTime
 
 getVelocityProjectile :: Float -> Float -> Float
-getVelocityProjectile velocity theta = sqrt((velocity * cos(theta))^2 + (velocity * sin(theta) - gt)^2)
+getVelocityProjectile velocity theta = sqrt((velocity * cos(theta))^2 + (velocity * sin(theta) - g*(unitTime^2)))

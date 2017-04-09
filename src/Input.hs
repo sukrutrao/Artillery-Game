@@ -1,8 +1,7 @@
 module Input where
 
 import qualified Graphics.UI.GLUT
-
-data Key = Key Graphics.UI.GLUT.Key deriving (Eq)
+import Types
 
 moveLeft :: Key
 moveLeft = Key $ Graphics.UI.GLUT.SpecialKey Graphics.UI.GLUT.KeyLeft

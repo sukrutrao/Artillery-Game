@@ -1,9 +1,6 @@
 import Graphics.UI.GLUT
 import System.IO.Unsafe
 import Data.IORef
-import Physics
-import Weapon
-import Tank
 import Gamestate
 import Callback
 
@@ -18,9 +15,5 @@ main = do
     gamestate <- newIORef gameX
     reshapeCallback $= Just reshape
     displayCallback $= display gamestate
-    --keyboardMouseCallback $= Just (keyboardMouse delta pos)
+    keyboardMouseCallback $= Just (keyboardMouse gamestate)
     mainLoop
-
-
-test :: IORef a -> a
-test val = unsafePerformIO $ readIORef val

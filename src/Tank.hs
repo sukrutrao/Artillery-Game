@@ -1,35 +1,12 @@
 module Tank where
 
+import Types
 import Physics
 import Weapon
 import Input 
 import qualified Graphics.UI.GLUT
 import Data.IORef
 
-data Turret = Turret {
-    angle :: Float, 
-    power :: Float  
-} deriving (Show)
-
-data Direction = FacingLeft | FacingRight  
-           deriving (Enum , Show)
-
-data TankState = TankState {
-    direction :: Direction,
-    position :: Point,
-    velocity :: Point,
-    inclineAngle :: Float,
-    turret :: Turret
-} deriving (Show)
-
-data Tank = Tank {
-    tankState :: TankState,
-    tankWeapons :: [Weapon],
-    score :: Integer,
-    -- Attributes For Graphics
-    color :: Graphics.UI.GLUT.Color4 Float,
-    healthBarPosition :: Point
-} deriving (Show)
 
 edgeOfTriangle :: Float
 edgeOfTriangle = 0.075
@@ -62,7 +39,7 @@ launchWeapon
         currentVelocity = v,
         currentAngle = theta, 
         impactRadius = r,
-        isLaunched = l
+        isLaunched = l,
     	hasImpacted = i
     })
     (Tank {
@@ -80,7 +57,7 @@ launchWeapon
         score = s,
         color = _,
         healthBarPosition = _
-    }) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True)
+    }) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True False)
 
 tankVelocity :: Float
 tankVelocity = 10
@@ -191,7 +168,7 @@ updateTank
     }) key = (Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
-            position = (updatePosition (Position x y) (getAngleAt (Position x y)) key),
+             position = (updatePosition (Position x y) (getAngleAt (Position x y)) key),
             velocity = (Velocity vx vy),
             inclineAngle = incline_theta,
             turret = (Turret {
@@ -204,5 +181,14 @@ updateTank
         color = c,
         healthBarPosition = p
     })
-    
+
 -- check for theta = pi/2!
+
+updateGameStateTank :: GameState -> Key -> GameState
+updateGameStateTank
+    (GameState {
+        tileMatrix = t,
+        tankList = l,
+        weapon = w,
+        chance = c
+    }) key = (GameState {tileMatrix = t , weapon = w , chance = c , tankList = ((take c l) ++ ((updateTank (l !! c) key) : (drop (c + 1) l))) })

@@ -1,21 +1,9 @@
 module Gamestate where
 
 import qualified Graphics.UI.GLUT
-import Physics
+import Types
 import Tank
 import Weapon
-
-data Tile = Tile {
-    tileposition :: Point,
-    isObstacle :: Bool
-} deriving (Show)
-
-data GameState = GameState {
-    tileMatrix :: [[Tile]],
-    tankList :: [Tank],
-    weapon :: [Weapon],
-    chance :: Int
-} deriving (Show)
 
 widthOfTile :: Float
 widthOfTile = 1
