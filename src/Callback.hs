@@ -110,7 +110,6 @@ keyboardMouse :: IORef Types.GameState -> KeyboardMouseCallback
 keyboardMouse gamestate key Down _ _ = case key of
   Char '+' -> gamestate $~! \x -> Tank.updateGameStateTank x Input.increasePower
   Char '-' -> gamestate $~! \x -> Tank.updateGameStateTank x Input.decreasePower
-
   _ -> return ()
 keyboardMouse _ _ _ _ _ = return ()
 
