@@ -94,3 +94,8 @@ checkPointInRectangle point (Position lx ly) length width theta =
 		(checkOrientationPointLine point (Position (lx - width * sin(theta) + length * cos(theta)) (ly + width * cos(theta) + length * sin(theta))) (Position (lx - width * sin(theta)) (ly + width * cos(theta)))) == BelowLine)
 		then True
 		else False
+		
+checkPointInCircle :: Point -> Point -> Float -> Bool
+checkPointInCircle (Position x y) (Position cx cy) radius = 
+	|	(x-cx)^2 + (y-cy)^2 <= radius^2 = True
+	|	otherwise = False
