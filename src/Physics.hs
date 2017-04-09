@@ -68,22 +68,22 @@ getPositionY:: Point -> Float
 getPositionY (Physics.Position _ y) = y
 
 getAngleProjectile :: Float -> Float -> Float 
-getAngleProjectile velocity theta = atan(tan(theta) - (g * t * sec(theta))/u)
+getAngleProjectile velocity theta = atan(tan(theta) - (g * unitTime)/(velocity * cos(theta)))
 
-getPositionProjectile :: Point -> FLoat -> Float -> Point 
+getPositionProjectile :: Point -> Float -> Float -> Point 
 getPositionProjectile position velocity theta = getNewPositionUnderGravity position velocity theta unitTime
 
 getVelocityProjectile :: Float -> Float -> Float
-getVelocityProjectile velocity theta = sqrt((velocity * cos(theta))^2 + (velocity * sin(theta) - gt)^2)
+getVelocityProjectile velocity theta = sqrt((velocity * cos(theta))^2 + (velocity * sin(theta) - g * unitTime)^2)
 
 data PointLineOrientation = AboveLine | BelowLine deriving(Enum, Eq) -- what about 90 degrees and its multiples?
 
-getLineSlopeIntercept :: Point -> Point -> Tuple
+getLineSlopeIntercept :: Point -> Point -> (Float,Float)
 getLineSlopeIntercept (Position x1 y1) (Position x2 y2) = (((y2-y1)/(x2-x1)), y1-(x1*((y2-y1)/(x2-x1))))
 
 checkOrientationPointLine :: Point -> Point -> Point -> PointLineOrientation
 checkOrientationPointLine (Position x y) first second
-	|	y > x*fst(getSlopeIntercept first second) + snd(getSlopeIntercept first second) = AboveLine
+	|	y > x*fst(getLineSlopeIntercept first second) + snd(getLineSlopeIntercept first second) = AboveLine
 	|	otherwise = BelowLine -- for multiples of 90 degrees?
 	
 checkPointInRectangle :: Point -> Point -> Float -> Float -> Float -> Bool
@@ -103,13 +103,13 @@ checkPointInCircle (Position x y) (Position cx cy) radius
 getListOfPointsInCircle :: Point -> Float -> [[Point]] -> [Point]
 getListOfPointsInCircle (Position cx cy) radius [[]] = []
 getListOfPointsInCircle (Position cx cy) radius (x:xs) =  
-	((checkCommonPointsCircleLine (Position cx cy) radius x) : (getListOfPointsInCircle (Position cx cy) radius xs))
+	((checkCommonPointsCircleLine (Position cx cy) radius x) ++ (getListOfPointsInCircle (Position cx cy) radius xs))
 
 checkCommonPointsCircleLine :: Point -> Float -> [Point] -> [Point]
 checkCommonPointsCircleLine (Position cx cy) radius [] = []
 checkCommonPointsCircleLine (Position cx cy) radius (x:xs) = 
-	if (checkPointInCircle x (Position cx cy) radius) then (x : (checkCommonPointsLineCircle (Position cx cy) radius xs))
-	else (checkCommonPointsLineCircle (Position cx cy) radius xs)
+	if (checkPointInCircle x (Position cx cy) radius) then (x : (checkCommonPointsCircleLine (Position cx cy) radius xs))
+	else (checkCommonPointsCircleLine (Position cx cy) radius xs)
 		
 	
 getListOfPointsInLine :: Point -> Integer -> [Point]

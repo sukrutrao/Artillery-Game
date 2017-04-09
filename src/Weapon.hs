@@ -26,7 +26,7 @@ updatePositionWeapon (GenericWeapon {
     	currentVelocity = velocity,
     	currentAngle = theta, 
     	impactRadius = r,
-    	isLaunched = islaunched
+    	isLaunched = islaunched,
     	hasImpacted = hasimpacted
 	}) = if islaunched
 			then (if (isObstacle (Position x y))
@@ -35,15 +35,15 @@ updatePositionWeapon (GenericWeapon {
     							currentVelocity = velocity,
     							currentAngle = theta, 
     							impactRadius = r,
-    							isLaunched = islaunched
+    							isLaunched = islaunched,
 								hasImpacted = True
 							})
 					else	(GenericWeapon {
-    							currentPosition = (getPositionProjectile (Position x y) velocity theta)
+    							currentPosition = (getPositionProjectile (Position x y) velocity theta),
     							currentVelocity = (getVelocityProjectile velocity theta),
     							currentAngle = (getAngleProjectile velocity theta), 
     							impactRadius = r,
-    							isLaunched = islaunched
+    							isLaunched = islaunched,
     							hasImpacted = hasimpacted
 							})
 					)
@@ -52,12 +52,12 @@ updatePositionWeapon (GenericWeapon {
     					currentVelocity = velocity,
     					currentAngle = theta, 
     					impactRadius = r,
-    					isLaunched = islaunched
+    					isLaunched = islaunched,
     					hasImpacted = hasimpacted
 					})
 					
 updateWeapon :: Weapon -> Weapon 
-updateWeapon (GenericWeapon weapon) = if (not $ hasImpacted weapon)
+updateWeapon weapon = if (not $ hasImpacted weapon)
 										then (updatePositionWeapon weapon) 
 										else weapon
 
