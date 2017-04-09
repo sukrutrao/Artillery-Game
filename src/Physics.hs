@@ -75,3 +75,22 @@ getPositionProjectile position velocity theta = getNewPositionUnderGravity posit
 
 getVelocityProjectile :: Float -> Float -> Float
 getVelocityProjectile velocity theta = sqrt((velocity * cos(theta))^2 + (velocity * sin(theta) - gt)^2)
+
+data PointLineOrientation = AboveLine | BelowLine deriving(Enum, Eq) -- what about 90 degrees and its multiples?
+
+getLineSlopeIntercept :: Point -> Point -> Tuple
+getLineSlopeIntercept (Position x1 y1) (Position x2 y2) = (((y2-y1)/(x2-x1)), y1-(x1*((y2-y1)/(x2-x1))))
+
+checkOrientationPointLine :: Point -> Point -> Point -> PointLineOrientation
+checkOrientationPointLine (Position x y) first second
+	|	y > x*fst(getSlopeIntercept first second) + snd(getSlopeIntercept first second) = AboveLine
+	|	otherwise = BelowLine -- for multiples of 90 degrees?
+	
+checkPointInRectangle :: Point -> Point -> Float -> Float -> Float -> Bool
+checkPointInRectangle point (Position lx ly) length width theta = 
+	if ((checkOrientationPointLine point (Position lx ly) (Position (lx + length * cos(theta)) (ly + length * sin(theta)))) == AboveLine &&
+		(checkOrientationPointLine point (Position lx ly) (Position (lx - width * sin(theta)) (ly + width * cos(theta)))) == AboveLine &&
+		(checkOrientationPointLine point (Position (lx - width * sin(theta) + length * cos(theta)) (ly + width * cos(theta) + length * sin(theta))) (Position (lx + length * cos(theta)) (ly + length * sin(theta)))) == BelowLine &&
+		(checkOrientationPointLine point (Position (lx - width * sin(theta) + length * cos(theta)) (ly + width * cos(theta) + length * sin(theta))) (Position (lx - width * sin(theta)) (ly + width * cos(theta)))) == BelowLine)
+		then True
+		else False
