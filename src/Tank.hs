@@ -27,7 +27,7 @@ angleIncrement :: Float
 angleIncrement = 1
 
 initializeTankState :: Float -> Float -> TankState
-initializeTankState x y = TankState {direction = FacingRight, position = (originPosition x y) , velocity = restVelocity , inclineAngle = 0 , turret = Turret {angle = 45 , power = 40}}
+initializeTankState x y = TankState {direction = FacingRight, position = (originPosition x y) , velocity = restVelocity , inclineAngle = 0 , turret = Turret {angle = 45 , power = 0}}
 
 initializeTank :: Float -> Float -> Graphics.UI.GLUT.Color4 Float -> Point -> Tank
 initializeTank x y z o = Tank {tankState = (initializeTankState x y), tankWeapons = [initializeWeapon x y], score = 25 , color = z , healthBarPosition = o} 
@@ -40,7 +40,7 @@ launchWeapon
         currentAngle = theta, 
         impactRadius = r,
         isLaunched = l,
-    	hasImpacted = i
+        hasImpacted = i
     })
     (Tank {
         tankState = (TankState {
@@ -76,8 +76,8 @@ updatePosition position theta key = position
 
 updatePower :: Float -> Key -> Float
 updatePower power key
-    | key == increasePower = power + powerIncrement
-    | key == increasePower = power - powerIncrement -- check for negative
+    | (key == increasePower) = if((power + powerIncrement) > 100) then 100 else (power + powerIncrement)
+    | (key == decreasePower) = if((power - powerIncrement) < 0) then 0 else (power - powerIncrement)
     | otherwise = power
 
 {-
@@ -131,7 +131,7 @@ stopTank (Tank {
         score = s,
         color = c,
         healthBarPosition = p
-    }) = (Tank {
+    }) = Tank {
         tankState = (TankState {
             direction = d,
             position = (Position x y),
@@ -146,7 +146,7 @@ stopTank (Tank {
         score = s,
         color = c,
         healthBarPosition = p
-    })
+    }
     
 updateTank :: Tank -> Key -> Tank
 updateTank
@@ -165,10 +165,11 @@ updateTank
         score = s,
         color = c,
         healthBarPosition = p
-    }) key = (Tank {
+    }) key = Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
-             position = (updatePosition (Position x y) (getAngleAt (Position x y)) key),
+            position = (Position x y),
+            --position = (updatePosition (Position x y) (getAngleAt (Position x y)) key),
             velocity = (Velocity vx vy),
             inclineAngle = incline_theta,
             turret = (Turret {
@@ -180,9 +181,13 @@ updateTank
         score = s,
         color = c,
         healthBarPosition = p
-    })
+    }
 
 -- check for theta = pi/2!
+
+
+
+
 
 updateGameStateTank :: GameState -> Key -> GameState
 updateGameStateTank
@@ -191,4 +196,7 @@ updateGameStateTank
         tankList = l,
         weapon = w,
         chance = c
-    }) key = (GameState {tileMatrix = t , weapon = w , chance = c , tankList = ((take c l) ++ ((updateTank (l !! c) key) : (drop (c + 1) l))) })
+    }) key = let temp = ((take c l) ++ ((updateTank (l !! c) key) : (drop (c + 1) l)))
+        in GameState {tileMatrix = t , tankList =  temp, weapon = w , chance = c }
+
+

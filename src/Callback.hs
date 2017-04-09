@@ -1,17 +1,17 @@
-module Callback (reshape , display) where
+module Callback (reshape , display  , idle , keyboardMouse) where
  
 import Graphics.UI.GLUT
 import System.IO.Unsafe
 import Control.Monad
 import Data.IORef
 import qualified Types
+import qualified  Tank
+import qualified Physics
+import qualified Input
 import Gamestate
 import Rectangle
 import Line
 import Triangle
-import qualified  Tank
-import qualified Physics
-import qualified Input
 
 reshape :: ReshapeCallback
 reshape size = do
@@ -21,7 +21,6 @@ display :: IORef Types.GameState -> DisplayCallback
 display gamestate = do
         clear [ColorBuffer, DepthBuffer]
         game <- get gamestate
-
         --Drawing The Tiles
         forM_ (Types.tileMatrix game) $ \(tileList) -> do
             forM_ (tileList) $ \(Types.Tile {Types.tileposition = (Types.Position x y), Types.isObstacle = w }) -> do
@@ -32,20 +31,13 @@ display gamestate = do
                 translate $ Vector3 x y 0
                 rectangle widthOfTile heightOfTile
                 flush
-
         --Drawing The White power Button
         loadIdentity
         currentColor $= Color4 1 1 1 1              -- white power background
         translate $ Vector3 (-0.375) (-0.9) (0::Float)
         rectangle 0.75 0.1
         flush
-     
-        --Drawing The White Health Of Tank 2
-        loadIdentity
-        currentColor $= Color4 1 1 1 1              -- white health background
-        translate $ Vector3 (0.5) (0.9) (0::Float)
-        rectangle 0.4 0.05
-        flush
+
 
         --Drawing The Tanks
         forM_ (Types.tankList game) $ \(Types.Tank { Types.tankState = (Types.TankState {
@@ -93,6 +85,8 @@ display gamestate = do
             flush
 
             --Drawing The Red Power Bar
+            putStr "Turret Power : "
+            print  turret_power
             loadIdentity
             currentColor $= Color4 1 0 0 1              -- red power background
             translate $ Vector3 (-0.375) (-0.9) (0::Float)
@@ -100,24 +94,27 @@ display gamestate = do
             flush
 
             --Drawing The Current Triangle
+
         let curTank = Types.position (Types.tankState (((Types.tankList game) !! (Types.chance game))))  
         loadIdentity
         currentColor $= Color4 0.8588 0.3019 1 1
         translate $ Vector3 ((Physics.getPositionX curTank) + (Tank.widthOfTank/2.0))  ((Physics.getPositionY curTank) + Tank.heightOfTank + 0.15) 0
         triangle Tank.edgeOfTriangle
+
         swapBuffers
         flush
 
 
 
-keyboardMouse :: IORef Tank.GameState -> KeyboardMouseCallback
+keyboardMouse :: IORef Types.GameState -> KeyboardMouseCallback
 keyboardMouse gamestate key Down _ _ = case key of
-  Input.increasePower -> writeIORef gamestate (Tank.updateGameStateTank (convertIOReftoNon gamestate) key)
-  Input.decreasePower ->  writeIORef gamestate (Tank.updateGameStateTank (convertIOReftoNon gamestate) key)
+  Char '+' -> gamestate $~! \x -> Tank.updateGameStateTank x Input.increasePower
+  Char '-' -> gamestate $~! \x -> Tank.updateGameStateTank x Input.decreasePower
+
   _ -> return ()
-      
-keyboardMouse _ _ _ _ _ _ = return ()
+keyboardMouse _ _ _ _ _ = return ()
 
 
-convertIOReftoNon :: IORef a -> a
-convertIOReftoNon val = unsafePerformIO $ readIORef val
+
+idle :: IdleCallback
+idle = postRedisplay Nothing
