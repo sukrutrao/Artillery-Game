@@ -96,6 +96,28 @@ checkPointInRectangle point (Position lx ly) length width theta =
 		else False
 		
 checkPointInCircle :: Point -> Point -> Float -> Bool
-checkPointInCircle (Position x y) (Position cx cy) radius = 
+checkPointInCircle (Position x y) (Position cx cy) radius
 	|	(x-cx)^2 + (y-cy)^2 <= radius^2 = True
 	|	otherwise = False
+	
+getListOfPointsInCircle :: Point -> Float -> [[Point]] -> [Point]
+getListOfPointsInCircle (Position cx cy) radius [[]] = []
+getListOfPointsInCircle (Position cx cy) radius (x:xs) =  
+	((checkCommonPointsCircleLine (Position cx cy) radius x) : (getListOfPointsInCircle (Position cx cy) radius xs))
+
+checkCommonPointsCircleLine :: Point -> Float -> [Point] -> [Point]
+checkCommonPointsCircleLine (Position cx cy) radius [] = []
+checkCommonPointsCircleLine (Position cx cy) radius (x:xs) = 
+	if (checkPointInCircle x (Position cx cy) radius) then (x : (checkCommonPointsLineCircle (Position cx cy) radius xs))
+	else (checkCommonPointsLineCircle (Position cx cy) radius xs)
+		
+	
+getListOfPointsInLine :: Point -> Integer -> [Point]
+getListOfPointsInLine (Position x y) length
+	|	length == 0 = []
+	|	otherwise = ((Position x y) : (getListOfPointsInLine (Position (x+1) y) (length - 1)))
+	
+getListOfPointsInRectangle :: Point -> Integer -> Integer -> [[Point]]
+getListOfPointsInRectangle (Position x y) length width
+	|	width == 0 = [[]]
+	|	otherwise = ((getListOfPointsInLine (Position x y) length) : (getListOfPointsInRectangle (Position x (y-1)) length (width-1)))

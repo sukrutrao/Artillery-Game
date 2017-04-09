@@ -80,7 +80,7 @@ launchWeapon
         score = s,
         color = _,
         healthBarPosition = _
-    }) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True)
+    }) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True False)
 
 tankVelocity :: Float
 tankVelocity = 10
