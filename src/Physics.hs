@@ -62,13 +62,13 @@ constantVelocityNewPosition :: Point -> Float -> Float ->  Point
 constantVelocityNewPosition position velocity theta = newPosition position (getComponentsVelocity velocity theta) (Acceleration 0 0) unitTime
 
 getTileIsObstacle:: GameState -> Int -> Int -> Bool
-getTileIsObstacle gamestate row col = (isObstacle (((tileMatrix gamestate) !! row) !! col))
+getTileIsObstacle (GameState{tileMatrix = l}) row col = (isObstacle ((l !! row) !! col))
 
 getTilePosX:: GameState -> Int -> Int -> Float
-getTilePosX gamestate row col = getPositionX (tilePosition (((tileMatrix gamestate) !! row) !! col))
+getTilePosX (GameState{tileMatrix = l}) row col = getPositionX (tilePosition ((l !! row) !! col))
 
 getTilePosY:: GameState -> Int -> Int -> Float
-getTilePosY gamestate row col = getPositionY (tilePosition (((tileMatrix gamestate) !! row) !! col))
+getTilePosY (GameState{tileMatrix = l}) row col = getPositionY (tilePosition ((l !! row) !! col))
 
 getPositionX:: Point -> Float
 getPositionX (Position x _) = x

@@ -80,13 +80,6 @@ updatePower power key
     | (key == decreasePower) = if((power - powerIncrement) < 0) then 0 else (power - powerIncrement)
     | otherwise = power
 
-{-
-updatePower :: Float -> Key -> Float
-updatePower power increasePower = power + powerIncrement
-updatePower power increasePower = power - powerIncrement -- check for negative
-updatePower power key = power
--}
-
 updateAngle :: Float -> Key -> Float
 updateAngle angle key
     | key == increaseAngle = angle + angleIncrement
@@ -168,8 +161,7 @@ updateTank
     }) key = Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
-            position = (Position x y),
-            --position = (updatePosition (Position x y) (getAngleAt (Position x y)) key),
+            position = (updatePosition (Position x y) (getAngleAt (Position x y)) key),
             velocity = (Velocity vx vy),
             inclineAngle = incline_theta,
             turret = (Turret {
