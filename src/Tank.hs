@@ -63,6 +63,7 @@ launchWeapon
         currentAngle = theta, 
         impactRadius = r,
         isLaunched = l
+    	hasImpacted = i
     })
     (Tank {
         tankState = (TankState {
@@ -80,7 +81,7 @@ launchWeapon
         color = _,
         healthBarPosition = _
     }) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True)
-    
+
 tankVelocity :: Float
 tankVelocity = 10
     
@@ -170,8 +171,6 @@ stopTank (Tank {
         healthBarPosition = p
     })
     
-{-
-
 updateTank :: Tank -> Key -> Tank
 updateTank
     (Tank {
@@ -205,4 +204,5 @@ updateTank
         color = c,
         healthBarPosition = p
     })
--}
+    
+-- check for theta = pi/2!
