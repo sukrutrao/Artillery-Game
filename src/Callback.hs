@@ -23,7 +23,7 @@ display gamestate = do
         game <- get gamestate
         --Drawing The Tiles
         forM_ (Types.tileMatrix game) $ \(tileList) -> do
-            forM_ (tileList) $ \(Types.Tile {Types.tileposition = (Types.Position x y), Types.isObstacle = w }) -> do
+            forM_ (tileList) $ \(Types.Tile {Types.tilePosition = (Types.Position x y), Types.isObstacle = w }) -> do
                 loadIdentity
                 if (w == True)
                     then currentColor $= Color4 0 0.5019 0 1            --green obstacle

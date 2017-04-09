@@ -12,8 +12,8 @@ heightOfTile :: Float
 heightOfTile = 1
 
 getTileMatrix :: [[Tile]] 
-getTileMatrix = [[Tile {tileposition = (Position (-1) 0),isObstacle = False } , Tile {tileposition = (Position 0 0),isObstacle = False } ] ,
-                 [Tile {tileposition = (Position (-1) (-1)),isObstacle = True } , Tile {tileposition = (Position 0 (-1)),isObstacle = True } ]
+getTileMatrix = [[Tile {tilePosition = (Position (-1) 0),isObstacle = False } , Tile {tilePosition = (Position 0 0),isObstacle = False } ] ,
+                 [Tile {tilePosition = (Position (-1) (-1)),isObstacle = True } , Tile {tilePosition = (Position 0 (-1)),isObstacle = True } ]
                 ]
 
 getTankList :: [(Float , Float , Graphics.UI.GLUT.Color4 Float , Point)] -> [Tank]

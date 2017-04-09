@@ -37,7 +37,7 @@ data Tank = Tank {
 
 --GameState
 data Tile = Tile {
-    tileposition :: Point,
+    tilePosition :: Point,
     isObstacle :: Bool
 } deriving (Show)
 
