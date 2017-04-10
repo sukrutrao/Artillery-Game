@@ -23,3 +23,12 @@ increaseAngle  = Key $ Graphics.UI.GLUT.Char 'D'
 
 decreaseAngle :: Key 
 decreaseAngle = Key $ Graphics.UI.GLUT.Char 'A'
+
+weapon0 :: Key 
+weapon0 = Key $ Graphics.UI.GLUT.Char '0'
+
+weapon1 :: Key 
+weapon1 = Key $ Graphics.UI.GLUT.Char '1'
+
+weapon2 :: Key 
+weapon2 = Key $ Graphics.UI.GLUT.Char '2'

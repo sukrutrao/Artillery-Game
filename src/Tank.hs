@@ -32,7 +32,7 @@ initializeTankState x y = TankState {direction = FacingRight,
                                     }
 
 initializeTank :: Float -> Float -> Integer -> Graphics.UI.GLUT.Color4 Float -> Int -> [Integer] -> Tank
-initializeTanka a b c d e f = Tank {tankState = (initializeTankState a b),
+initializeTank a b c d e f = Tank {tankState = (initializeTankState a b),
                                     score = c,
                                     color = d,
                                     currentWeapon = e,
@@ -74,12 +74,6 @@ updatePosition position theta key
     | key == moveLeft = constantVelocityNewPosition position (-tankVelocity) theta
     | otherwise = position
 
-{-
-updatePosition position theta moveRight = 
-updatePosition position theta moveLeft = constantVelocityNewPosition position (-tankVelocity) theta
-updatePosition position theta key = position
--}
-
 updatePower :: Float -> Key -> Float
 updatePower power key
     | (key == increasePower) = if((power + powerIncrement) > 100) then 100 else (power + powerIncrement)
@@ -92,26 +86,19 @@ updateAngle angle key
     | key == decreaseAngle = angle - angleIncrement -- check for negative
     | otherwise = angle
 
-{-
-updateAngle :: Float -> Key -> Float
-updateAngle angle increaseAngle = angle + angleIncrement
-updateAngle angle decreaseAngle = angle - angleIncrement -- check for negative
-updateAngle angle key = angle
--}
-
-
 updateDirection :: Direction -> Key -> Direction
 updateDirection direction key
     | key == moveRight = FacingRight 
     | key == moveLeft = FacingLeft
     | otherwise = direction
 
-{-
-updateDirection :: Direction -> Key -> Direction
-updateDirection direction moveRight = FacingRight 
-updateDirection direction moveLeft = FacingLeft
-updateDirection direction key = direction
--}
+
+updateWeapon :: Int -> Key -> Int
+updateWeapon currWeapon key
+    | key == weapon0 = 0 
+    | key == weapon1 = 1
+    | key == weapon2 = 2
+    | otherwise = currWeapon
 
 
 stopTank :: Tank -> Tank
@@ -126,9 +113,10 @@ stopTank (Tank {
                 power = turret_power
             })
         }),
-        tankWeapons = w,
         score = s,
         color = c,
+        currentWeapon = e,
+        weaponCount = f
         
     }) = Tank {
         tankState = (TankState {
@@ -141,11 +129,13 @@ stopTank (Tank {
                 power = turret_power
             })
         }),
-        tankWeapons = w,
         score = s,
-        color = c
+        color = c,
+        currentWeapon = e,
+        weaponCount = f
     }
-    
+
+
 updateTank :: Tank -> Key -> Tank
 updateTank
     (Tank {
@@ -159,14 +149,14 @@ updateTank
                 power = turret_power
             })
         }),
-        tankWeapons = w,
         score = s,
-        color = c
+        color = c,
+        currentWeapon = e,
+        weaponCount = f
     }) key = Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
-            position = (Position x y),
-          --  position = (updatePosition (Position x y) (getAngleAt (Position x y)) key),
+            position = (updatePosition (Position x y) (getAngleAt (Position x y)) key),
             velocity = (Velocity vx vy),
             inclineAngle = incline_theta,
             turret = (Turret {
@@ -174,9 +164,10 @@ updateTank
                 power = (updatePower turret_power key)
             })
         }),
-        tankWeapons = w,
-        score = s-1,
-        color = c
+        score = s,
+        color = c,
+        currentWeapon = (updateWeapon e key),
+        weaponCount = f
     }
 
 -- check for theta = pi/2!

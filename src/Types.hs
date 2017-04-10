@@ -26,7 +26,7 @@ data TankState = TankState {
 } deriving (Show)
 
 data Tank = Tank {
-    tankState :: TankState
+    tankState :: TankState,
     score :: Integer,
     color :: Graphics.UI.GLUT.Color4 Float,
     currentWeapon :: Int,

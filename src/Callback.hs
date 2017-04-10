@@ -63,10 +63,11 @@ display gamestate = do
                                                 Types.angle = turret_theta, 
                                                 Types.power = turret_power
                                             })
-                                        }),
-                                        Types.tankWeapons = w,
+                                        })
                                         Types.score = s,
-                                        Types.color = tankcolor
+                                        Types.color = tankcolor,
+                                        Types.currentWeapon = current_weapon,
+                                        Types.weaponCount = weapon_count
                                     }) -> do
 
             tankcount $~! (+1)
@@ -85,8 +86,10 @@ display gamestate = do
 
             let perpendicularAngle = atan((-1)*(1/(tan(degreeToRadian incline_theta))))
 
-            let healthX = (topCenterX-(cos(degreeToRadian incline_theta)*(Tank.widthOfTank/3))) - (Tank.lengthOfTurret*0.35)*cos(perpendicularAngle)
-                healthY = (topCenterY-(sin(degreeToRadian incline_theta)*(Tank.widthOfTank/3))) - (Tank.lengthOfTurret*1.25)*sin(perpendicularAngle)
+            let lengthOfTurret = (Types.lengthOfTurret ((Types.tankList game) !! current_weapon))
+
+            let healthX = (topCenterX-(cos(degreeToRadian incline_theta)*(Tank.widthOfTank/3))) - (lengthOfTurret*0.35)*cos(perpendicularAngle)
+                healthY = (topCenterY-(sin(degreeToRadian incline_theta)*(Tank.widthOfTank/3))) - (lengthOfTurret*1.25)*sin(perpendicularAngle)
 
             --Drawing The White Health Of Tank
             loadIdentity
@@ -106,11 +109,11 @@ display gamestate = do
 
             --Drawing The Turret
             loadIdentity
-            lineWidth $= 5
-            currentColor $= Color4 0.34 0.34 0.1686 1     -- grey turret
+            lineWidth $= (Types.turretThickness ((Types.tankList game) !! current_weapon))
+            currentColor $=  (Types.turretColor ((Types.tankList game) !! current_weapon))     -- grey turret
             translate $ Vector3 topCenterX topCenterY 0
             rotate (turret_theta+incline_theta) $ Vector3 0 0 1 
-            line Tank.lengthOfTurret
+            line lengthOfTurret
             flush
 
             --Drawing The  Current Triangle
@@ -119,14 +122,13 @@ display gamestate = do
                 then do
                     loadIdentity
                     currentColor $= Color4 0.5588 0.0019 0.0988 1
-                    translate $ Vector3 (topCenterX-(Tank.lengthOfTurret*0.55)*cos(perpendicularAngle)) (topCenterY-(Tank.lengthOfTurret*1.90)*sin(perpendicularAngle)) 0
+                    translate $ Vector3 (topCenterX-(lengthOfTurret*0.55)*cos(perpendicularAngle)) (topCenterY-(lengthOfTurret*1.90)*sin(perpendicularAngle)) 0
                     rotate incline_theta $ Vector3 0 0 1 
                     triangle Tank.edgeOfTriangle
                 else
                     return()
         swapBuffers
         flush
-
 
 
 keyboardMouse :: IORef Types.GameState -> KeyboardMouseCallback
@@ -136,7 +138,15 @@ keyboardMouse gamestate key Down _ _ = case key of
             postRedisplay Nothing
   Char '-' -> do
             gamestate $~! \x -> Tank.updateGameStateTank x Input.decreasePower
-            print "HOLA"
+            postRedisplay Nothing
+  Char '0' -> do
+            gamestate $~! \x -> Tank.updateGameStateTank x Input.weapon0
+            postRedisplay Nothing
+  Char '1' -> do
+            gamestate $~! \x -> Tank.updateGameStateTank x Input.weapon1
+            postRedisplay Nothing
+  Char '2' -> do
+            gamestate $~! \x -> Tank.updateGameStateTank x Input.weapon2
             postRedisplay Nothing
   _ -> return ()
 keyboardMouse _ _ _ _ _ = return ()
