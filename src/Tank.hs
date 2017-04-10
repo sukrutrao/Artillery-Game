@@ -30,7 +30,7 @@ initializeTankState :: Float -> Float -> TankState
 initializeTankState x y = TankState {direction = FacingRight, 
                                      position = (originPosition x y),
                                      velocity = restVelocity,
-                                     inclineAngle = 45,
+                                     inclineAngle = 0,
                                      turret = Turret {angle = 45 , power = 0}
                                     }
 

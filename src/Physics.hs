@@ -61,14 +61,14 @@ newPositionGravityFrame (Position x y) velocity theta =
 constantVelocityNewPosition :: Point -> Float -> Float ->  Point
 constantVelocityNewPosition position velocity theta = newPosition position (getComponentsVelocity velocity theta) (Acceleration 0 0) unitTime
 
-getTileIsObstacle:: GameState -> Int -> Int -> Bool
-getTileIsObstacle (GameState{tileMatrix = l}) row col = (isObstacle ((l !! row) !! col))
+getTileIsObstacle:: GameState -> Float -> Float -> Bool
+getTileIsObstacle (GameState{tileMatrix = l}) row col = (isObstacle ((l !! (truncate row)) !! (truncate col)))
 
-getTilePosX:: GameState -> Int -> Int -> Float
-getTilePosX (GameState{tileMatrix = l}) row col = getPositionX (tilePosition ((l !! row) !! col))
+getTilePosX:: GameState -> Float -> Float -> Float
+getTilePosX (GameState{tileMatrix = l}) row col = getPositionX (tilePosition ((l !! (truncate row)) !! (truncate col)))
 
-getTilePosY:: GameState -> Int -> Int -> Float
-getTilePosY (GameState{tileMatrix = l}) row col = getPositionY (tilePosition ((l !! row) !! col))
+getTilePosY:: GameState -> Float -> Float -> Float
+getTilePosY (GameState{tileMatrix = l}) row col = getPositionY (tilePosition ((l !! (truncate row)) !! (truncate col)))
 
 getPositionX:: Point -> Float
 getPositionX (Position x _) = x

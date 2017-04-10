@@ -19,13 +19,14 @@ getWeaponList initialWeaponPosition = [(initializeWeapon x y) | (x,y) <- initial
 
 initializeGamestate::GameState
 initializeGamestate = GameState { tileMatrix = (getTileMatrix), 
-                                  tankList = (getTankList [((-0.50) , (-0.5) , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1),
-                                                            (0 , (-0.5) , Graphics.UI.GLUT.Color4 0.8 0.4 0.6 1),
-                                                            (0.5 , (-0.5) , Graphics.UI.GLUT.Color4 0.123 0.03 0.24 1)
+                                  tankList = (getTankList [(30 , 10 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1),
+                                                           (30 , 20 , Graphics.UI.GLUT.Color4 0.8 0.4 0.6 1),
+                                                           (30 , 30 , Graphics.UI.GLUT.Color4 0.123 0.03 0.24 1)
                                                           ]
                                                ),
+                                  -- position , impactRadius ,  
                                   weapon = (getWeaponList [((-0.75) , 0) , (0 , 0) ]),
-                                  chance = 1
+                                  chance = 0
                                 }
 
 degreeToRadian::Float -> Float
