@@ -180,3 +180,12 @@ searchForAngle (Position x y) length theta thetaMax tileMap =
 
 getAngleAt :: Point -> Integer -> -> Float
 getAngleAt (Position x y) length tileMap = searchForAngle (Position x y) length (-1.57) thetaMax tileMap
+
+checkObstacleInCircle :: Point -> Float -> -> Bool
+checkObstacleInCircle (Position cx cy) radius tileMap = checkObstacleInList (getListOfPointsInCircle (Position cx cy) radius 
+	(getListOfPointsInRectangle (Position cx cy) (truncate (2*radius)) (truncate (2*radius))))
+
+checkObstacleInList :: [[Point]] -> -> Bool
+checkObstacleInList [] tileMap = False
+checkObstacleInList (x:xs) tileMap = getIsObstacle ((tileMap !! (truncate $ getPositionX x)) !! (truncate $ getPositionY x)))
+	|| (checkObstacleInList xs)
