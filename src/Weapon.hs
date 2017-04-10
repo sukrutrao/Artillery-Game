@@ -11,20 +11,21 @@ genericImpactRadius :: Float
 genericImpactRadius = 10
 
 initializeWeapon :: Float -> Float -> Float -> Float -> Float -> Graphics.UI.GLUT.Color4 Float -> Graphics.UI.GLUT.Color4 Float ->  Graphics.UI.GLUT.Vector3 Float -> Float -> Float -> WeaponGraphics
-initializeWeapon a b c d e f g h i j =  WeaponGraphics { weaponPhysics = (GenericWeapon { currentPosition = (originPosition a b),
+initializeWeapon posX posY factor currAngle radius bullColor turrColor bullRotate turrThick turrLen =  
+                                    WeaponGraphics { weaponPhysics = (GenericWeapon { currentPosition = (originPosition posX posY),
                                                                                       currentVelocity = defaultStartVelocity,
-                                                                                      velocityMultiplyingFactor = c,
-                                                                                      currentAngle = d,
-                                                                                      impactRadius = e,
+                                                                                      velocityMultiplyingFactor = factor,
+                                                                                      currentAngle = currAngle,
+                                                                                      impactRadius = radius,
                                                                                       isLaunched = False,
                                                                                       hasImpacted = False
                                                                                     }
                                                                      ),
-                                                    bulletColor = f,
-                                                    turretColor = g,
-                                                    bulletRotation = h,
-                                                    turretThickness = i,
-                                                    lengthOfTurret = j
+                                                    bulletColor = bullColor,
+                                                    turretColor = turrColor,
+                                                    bulletRotation = bullRotate,
+                                                    turretThickness = turrThick,
+                                                    lengthOfTurret = turrLen
                                                    }
 
 

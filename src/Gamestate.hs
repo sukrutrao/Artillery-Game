@@ -1,6 +1,6 @@
 module Gamestate where
 
-import qualified Graphics.UI.GLUT
+import Graphics.UI.GLUT
 import Types
 import Tank
 import Weapon
@@ -11,7 +11,7 @@ widthOfTile = 0.05
 heightOfTile :: Float
 heightOfTile = 0.05
 
-getTankList :: [(Float , Float , Graphics.UI.GLUT.Color4 Float)] -> [Tank]
+getTankList :: [(Float , Float , Integer , Color4 Float)] -> [Tank]
 getTankList initialPosition = [(initializeTank a b c d e f) | (a,b,c,d,e,f) <- initialPosition] 
 
 getWeaponList :: [(Float , Float)] -> [WeaponGraphics]
@@ -20,15 +20,15 @@ getWeaponList initialWeaponPosition = [(initializeWeapon a b c d e f g h i j) | 
 initializeGamestate::GameState
 initializeGamestate = GameState { tileMatrix = (getTileMatrix), 
 -- position x , y , score ,color , currentWeapon , weaponCount , 
-                                  tankList = (getTankList [(30 , 10 , 30 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , 0 , [10,10,10]),
-                                                           (30 , 20 , 30 , Graphics.UI.GLUT.Color4 0.8 0.4 0.6 1 , 0 , [10,10,10]),
-                                                           (30 , 30 , 30 , Graphics.UI.GLUT.Color4 0.123 0.03 0.24 1 , 0 , [10,10,10])
+                                  tankList = (getTankList [(30 , 10 , 30 , Color4 0.5 0.5 0.1 1 , 0 , [10,10,10]),
+                                                           (30 , 20 , 30 , Color4 0.8 0.4 0.6 1 , 0 , [10,10,10]),
+                                                           (30 , 30 , 30 , Color4 0.123 0.03 0.24 1 , 0 , [10,10,10])
                                                           ]
                                                ),
 -- position x y , factor , currentAngle , impactRadius , color , rotation , thickness length
-                                  weapon = (getWeaponList [(30 , 30 , 2 , 0 , 30 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , Graphics.UI.GLUT.Color4 0.34 0.34 0.1686 1 , Vector3 0 0.5 0.1 , 5 , 0.1) ,
-                                  						   (30 , 30 , 3 , 0 , 20 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , Graphics.UI.GLUT.Color4 0.34 0.1686 0.34 1 , Vector3 0.5 0.1 0 , 15 , 0.17),
-                                  						   (30 , 30 , 4 , 0 , 10 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , Graphics.UI.GLUT.Color4 0.1686 0.34 0.34 1 , Vector3 0.1 0.5 0 , 25 , 0.24),
+                                  weapon = (getWeaponList [(30 , 30 , 2 , 0 , 30 , Color4 0.5 0.5 0.1 1 , Color4 0.34 0.34 0.1686 1 , Vector3 0 0.5 0.1 , 5 , 0.1) ,
+                                  						   (30 , 30 , 3 , 0 , 20 , Color4 0.5 0.5 0.1 1 , Color4 0.34 0.1686 0.34 1 , Vector3 0.5 0.1 0 , 15 , 0.17),
+                                  						   (30 , 30 , 4 , 0 , 10 , Color4 0.5 0.5 0.1 1 , Color4 0.1686 0.34 0.34 1 , Vector3 0.1 0.5 0 , 25 , 0.24),
                                   						  ]
                                   		   ),
                                   chance = 0

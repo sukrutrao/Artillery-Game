@@ -24,19 +24,19 @@ angleIncrement :: Float
 angleIncrement = 0.1
 
 initializeTankState :: Float -> Float -> TankState
-initializeTankState x y = TankState {direction = FacingRight, 
-                                     position = (originPosition x y),
+initializeTankState posX posY = TankState {direction = FacingRight, 
+                                     position = (originPosition posX posY),
                                      velocity = restVelocity,
                                      inclineAngle = 0,
                                      turret = Turret {angle = 0.7853981633974483 , power = 0}
                                     }
 
 initializeTank :: Float -> Float -> Integer -> Graphics.UI.GLUT.Color4 Float -> Int -> [Integer] -> Tank
-initializeTank a b c d e f = Tank {tankState = (initializeTankState a b),
-                                    score = c,
-                                    color = d,
-                                    currentWeapon = e,
-                                    weaponCount = f
+initializeTank posX posY score tankcolor currweapon listweaponcount = Tank {tankState = (initializeTankState posX posY),
+                                    score = score,
+                                    color = tankcolor,
+                                    currentWeapon = currweapon,
+                                    weaponCount = listweaponcount
                                    } 
 {-
 launchWeapon :: Weapon -> Tank -> Float -> Float -> Weapon
@@ -91,7 +91,6 @@ updateDirection direction key
     | key == moveRight = FacingRight 
     | key == moveLeft = FacingLeft
     | otherwise = direction
-
 
 updateWeapon :: Int -> Key -> Int
 updateWeapon currWeapon key
@@ -156,7 +155,8 @@ updateTank
     }) key tileMatrix = Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
-            position = (updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key),
+            position = (Position x y),
+           -- position = (updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key),
             velocity = (Velocity vx vy),
             inclineAngle = incline_theta,
             turret = (Turret {
