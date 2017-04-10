@@ -26,11 +26,11 @@ data TankState = TankState {
 } deriving (Show)
 
 data Tank = Tank {
-    tankState :: TankState,
-    tankWeapons :: [Weapon],
+    tankState :: TankState
     score :: Integer,
-    color :: Graphics.UI.GLUT.Color4 Float
-    --weaponIndex :: Integer
+    color :: Graphics.UI.GLUT.Color4 Float,
+    currentWeapon :: Int,
+    weaponCount :: [Integer]
 } deriving (Show)
 
 
@@ -43,8 +43,8 @@ data Tile = Tile {
 data GameState = GameState {
     tileMatrix :: [[Tile]],
     tankList :: [Tank],
-    weapon :: [Weapon],
-    chance :: Integer
+    weapon :: [WeaponGraphics],
+    chance :: Int
 } deriving (Show)
 
 --Weapon
@@ -61,6 +61,7 @@ data Weapon = GenericWeapon {
 data WeaponGraphics = WeaponGraphics {
     weaponPhysics :: Weapon,
     bulletColor :: Graphics.UI.GLUT.Color4 Float,
+    turretColor :: Graphics.UI.GLUT.Color4 Float,
     bulletRotation :: Graphics.UI.GLUT.Vector3 Float,
     turretThickness :: Float,
     lengthOfTurret :: Float

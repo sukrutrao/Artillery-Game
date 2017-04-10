@@ -9,8 +9,23 @@ defaultStartVelocity = 10
 genericImpactRadius :: Float
 genericImpactRadius = 10
 
-initializeWeapon :: Float -> Float -> Weapon
-initializeWeapon x y = GenericWeapon {currentPosition = (originPosition x y) , currentVelocity = defaultStartVelocity, currentAngle = 0 , impactRadius = genericImpactRadius , isLaunched = False, hasImpacted = False}
+initializeWeapon :: Float -> Float -> Float-> Float -> Graphics.UI.GLUT.Color4 Float -> Graphics.UI.GLUT.Color4 Float ->  Graphics.UI.GLUT.Vector3 Float -> Float -> Float -> WeaponGraphics
+initializeWeapon a b c d e f g h i =  WeaponGraphics { weaponPhysics = (GenericWeapon { currentPosition = (originPosition a b),
+                                                                                      currentVelocity = defaultStartVelocity,
+                                                                                      currentAngle = c,
+                                                                                      impactRadius = d ,
+                                                                                      isLaunched = False,
+                                                                                      hasImpacted = False
+                                                                                    }
+                                                                     ),
+                                                    bulletColor = e,
+                                                    turretColor = f,
+                                                    bulletRotation = g,
+                                                    turretThickness = h,
+                                                    lengthOfTurret = i
+                                                   }
+
+
 
 {-
 updatePositionWeapon :: Weapon -> Weapon

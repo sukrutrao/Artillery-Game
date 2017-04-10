@@ -17,9 +17,6 @@ widthOfTank = 0.2
 heightOfTank :: Float
 heightOfTank = 0.1
 
-lengthOfTurret :: Float
-lengthOfTurret = 0.1
-
 powerIncrement :: Float
 powerIncrement = 1
 
@@ -34,9 +31,14 @@ initializeTankState x y = TankState {direction = FacingRight,
                                      turret = Turret {angle = 45 , power = 0}
                                     }
 
-initializeTank :: Float -> Float -> Graphics.UI.GLUT.Color4 Float -> Tank
-initializeTank x y z = Tank {tankState = (initializeTankState x y), tankWeapons = [initializeWeapon x y], score = 30 , color = z} 
-
+initializeTank :: Float -> Float -> Integer -> Graphics.UI.GLUT.Color4 Float -> Int -> [Integer] -> Tank
+initializeTanka a b c d e f = Tank {tankState = (initializeTankState a b),
+                                    score = c,
+                                    color = d,
+                                    currentWeapon = e,
+                                    weaponCount = f
+                                   } 
+{-
 launchWeapon :: Weapon -> Tank -> Float -> Float -> Weapon
 launchWeapon
     (GenericWeapon {
@@ -58,11 +60,11 @@ launchWeapon
                 power = turret_power
             })
         }),
-        tankWeapons = w,
-        score = s,
-        color = _
-    }) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True False)
+        score = _,
+        color = _,
 
+    }) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True False)
+-}
 tankVelocity :: Float
 tankVelocity = 10
     
@@ -126,7 +128,8 @@ stopTank (Tank {
         }),
         tankWeapons = w,
         score = s,
-        color = c
+        color = c,
+        
     }) = Tank {
         tankState = (TankState {
             direction = d,

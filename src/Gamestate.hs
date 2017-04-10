@@ -12,20 +12,25 @@ heightOfTile :: Float
 heightOfTile = 0.05
 
 getTankList :: [(Float , Float , Graphics.UI.GLUT.Color4 Float)] -> [Tank]
-getTankList initialPosition = [(initializeTank x y z) | (x,y,z) <- initialPosition] 
+getTankList initialPosition = [(initializeTank a b c d e f) | (a,b,c,d,e,f) <- initialPosition] 
 
-getWeaponList :: [(Float , Float)] -> [Weapon]
-getWeaponList initialWeaponPosition = [(initializeWeapon x y) | (x,y) <- initialWeaponPosition]
+getWeaponList :: [(Float , Float)] -> [WeaponGraphics]
+getWeaponList initialWeaponPosition = [(initializeWeapon a b c d e f g h i) | (a,b,c,d,e,f,g,h,i) <- initialWeaponPosition]
 
 initializeGamestate::GameState
 initializeGamestate = GameState { tileMatrix = (getTileMatrix), 
-                                  tankList = (getTankList [(30 , 10 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1),
-                                                           (30 , 20 , Graphics.UI.GLUT.Color4 0.8 0.4 0.6 1),
-                                                           (30 , 30 , Graphics.UI.GLUT.Color4 0.123 0.03 0.24 1)
+-- position x , y , score ,color , currentWeapon , weaponCount , 
+                                  tankList = (getTankList [(30 , 10 , 30 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , 0 , [10,10,10]),
+                                                           (30 , 20 , 30 , Graphics.UI.GLUT.Color4 0.8 0.4 0.6 1 , 0 , [10,10,10]),
+                                                           (30 , 30 , 30 , Graphics.UI.GLUT.Color4 0.123 0.03 0.24 1 , 0 , [10,10,10])
                                                           ]
                                                ),
-                                  -- position , impactRadius ,  
-                                  weapon = (getWeaponList [((-0.75) , 0) , (0 , 0) ]),
+-- position x y , factor , currentAngle , impactRadius , color , rotation , thickness length
+                                  weapon = (getWeaponList [(30 , 30 , 0 , 10 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , Graphics.UI.GLUT.Color4 0.34 0.34 0.1686 1 , Vector3 0 0.5 0.1 , 5 , 0.1) ,
+                                  						   (30 , 30 , 0 , 20 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , Graphics.UI.GLUT.Color4 0.34 0.1686 0.34 1 , Vector3 0.5 0.1 0 , 15 , 0.17),
+                                  						   (30 , 30 , 0 , 30 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , Graphics.UI.GLUT.Color4 0.1686 0.34 0.34 1 , Vector3 0.1 0.5 0 , 25 , 0.24),
+                                  						  ]
+                                  		   ),
                                   chance = 0
                                 }
 
