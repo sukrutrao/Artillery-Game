@@ -156,7 +156,7 @@ checkLineIfObstacle :: Point -> Point -> Integer -> Float -> -> Bool
 checkLineIfObstacle (Position x y) (Position ox oy) i theta tileMap = 
 	if (x <= ox && y <= oy)
 		then if (not ((getIsObstacle tileMap !! (truncate x)) !! (truncate y)))
-			then (checkLineIfObstacle (Position (x + (cosComponent i theta)) (y + (sinComponent i theta))) (Position ox oy) (i + 1) theta)
+			then (checkLineIfObstacle (Position (x + (i * cos(theta)) (y + (i * sin(theta))) (Position ox oy) (i + 1) theta)
 			else False
 		else True
 
