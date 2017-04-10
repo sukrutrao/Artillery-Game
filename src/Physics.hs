@@ -178,13 +178,16 @@ searchForAngle (Position x y) length theta thetaMax tileMap =
 				else (checkLineSegmentObstacle (Position x y) length (theta + thetaIncrement) tileMap)
 		else (-1)
 
+-- Accepts left end point of line and length of tank, and returns angle of its inclination
 getAngleAt :: Point -> Integer -> -> Float
 getAngleAt (Position x y) length tileMap = searchForAngle (Position x y) length (-1.57) thetaMax tileMap
 
+-- Accepts the centre and radius of a circle, tile map, and checks if it contains any obstacle in it or not
 checkObstacleInCircle :: Point -> Float -> -> Bool
 checkObstacleInCircle (Position cx cy) radius tileMap = checkObstacleInList (getListOfPointsInCircle (Position cx cy) radius 
 	(getListOfPointsInRectangle (Position cx cy) (truncate (2*radius)) (truncate (2*radius))))
 
+-- Accepts a 2D list of points and tile map and returns if any of them contain an obstacle or not
 checkObstacleInList :: [[Point]] -> -> Bool
 checkObstacleInList [] tileMap = False
 checkObstacleInList (x:xs) tileMap = getIsObstacle ((tileMap !! (truncate $ getPositionX x)) !! (truncate $ getPositionY x)))
