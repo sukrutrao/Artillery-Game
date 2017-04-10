@@ -20,7 +20,7 @@ rectHalfAngle :: Float
 rectHalfAngle = atan ((2*Tank.heightOfTank)/Tank.widthOfTank)
 
 hypotenuseRect :: Float
-hypotenuseRect = sqrt((Tank.heightOfTank^2) + ((Tank.widthOfTank/2)^2))
+hypotenuseRect = sqrt(((Tank.heightOfTank*heightOfTile)^2) + (((Tank.widthOfTank*widthOfTile)/2)^2))
 
 display :: IORef Types.GameState -> DisplayCallback
 display gamestate = do
@@ -74,37 +74,39 @@ display gamestate = do
 
             let tankCoordX = Physics.getTilePosX (Types.tileMatrix game) x y
                 tankCoordY = Physics.getTilePosY (Types.tileMatrix game) x y
+                tankWidthInGLUT = Tank.widthOfTank*widthOfTile
+                tankHeightInGLUT = Tank.heightOfTank*heightOfTile
 
             loadIdentity
             currentColor $= tankcolor
             translate $ Vector3 tankCoordX tankCoordY 0
-            rotate incline_theta $ Vector3 0 0 1 
-            rectangle Tank.widthOfTank Tank.heightOfTank
+            rotate (Physics.radianTodegree incline_theta) $ Vector3 0 0 1 
+            rectangle tankWidthInGLUT tankHeightInGLUT
 
-            let topCenterX = (tankCoordX+(hypotenuseRect*cos((degreeToRadian incline_theta)+rectHalfAngle)))
-                topCenterY = (tankCoordY+(hypotenuseRect*sin((degreeToRadian incline_theta)+rectHalfAngle)))
+            let topCenterX = (tankCoordX+(hypotenuseRect*cos(incline_theta+rectHalfAngle)))
+                topCenterY = (tankCoordY+(hypotenuseRect*sin(incline_theta+rectHalfAngle)))
 
-            let perpendicularAngle = atan((-1)*(1/(tan(degreeToRadian incline_theta))))
+            let perpendicularAngle = atan((-1)*(1/(tan(incline_theta))))
 
             let lengthOfTurret = (Types.lengthOfTurret ((Types.tankList game) !! current_weapon))
 
-            let healthX = (topCenterX-(cos(degreeToRadian incline_theta)*(Tank.widthOfTank/3))) - (lengthOfTurret*0.35)*cos(perpendicularAngle)
-                healthY = (topCenterY-(sin(degreeToRadian incline_theta)*(Tank.widthOfTank/3))) - (lengthOfTurret*1.25)*sin(perpendicularAngle)
+            let healthX = (topCenterX-(cos(incline_theta)*(tankWidthInGLUT/3))) - (lengthOfTurret*0.35)*cos(perpendicularAngle)
+                healthY = (topCenterY-(sin(incline_theta)*(tankWidthInGLUT/3))) - (lengthOfTurret*1.25)*sin(perpendicularAngle)
 
             --Drawing The White Health Of Tank
             loadIdentity
             currentColor $= Color4 1 1 1 1              -- white health background
             translate $ Vector3 healthX healthY (0::Float)
-            rotate incline_theta $ Vector3 0 0 1 
-            rectangle (Tank.widthOfTank/1.5) 0.02
+            rotate (Physics.radianTodegree incline_theta) $ Vector3 0 0 1 
+            rectangle (tankWidthInGLUT/1.5) 0.02
             flush
 
             --Drawing The Health Of Tank
             loadIdentity
             currentColor $= if (s>20) then Color4 0 0.5019 0 1 else (if (s>10) then Color4 1 0.8196 0.10196 1 else Color4 1 0 0 1 )               -- tank color power
             translate $ Vector3 healthX healthY (0::Float)
-            rotate incline_theta $ Vector3 0 0 1 
-            rectangle (max (0.0)  (((fromIntegral s)*((Tank.widthOfTank/1.5)))/30)) 0.02
+            rotate (Physics.radianTodegree incline_theta) $ Vector3 0 0 1 
+            rectangle (max (0.0)  (((fromIntegral s)*((tankWidthInGLUT/1.5)))/30)) 0.02
             flush
 
             --Drawing The Turret
@@ -112,7 +114,7 @@ display gamestate = do
             lineWidth $= (Types.turretThickness ((Types.tankList game) !! current_weapon))
             currentColor $=  (Types.turretColor ((Types.tankList game) !! current_weapon))     -- grey turret
             translate $ Vector3 topCenterX topCenterY 0
-            rotate (turret_theta+incline_theta) $ Vector3 0 0 1 
+            rotate (Physics.radianTodegree (turret_theta+incline_theta)) $ Vector3 0 0 1 
             line lengthOfTurret
             flush
 
@@ -123,7 +125,7 @@ display gamestate = do
                     loadIdentity
                     currentColor $= Color4 0.5588 0.0019 0.0988 1
                     translate $ Vector3 (topCenterX-(lengthOfTurret*0.55)*cos(perpendicularAngle)) (topCenterY-(lengthOfTurret*1.90)*sin(perpendicularAngle)) 0
-                    rotate incline_theta $ Vector3 0 0 1 
+                    rotate (Physics.radianTodegree incline_theta) $ Vector3 0 0 1 
                     triangle Tank.edgeOfTriangle
                 else
                     return()

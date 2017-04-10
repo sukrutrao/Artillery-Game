@@ -11,17 +11,17 @@ import Data.IORef
 edgeOfTriangle :: Float
 edgeOfTriangle = 0.075
 
-widthOfTank :: Float
-widthOfTank = 0.2
+widthOfTank :: Integer
+widthOfTank = 4
 
-heightOfTank :: Float
-heightOfTank = 0.1
+heightOfTank :: Integer
+heightOfTank = 2
 
 powerIncrement :: Float
 powerIncrement = 1
 
 angleIncrement :: Float
-angleIncrement = 1
+angleIncrement = 0.1
 
 initializeTankState :: Float -> Float -> TankState
 initializeTankState x y = TankState {direction = FacingRight, 

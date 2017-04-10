@@ -61,14 +61,14 @@ newPositionGravityFrame (Position x y) velocity theta =
 constantVelocityNewPosition :: Point -> Float -> Float ->  Point
 constantVelocityNewPosition position velocity theta = newPosition position (getComponentsVelocity velocity theta) (Acceleration 0 0) unitTime
 
-getTileIsObstacle:: [[Tile]] -> Float -> Float -> Bool
-getTileIsObstacle l row col = (isObstacle ((l !! (truncate row)) !! (truncate col)))
+getIsObstacle:: [[Tile]] -> Float -> Float -> Bool
+getIsObstacle tileMatrix row col = (isObstacle ((tileMatrix !! (truncate row)) !! (truncate col)))
 
 getTilePosX:: [[Tile]] -> Float -> Float -> Float
-getTilePosX l row col = getPositionX (tilePosition ((l !! (truncate row)) !! (truncate col)))
+getTilePosX tileMatrix row col = getPositionX (tilePosition ((tileMatrix !! (truncate row)) !! (truncate col)))
 
 getTilePosY:: [[Tile]] -> Float -> Float -> Float
-getTilePosY l row col = getPositionY (tilePosition ((l !! (truncate row)) !! (truncate col)))
+getTilePosY tileMatrixrow col = getPositionY (tilePosition ((tileMatrix !! (truncate row)) !! (truncate col)))
 
 getPositionX:: Point -> Float
 getPositionX (Position x _) = x
@@ -148,15 +148,15 @@ commonPointsBetweenCircleRectangle (Position cx cy) radius (Position x y) length
     (commonPointsBetweenLists (flattenList $ (getListOfPointsInRectangle (Position x y) (truncate length) (truncate width)))
         (getListOfPointsInCircle (Position cx cy) radius (getListOfPointsInRectangle (Position (cx-radius) (cy-radius)) (truncate (2*radius)) (truncate (2*radius)) )))
 
-getOtherEndPoint :: Point -> Integer -> Float -> Point
+getOtherEndPoint -> Point -> Integer -> Float -> Point
 getOtherEndPoint (Position x y) length theta = 
     (Position (x + (cosComponent length theta)) (y + (sinComponent length theta)))
 
 checkLineIfObstacle :: Point -> Point -> Integer -> Float -> [[Tile]] -> Bool
 checkLineIfObstacle (Position x y) (Position ox oy) i theta tileMap = 
     if (x <= ox && y <= oy)
-        then if (not ((getIsObstacle tileMap !! (truncate x)) !! (truncate y)))
-            then (checkLineIfObstacle (Position (x + (cosComponent i theta)) (y + (sinComponent i theta))) (Position ox oy) (i + 1) theta)
+        then if (not ((getIsObstacle tileMap (truncate x) (truncate y)))
+            then (checkLineIfObstacle (Position (x + (i * cos(theta)) (y + (i * sin(theta))) (Position ox oy) (i + 1) theta)
             else False
         else True
 
@@ -170,7 +170,7 @@ thetaIncrement = 0.1
 thetaMax :: Float
 thetaMax = 1.57
 
-searchForAngle :: Point -> Integer -> Float -> Float -> [[Tile]] -> Float
+searchForAngle :: Point -> Integer -> Float -> Float ->  [[Tile]] -> Float
 searchForAngle (Position x y) length theta thetaMax tileMap = 
     if theta < thetaMax
         then if (checkLineSegmentObstacle (Position x y) length theta tileMap)
@@ -178,5 +178,20 @@ searchForAngle (Position x y) length theta thetaMax tileMap =
                 else (checkLineSegmentObstacle (Position x y) length (theta + thetaIncrement) tileMap)
         else (-1)
 
-getAngleAt :: Point -> Integer -> [[Tile]] -> Float
+-- Accepts left end point of line and length of tank, and returns angle of its inclination
+getAngleAt :: Point -> Integer ->  [[Tile]]  -> Float
 getAngleAt (Position x y) length tileMap = searchForAngle (Position x y) length (-1.57) thetaMax tileMap
+
+-- Accepts the centre and radius of a circle, tile map, and checks if it contains any obstacle in it or not
+checkObstacleInCircle :: Point -> Float ->  [[Tile]] -> Bool
+checkObstacleInCircle (Position cx cy) radius tileMap = checkObstacleInList (getListOfPointsInCircle (Position cx cy) radius 
+    (getListOfPointsInRectangle (Position cx cy) (truncate (2*radius)) (truncate (2*radius))))
+
+-- Accepts a 2D list of points and tile map and returns if any of them contain an obstacle or not
+checkObstacleInList :: [[Point]] -> [[Tile]] -> Bool
+checkObstacleInList [] tileMap = False
+checkObstacleInList (x:xs) tileMap = getIsObstacle ((tileMap !! (truncate $ getPositionX x)) !! (truncate $ getPositionY x)))
+    || (checkObstacleInList xs)
+
+radianTodegree::Float -> Float
+radianTodegree x = (pi*180)/x
