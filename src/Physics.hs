@@ -170,10 +170,13 @@ thetaIncrement = 0.1
 thetaMax :: Float
 thetaMax = 1.57
 
-getAngleAt :: Point -> Integer -> Float -> Float -> -> Float
-getAngleAt (Position x y) length theta thetaMax tileMap = 
+searchForAngle :: Point -> Integer -> Float -> Float -> -> Float
+searchForAngle (Position x y) length theta thetaMax tileMap = 
 	if theta < thetaMax
 		then if (checkLineSegmentObstacle (Position x y) length theta tileMap)
 				then theta
 				else (checkLineSegmentObstacle (Position x y) length (theta + thetaIncrement) tileMap)
 		else (-1)
+
+getAngleAt :: Point -> Integer -> -> Float
+getAngleAt (Position x y) length tileMap = searchForAngle (Position x y) length (-1.57) thetaMax tileMap
