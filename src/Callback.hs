@@ -16,8 +16,8 @@ reshape :: ReshapeCallback
 reshape size = do
   viewport $= (Position 0 0, size)
 
-rectAngle :: Float
-rectAngle = atan ((2*Tank.heightOfTank)/Tank.widthOfTank)
+rectHalfAngle :: Float
+rectHalfAngle = atan ((2*Tank.heightOfTank)/Tank.widthOfTank)
 
 hypotenuseRect :: Float
 hypotenuseRect = sqrt((Tank.heightOfTank^2) + ((Tank.widthOfTank/2)^2))
@@ -27,6 +27,7 @@ display gamestate = do
         clear [ColorBuffer, DepthBuffer]
         game <- get gamestate
         --Drawing The Tiles
+
         forM_ (Types.tileMatrix game) $ \(tileList) -> do
             forM_ (tileList) $ \(Types.Tile {Types.tilePosition = (Types.Position x y), Types.isObstacle = w }) -> do
                 loadIdentity
@@ -34,7 +35,7 @@ display gamestate = do
                 translate $ Vector3 x y 0
                 rectangle widthOfTile heightOfTile
                 flush
-        --Drawing The White power Button
+        --Drawing The White power Bar
         loadIdentity
         currentColor $= Color4 1 1 1 1              -- white power background
         translate $ Vector3 (-0.375) (-0.9) (0::Float)
@@ -70,14 +71,17 @@ display gamestate = do
 
             tankcount $~! (+1)
 
+            let tankCoordX = Physics.getTilePosX game x y
+                tankCoordY = Physics.getTilePosY game x y
+
             loadIdentity
             currentColor $= tankcolor
-            translate $ Vector3 x y 0
+            translate $ Vector3 tankCoordX tankCoordY 0
             rotate incline_theta $ Vector3 0 0 1 
             rectangle Tank.widthOfTank Tank.heightOfTank
 
-            let topCenterX = (x+(hypotenuseRect*cos((degreeToRadian incline_theta)+rectAngle)))
-                topCenterY = (y+(hypotenuseRect*sin((degreeToRadian incline_theta)+rectAngle)))
+            let topCenterX = (tankCoordX+(hypotenuseRect*cos((degreeToRadian incline_theta)+rectHalfAngle)))
+                topCenterY = (tankCoordY+(hypotenuseRect*sin((degreeToRadian incline_theta)+rectHalfAngle)))
 
             let perpendicularAngle = atan((-1)*(1/(tan(degreeToRadian incline_theta))))
 
@@ -94,7 +98,7 @@ display gamestate = do
 
             --Drawing The Health Of Tank
             loadIdentity
-            currentColor $= if (s>20) then Color4 0 0.5019 0 1 else (if (s>10) then Color4 1 0 1 1 else Color4 1 0 0 1 )               -- tank color power
+            currentColor $= if (s>20) then Color4 0 0.5019 0 1 else (if (s>10) then Color4 1 0.8196 0.10196 1 else Color4 1 0 0 1 )               -- tank color power
             translate $ Vector3 healthX healthY (0::Float)
             rotate incline_theta $ Vector3 0 0 1 
             rectangle (max (0.0)  (((fromIntegral s)*((Tank.widthOfTank/1.5)))/30)) 0.02
@@ -132,6 +136,7 @@ keyboardMouse gamestate key Down _ _ = case key of
             postRedisplay Nothing
   Char '-' -> do
             gamestate $~! \x -> Tank.updateGameStateTank x Input.decreasePower
+            print "HOLA"
             postRedisplay Nothing
   _ -> return ()
 keyboardMouse _ _ _ _ _ = return ()
@@ -139,4 +144,4 @@ keyboardMouse _ _ _ _ _ = return ()
 
 
 idle :: IdleCallback
-idle = postRedisplay Nothing
+idle = print "IDLE" --postRedisplay Nothing

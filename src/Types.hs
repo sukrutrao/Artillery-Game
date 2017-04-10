@@ -30,6 +30,7 @@ data Tank = Tank {
     tankWeapons :: [Weapon],
     score :: Integer,
     color :: Graphics.UI.GLUT.Color4 Float
+    --weaponIndex :: Integer
 } deriving (Show)
 
 
@@ -54,4 +55,12 @@ data Weapon = GenericWeapon {
     impactRadius :: Float,
     isLaunched :: Bool,
     hasImpacted :: Bool
+} deriving (Show)
+
+data WeaponGraphics = WeaponGraphics {
+    weaponPhysics :: Weapon,
+    bulletColor :: Graphics.UI.GLUT.Color4 Float,
+    bulletRotation :: Graphics.UI.GLUT.Vector3 Float,
+    turretThickness :: Float,
+    lengthOfTurret :: Float
 } deriving (Show)
