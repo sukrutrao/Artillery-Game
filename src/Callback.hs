@@ -16,6 +16,12 @@ reshape :: ReshapeCallback
 reshape size = do
   viewport $= (Position 0 0, size)
 
+rectAngle :: Float
+rectAngle = atan ((2*Tank.heightOfTank)/Tank.widthOfTank)
+
+hypotenuseRect :: Float
+hypotenuseRect = sqrt((Tank.heightOfTank^2) + ((Tank.widthOfTank/2)^2))
+
 display :: IORef Types.GameState -> DisplayCallback
 display gamestate = do
         clear [ColorBuffer, DepthBuffer]
@@ -38,16 +44,16 @@ display gamestate = do
 
         --Drawing The Red Power Bar
 
-        let currTankPower = Types.power(Types.turret (Types.tankState ((Types.tankList game) !! (Types.chance game))))
         loadIdentity
         currentColor $= Color4 1 0 0 1              -- red power background
         translate $ Vector3 (-0.375) (-0.9) (0::Float)
-        rectangle ((currTankPower  *0.75)/100) 0.01
+        rectangle ((Types.power(Types.turret (Types.tankState ((Types.tankList game) !! (Types.chance game))))  *0.75)/100) 0.01
         flush
 
+        tankcount <- newIORef (-1)
 
         --Drawing The Tanks
-        forM_ (Types.tankList game) $ \(Types.Tank { Types.tankState = (Types.TankState {
+        forM_ (Types.tankList game) $ \(Types.Tank  { Types.tankState = (Types.TankState {
                                             Types.direction = d,
                                             Types.position = (Types.Position x y),
                                             Types.velocity = (Types.Velocity 0 0),
@@ -59,47 +65,61 @@ display gamestate = do
                                         }),
                                         Types.tankWeapons = w,
                                         Types.score = s,
-                                        Types.color = tankcolor,
-                                        Types.healthBarPosition = healthPos
+                                        Types.color = tankcolor
                                     }) -> do
+
+            tankcount $~! (+1)
+
             loadIdentity
             currentColor $= tankcolor
-            rotate incline_theta $ Vector3 0 0 1 
             translate $ Vector3 x y 0
+            rotate incline_theta $ Vector3 0 0 1 
             rectangle Tank.widthOfTank Tank.heightOfTank
+
+            let topCenterX = (x+(hypotenuseRect*cos((degreeToRadian incline_theta)+rectAngle)))
+                topCenterY = (y+(hypotenuseRect*sin((degreeToRadian incline_theta)+rectAngle)))
+
+            let perpendicularAngle = atan((-1)*(1/(tan(degreeToRadian incline_theta))))
+
+            let healthX = (topCenterX-(cos(degreeToRadian incline_theta)*(Tank.widthOfTank/3))) - (Tank.lengthOfTurret*0.35)*cos(perpendicularAngle)
+                healthY = (topCenterY-(sin(degreeToRadian incline_theta)*(Tank.widthOfTank/3))) - (Tank.lengthOfTurret*1.25)*sin(perpendicularAngle)
 
             --Drawing The White Health Of Tank
             loadIdentity
             currentColor $= Color4 1 1 1 1              -- white health background
-            translate $ Vector3 (Physics.getPositionX healthPos) (Physics.getPositionY healthPos) (0::Float)
-            rectangle 0.4 0.05
+            translate $ Vector3 healthX healthY (0::Float)
+            rotate incline_theta $ Vector3 0 0 1 
+            rectangle (Tank.widthOfTank/1.5) 0.02
             flush
 
             --Drawing The Health Of Tank
             loadIdentity
-            currentColor $= tankcolor              -- tank color power
-            translate $ Vector3 (Physics.getPositionX healthPos) (Physics.getPositionY healthPos) (0::Float)
-            rectangle (max (0.0)  (((fromIntegral s)*0.4) / 30)) 0.05
+            currentColor $= if (s>20) then Color4 0 0.5019 0 1 else (if (s>10) then Color4 1 0 1 1 else Color4 1 0 0 1 )               -- tank color power
+            translate $ Vector3 healthX healthY (0::Float)
+            rotate incline_theta $ Vector3 0 0 1 
+            rectangle (max (0.0)  (((fromIntegral s)*((Tank.widthOfTank/1.5)))/30)) 0.02
             flush
 
             --Drawing The Turret
             loadIdentity
             lineWidth $= 5
             currentColor $= Color4 0.34 0.34 0.1686 1     -- grey turret
-            translate $ Vector3 (x+(Tank.widthOfTank/2)) (y+Tank.heightOfTank) 0
+            translate $ Vector3 topCenterX topCenterY 0
             rotate (turret_theta+incline_theta) $ Vector3 0 0 1 
             line Tank.lengthOfTurret
             flush
 
-
-            --Drawing The Current Triangle
-
-        let curTank = Types.position (Types.tankState (((Types.tankList game) !! (Types.chance game))))
-        loadIdentity
-        currentColor $= Color4 0.8588 0.3019 1 1
-        translate $ Vector3 ((Physics.getPositionX curTank) + (Tank.widthOfTank/2.0))  ((Physics.getPositionY curTank) + Tank.heightOfTank + 0.15) 0
-        triangle Tank.edgeOfTriangle
-
+            --Drawing The  Current Triangle
+            tankcountIO <- get tankcount
+            if( tankcountIO == (Types.chance game))
+                then do
+                    loadIdentity
+                    currentColor $= Color4 0.5588 0.0019 0.0988 1
+                    translate $ Vector3 (topCenterX-(Tank.lengthOfTurret*0.55)*cos(perpendicularAngle)) (topCenterY-(Tank.lengthOfTurret*1.90)*sin(perpendicularAngle)) 0
+                    rotate incline_theta $ Vector3 0 0 1 
+                    triangle Tank.edgeOfTriangle
+                else
+                    return()
         swapBuffers
         flush
 

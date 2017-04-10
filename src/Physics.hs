@@ -60,7 +60,7 @@ newPositionGravityFrame (Position x y) velocity theta =
 
 constantVelocityNewPosition :: Point -> Float -> Float ->  Point
 constantVelocityNewPosition position velocity theta = newPosition position (getComponentsVelocity velocity theta) (Acceleration 0 0) unitTime
-	
+
 getTileIsObstacle:: GameState -> Int -> Int -> Bool
 getTileIsObstacle (GameState{tileMatrix = l}) row col = (isObstacle ((l !! row) !! col))
 
@@ -92,58 +92,58 @@ getLineSlopeIntercept (Position x1 y1) (Position x2 y2) = (((y2-y1)/(x2-x1)), y1
 
 checkOrientationPointLine :: Point -> Point -> Point -> PointLineOrientation
 checkOrientationPointLine (Position x y) first second
-	|	y > x*fst(getLineSlopeIntercept first second) + snd(getLineSlopeIntercept first second) = AboveLine
-	|	otherwise = BelowLine -- for multiples of 90 degrees?
-	
+    |    y > x*fst(getLineSlopeIntercept first second) + snd(getLineSlopeIntercept first second) = AboveLine
+    |    otherwise = BelowLine -- for multiples of 90 degrees?
+    
 checkPointInRectangle :: Point -> Point -> Float -> Float -> Float -> Bool
 checkPointInRectangle point (Position lx ly) length width theta = 
-	if ((checkOrientationPointLine point (Position lx ly) (Position (lx + length * cos(theta)) (ly + length * sin(theta)))) == AboveLine &&
-		(checkOrientationPointLine point (Position lx ly) (Position (lx - width * sin(theta)) (ly + width * cos(theta)))) == AboveLine &&
-		(checkOrientationPointLine point (Position (lx - width * sin(theta) + length * cos(theta)) (ly + width * cos(theta) + length * sin(theta))) (Position (lx + length * cos(theta)) (ly + length * sin(theta)))) == BelowLine &&
-		(checkOrientationPointLine point (Position (lx - width * sin(theta) + length * cos(theta)) (ly + width * cos(theta) + length * sin(theta))) (Position (lx - width * sin(theta)) (ly + width * cos(theta)))) == BelowLine)
-		then True
-		else False
-		
+    if ((checkOrientationPointLine point (Position lx ly) (Position (lx + length * cos(theta)) (ly + length * sin(theta)))) == AboveLine &&
+        (checkOrientationPointLine point (Position lx ly) (Position (lx - width * sin(theta)) (ly + width * cos(theta)))) == AboveLine &&
+        (checkOrientationPointLine point (Position (lx - width * sin(theta) + length * cos(theta)) (ly + width * cos(theta) + length * sin(theta))) (Position (lx + length * cos(theta)) (ly + length * sin(theta)))) == BelowLine &&
+        (checkOrientationPointLine point (Position (lx - width * sin(theta) + length * cos(theta)) (ly + width * cos(theta) + length * sin(theta))) (Position (lx - width * sin(theta)) (ly + width * cos(theta)))) == BelowLine)
+        then True
+        else False
+        
 checkPointInCircle :: Point -> Point -> Float -> Bool
 checkPointInCircle (Position x y) (Position cx cy) radius
-	|	(x-cx)^2 + (y-cy)^2 <= radius^2 = True
-	|	otherwise = False
-	
+    |    (x-cx)^2 + (y-cy)^2 <= radius^2 = True
+    |    otherwise = False
+    
 getListOfPointsInCircle :: Point -> Float -> [[Point]] -> [Point]
 getListOfPointsInCircle (Position cx cy) radius [[]] = []
 getListOfPointsInCircle (Position cx cy) radius (x:xs) =  
-	((checkCommonPointsCircleLine (Position cx cy) radius x) ++ (getListOfPointsInCircle (Position cx cy) radius xs))
+    ((checkCommonPointsCircleLine (Position cx cy) radius x) ++ (getListOfPointsInCircle (Position cx cy) radius xs))
 
 checkCommonPointsCircleLine :: Point -> Float -> [Point] -> [Point]
 checkCommonPointsCircleLine (Position cx cy) radius [] = []
 checkCommonPointsCircleLine (Position cx cy) radius (x:xs) = 
-	if (checkPointInCircle x (Position cx cy) radius) then (x : (checkCommonPointsCircleLine (Position cx cy) radius xs))
-	else (checkCommonPointsCircleLine (Position cx cy) radius xs)
-		
-	
+    if (checkPointInCircle x (Position cx cy) radius) then (x : (checkCommonPointsCircleLine (Position cx cy) radius xs))
+    else (checkCommonPointsCircleLine (Position cx cy) radius xs)
+        
+    
 getListOfPointsInLine :: Point -> Integer -> [Point]
 getListOfPointsInLine (Position x y) length
-	|	length == 0 = []
-	|	otherwise = ((Position x y) : (getListOfPointsInLine (Position (x+1) y) (length - 1)))
-	
+    |    length == 0 = []
+    |    otherwise = ((Position x y) : (getListOfPointsInLine (Position (x+1) y) (length - 1)))
+    
 getListOfPointsInRectangle :: Point -> Integer -> Integer -> [[Point]]
 getListOfPointsInRectangle (Position x y) length width
-	|	width == 0 = [[]]
-	|	otherwise = ((getListOfPointsInLine (Position x y) length) : (getListOfPointsInRectangle (Position x (y-1)) length (width-1)))
-	
+    |    width == 0 = [[]]
+    |    otherwise = ((getListOfPointsInLine (Position x y) length) : (getListOfPointsInRectangle (Position x (y-1)) length (width-1)))
+    
 flattenList :: [[Point]] -> [Point]
 flattenList [[]] = []
 flattenList (x:xs) = (x ++ (flattenList xs))
-	
+    
 commonPointsBetweenLists :: [Point] -> [Point] -> [Point]
 commonPointsBetweenLists [] [] = []
 commonPointsBetweenLists (x:xs) [] = []
 commonPointsBetweenLists [] y = []
 commonPointsBetweenLists (x:xs) y = if (x `elem` y) then (x : (commonPointsBetweenLists xs y))
-									else (commonPointsBetweenLists xs y)
+                                    else (commonPointsBetweenLists xs y)
 
-{-									
+{-                                    
 commonPointsBetweenCircleRectangle :: Point -> Float -> Point -> Float -> Float -> [Point]
 commonPointsBetweenCircleRectangle (Position cx cy) radius (Position x y) length width = 
-	(commonPointsBetweenLists (flattenList $ (getListOfPointsInRectangle (Position x y) length width)) (getListOfPointsInCircle (Position cx cy) radius (getListOfPointsInRectangle (Position (cx-radius) (cy-radius)) (2*radius) (2*radius) )))
-	-}
+    (commonPointsBetweenLists (flattenList $ (getListOfPointsInRectangle (Position x y) length width)) (getListOfPointsInCircle (Position cx cy) radius (getListOfPointsInRectangle (Position (cx-radius) (cy-radius)) (2*radius) (2*radius) )))
+    -}

@@ -15,7 +15,7 @@ widthOfTank :: Float
 widthOfTank = 0.2
 
 heightOfTank :: Float
-heightOfTank = 0.15
+heightOfTank = 0.1
 
 lengthOfTurret :: Float
 lengthOfTurret = 0.1
@@ -27,10 +27,15 @@ angleIncrement :: Float
 angleIncrement = 1
 
 initializeTankState :: Float -> Float -> TankState
-initializeTankState x y = TankState {direction = FacingRight, position = (originPosition x y) , velocity = restVelocity , inclineAngle = 0 , turret = Turret {angle = 45 , power = 0}}
+initializeTankState x y = TankState {direction = FacingRight, 
+                                     position = (originPosition x y),
+                                     velocity = restVelocity,
+                                     inclineAngle = 45,
+                                     turret = Turret {angle = 45 , power = 0}
+                                    }
 
-initializeTank :: Float -> Float -> Graphics.UI.GLUT.Color4 Float -> Point -> Tank
-initializeTank x y z o = Tank {tankState = (initializeTankState x y), tankWeapons = [initializeWeapon x y], score = 25 , color = z , healthBarPosition = o} 
+initializeTank :: Float -> Float -> Graphics.UI.GLUT.Color4 Float -> Tank
+initializeTank x y z = Tank {tankState = (initializeTankState x y), tankWeapons = [initializeWeapon x y], score = 30 , color = z} 
 
 launchWeapon :: Weapon -> Tank -> Float -> Float -> Weapon
 launchWeapon
@@ -55,8 +60,7 @@ launchWeapon
         }),
         tankWeapons = w,
         score = s,
-        color = _,
-        healthBarPosition = _
+        color = _
     }) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True False)
 
 tankVelocity :: Float
@@ -122,8 +126,7 @@ stopTank (Tank {
         }),
         tankWeapons = w,
         score = s,
-        color = c,
-        healthBarPosition = p
+        color = c
     }) = Tank {
         tankState = (TankState {
             direction = d,
@@ -137,8 +140,7 @@ stopTank (Tank {
         }),
         tankWeapons = w,
         score = s,
-        color = c,
-        healthBarPosition = p
+        color = c
     }
     
 updateTank :: Tank -> Key -> Tank
@@ -156,8 +158,7 @@ updateTank
         }),
         tankWeapons = w,
         score = s,
-        color = c,
-        healthBarPosition = p
+        color = c
     }) key = Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
@@ -171,9 +172,8 @@ updateTank
             })
         }),
         tankWeapons = w,
-        score = s,
-        color = c,
-        healthBarPosition = p
+        score = s-1,
+        color = c
     }
 
 -- check for theta = pi/2!

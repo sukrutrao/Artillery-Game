@@ -29,9 +29,7 @@ data Tank = Tank {
     tankState :: TankState,
     tankWeapons :: [Weapon],
     score :: Integer,
-    -- Attributes For Graphics
-    color :: Graphics.UI.GLUT.Color4 Float,
-    healthBarPosition :: Point
+    color :: Graphics.UI.GLUT.Color4 Float
 } deriving (Show)
 
 
