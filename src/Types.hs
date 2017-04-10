@@ -44,13 +44,14 @@ data GameState = GameState {
     tileMatrix :: [[Tile]],
     tankList :: [Tank],
     weapon :: [Weapon],
-    chance :: Int
+    chance :: Integer
 } deriving (Show)
 
 --Weapon
 data Weapon = GenericWeapon {
     currentPosition :: Point,
     currentVelocity :: Float,
+    velocityMultiplyingFactor :: Float,
     currentAngle :: Float, 
     impactRadius :: Float,
     isLaunched :: Bool,
