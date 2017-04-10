@@ -28,7 +28,7 @@ initializeTankState x y = TankState {direction = FacingRight,
                                      position = (originPosition x y),
                                      velocity = restVelocity,
                                      inclineAngle = 0,
-                                     turret = Turret {angle = 45 , power = 0}
+                                     turret = Turret {angle = 0.7853981633974483 , power = 0}
                                     }
 
 initializeTank :: Float -> Float -> Integer -> Graphics.UI.GLUT.Color4 Float -> Int -> [Integer] -> Tank

@@ -61,14 +61,14 @@ newPositionGravityFrame (Position x y) velocity theta =
 constantVelocityNewPosition :: Point -> Float -> Float ->  Point
 constantVelocityNewPosition position velocity theta = newPosition position (getComponentsVelocity velocity theta) (Acceleration 0 0) unitTime
 
-getTileIsObstacle:: GameState -> Float -> Float -> Bool
-getTileIsObstacle (GameState{tileMatrix = l}) row col = (isObstacle ((l !! (truncate row)) !! (truncate col)))
+getTileIsObstacle:: [[Tile]] -> Float -> Float -> Bool
+getTileIsObstacle l row col = (isObstacle ((l !! (truncate row)) !! (truncate col)))
 
-getTilePosX:: GameState -> Float -> Float -> Float
-getTilePosX (GameState{tileMatrix = l}) row col = getPositionX (tilePosition ((l !! (truncate row)) !! (truncate col)))
+getTilePosX:: [[Tile]] -> Float -> Float -> Float
+getTilePosX l row col = getPositionX (tilePosition ((l !! (truncate row)) !! (truncate col)))
 
-getTilePosY:: GameState -> Float -> Float -> Float
-getTilePosY (GameState{tileMatrix = l}) row col = getPositionY (tilePosition ((l !! (truncate row)) !! (truncate col)))
+getTilePosY:: [[Tile]] -> Float -> Float -> Float
+getTilePosY l row col = getPositionY (tilePosition ((l !! (truncate row)) !! (truncate col)))
 
 getPositionX:: Point -> Float
 getPositionX (Position x _) = x
@@ -136,7 +136,7 @@ flattenList [[]] = []
 flattenList (x:xs) = (x ++ (flattenList xs))
     
 commonPointsBetweenLists :: [Point] -> [Point] -> [Point]
-commonPointsBetweenLists [] [] = []
+commonPointsBetweenLists [] [] = [] 
 commonPointsBetweenLists (x:xs) [] = []
 commonPointsBetweenLists [] y = []
 commonPointsBetweenLists (x:xs) y = if (x `elem` y) then (x : (commonPointsBetweenLists xs y))
@@ -148,3 +148,35 @@ commonPointsBetweenCircleRectangle (Position cx cy) radius (Position x y) length
     (commonPointsBetweenLists (flattenList $ (getListOfPointsInRectangle (Position x y) (truncate length) (truncate width)))
         (getListOfPointsInCircle (Position cx cy) radius (getListOfPointsInRectangle (Position (cx-radius) (cy-radius)) (truncate (2*radius)) (truncate (2*radius)) )))
 
+getOtherEndPoint :: Point -> Integer -> Float -> Point
+getOtherEndPoint (Position x y) length theta = 
+    (Position (x + (cosComponent length theta)) (y + (sinComponent length theta)))
+
+checkLineIfObstacle :: Point -> Point -> Integer -> Float -> [[Tile]] -> Bool
+checkLineIfObstacle (Position x y) (Position ox oy) i theta tileMap = 
+    if (x <= ox && y <= oy)
+        then if (not ((getIsObstacle tileMap !! (truncate x)) !! (truncate y)))
+            then (checkLineIfObstacle (Position (x + (cosComponent i theta)) (y + (sinComponent i theta))) (Position ox oy) (i + 1) theta)
+            else False
+        else True
+
+checkLineSegmentObstacle :: Point -> Integer -> Float -> [[Tile]] -> Bool
+checkLineSegmentObstacle (Position x y) length theta tileMap = 
+    checkLineIfObstacle (Position x y) (getOtherEndPoint (Position x y) length theta) 1 theta tileMap
+
+thetaIncrement :: Float
+thetaIncrement = 0.1
+
+thetaMax :: Float
+thetaMax = 1.57
+
+searchForAngle :: Point -> Integer -> Float -> Float -> [[Tile]] -> Float
+searchForAngle (Position x y) length theta thetaMax tileMap = 
+    if theta < thetaMax
+        then if (checkLineSegmentObstacle (Position x y) length theta tileMap)
+                then theta
+                else (checkLineSegmentObstacle (Position x y) length (theta + thetaIncrement) tileMap)
+        else (-1)
+
+getAngleAt :: Point -> Integer -> [[Tile]] -> Float
+getAngleAt (Position x y) length tileMap = searchForAngle (Position x y) length (-1.57) thetaMax tileMap

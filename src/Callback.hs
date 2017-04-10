@@ -72,8 +72,8 @@ display gamestate = do
 
             tankcount $~! (+1)
 
-            let tankCoordX = Physics.getTilePosX game x y
-                tankCoordY = Physics.getTilePosY game x y
+            let tankCoordX = Physics.getTilePosX (Types.tileMatrix game) x y
+                tankCoordY = Physics.getTilePosY (Types.tileMatrix game) x y
 
             loadIdentity
             currentColor $= tankcolor
