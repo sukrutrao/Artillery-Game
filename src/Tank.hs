@@ -76,14 +76,14 @@ updatePosition position theta key
 
 updatePower :: Float -> Key -> Float
 updatePower power key
-    | (key == increasePower) = if((power + powerIncrement) > 100) then 100 else (power + powerIncrement)
-    | (key == decreasePower) = if((power - powerIncrement) < 0) then 0 else (power - powerIncrement)
+    | (key == increasePower) = if(power+powerIncrement > 100) then 100 else power+powerIncrement
+    | (key == decreasePower) = if(power-powerIncrement < 0) then 0 else power-powerIncrement
     | otherwise = power
 
 updateAngle :: Float -> Key -> Float
 updateAngle angle key
-    | key == increaseAngle = angle + angleIncrement
-    | key == decreaseAngle = angle - angleIncrement -- check for negative
+    | key == increaseAngle = if(angle+angleIncrement > pi) then pi else angle+angleIncrement
+    | key == decreaseAngle = if(angle-angleIncrement < 0) then 0 else angle-angleIncrement  -- check for negative
     | otherwise = angle
 
 updateDirection :: Direction -> Key -> Direction
@@ -155,8 +155,7 @@ updateTank
     }) key tileMatrix = Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
-            position = (Position x y),
-           -- position = (updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key),
+            position = (updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key),
             velocity = (Velocity vx vy),
             inclineAngle = incline_theta,
             turret = (Turret {
@@ -164,7 +163,7 @@ updateTank
                 power = (updatePower turret_power key)
             })
         }),
-        score = s,
+        score = s-1,
         color = c,
         currentWeapon = (updateWeapon e key),
         weaponCount = f

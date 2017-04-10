@@ -148,19 +148,18 @@ commonPointsBetweenCircleRectangle (Position cx cy) radius (Position x y) length
     (commonPointsBetweenLists (flattenList $ (getListOfPointsInRectangle (Position x y) (truncate length) (truncate width)))
         (getListOfPointsInCircle (Position cx cy) radius (getListOfPointsInRectangle (Position (cx-radius) (cy-radius)) (truncate (2*radius)) (truncate (2*radius)) )))
 
-{-
 getOtherEndPoint :: Point -> Integer -> Float -> Point
 getOtherEndPoint (Position x y) length theta = 
-    (Position (x + length*(cos theta)) (y + length*(sin theta)))
-  -} 
-{-
+    (Position (x + ((fromIntegral length)*(cos theta))) (y + ((fromIntegral length)*(sin theta))))
+   
+
    -- TODO old version by sukrut(Position (x + (cosComponent length theta)) (y + (sinComponent length theta)))
 
 checkLineIfObstacle :: Point -> Point -> Integer -> Float -> [[Tile]] -> Bool
 checkLineIfObstacle (Position x y) (Position ox oy) i theta tileMap = 
     if (x <= ox && y <= oy)
-        then if (not ((getIsObstacle tileMap (truncate x) (truncate y))))
-                then checkLineIfObstacle (Position (x + (i * cos(theta)) (y + (i * sin(theta))) (Position ox oy) (i + 1) theta tileMap))
+        then if not (getIsObstacle tileMap x y)
+                then checkLineIfObstacle (Position (x + ((fromIntegral i) * cos(theta))) (y + ((fromIntegral i) * sin(theta)))) (Position ox oy) (i + 1) theta tileMap
                 else False
         else True
 
@@ -179,24 +178,24 @@ searchForAngle (Position x y) length theta thetaMax tileMap =
     if theta < thetaMax
         then if (checkLineSegmentObstacle (Position x y) length theta tileMap)
                 then theta
-                else (checkLineSegmentObstacle (Position x y) length (theta + thetaIncrement) tileMap)
-        else (-1)
+                else (searchForAngle (Position x y) length (theta + thetaIncrement) thetaMax tileMap)
+        else (-1.0)
 
 -- Accepts left end point of line and length of tank, and returns angle of its inclination
 getAngleAt :: Point -> Integer ->  [[Tile]]  -> Float
 getAngleAt (Position x y) length tileMap = searchForAngle (Position x y) length (-1.57) thetaMax tileMap
 
-
+{-
 -- Accepts the centre and radius of a circle, tile map, and checks if it contains any obstacle in it or not
 checkObstacleInCircle :: Point -> Float ->  [[Tile]] -> Bool
 checkObstacleInCircle (Position cx cy) radius tileMap = checkObstacleInList (getListOfPointsInCircle (Position cx cy) radius 
-    (getListOfPointsInRectangle (Position cx cy) (truncate (2*radius)) (truncate (2*radius))))
+    (getListOfPointsInRectangle (Position cx cy) (truncate (2*radius)) (truncate (2*radius)))) tileMap
 
--- Accepts a 2D list of points and tile map and returns if any of them contain an obstacle or not
-checkObstacleInList :: [[Point]] -> [[Tile]] -> Bool
+-- Accept a list of points and tile map and returns if any of them contain an obstacle or not
+checkObstacleInList :: [Point] -> [[Tile]] -> Bool
 checkObstacleInList [] tileMap = False
-checkObstacleInList (x:xs) tileMap = getIsObstacle ((tileMap !! (truncate $ getPositionX x)) !! (truncate $ getPositionY x)))
-    || (checkObstacleInList xs)
+checkObstacleInList (x:xs) tileMap = (getIsObstacle tileMap (truncate $ getPositionX x) (truncate $ getPositionY x))
+    || (checkObstacleInList xs tileMap)
 -}
 radianTodegree::Float -> Float
-radianTodegree x = (pi*180)/x
+radianTodegree x = (x*180)/pi
