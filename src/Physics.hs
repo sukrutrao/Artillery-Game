@@ -142,13 +142,9 @@ commonPointsBetweenLists [] y = []
 commonPointsBetweenLists (x:xs) y = if (x `elem` y) then (x : (commonPointsBetweenLists xs y))
                                     else (commonPointsBetweenLists xs y)
 
-{-                                    
+                              
 commonPointsBetweenCircleRectangle :: Point -> Float -> Point -> Float -> Float -> [Point]
 commonPointsBetweenCircleRectangle (Position cx cy) radius (Position x y) length width = 
-<<<<<<< HEAD
-    (commonPointsBetweenLists (flattenList $ (getListOfPointsInRectangle (Position x y) length width)) (getListOfPointsInCircle (Position cx cy) radius (getListOfPointsInRectangle (Position (cx-radius) (cy-radius)) (2*radius) (2*radius) )))
-    -}
-{-
 	(commonPointsBetweenLists (flattenList $ (getListOfPointsInRectangle (Position x y) (truncate length) (truncate width)))
 		(getListOfPointsInCircle (Position cx cy) radius (getListOfPointsInRectangle (Position (cx-radius) (cy-radius)) (truncate (2*radius)) (truncate (2*radius)) )))
--}
+
