@@ -148,3 +148,14 @@ commonPointsBetweenCircleRectangle (Position cx cy) radius (Position x y) length
 	(commonPointsBetweenLists (flattenList $ (getListOfPointsInRectangle (Position x y) (truncate length) (truncate width)))
 		(getListOfPointsInCircle (Position cx cy) radius (getListOfPointsInRectangle (Position (cx-radius) (cy-radius)) (truncate (2*radius)) (truncate (2*radius)) )))
 
+getOtherEndPoint -> Point -> Integer -> Float -> Point
+getOtherEndPoint (Position x y) length theta = 
+	(Position (x + (cosComponent length theta)) (y + (sinComponent length theta)))
+
+checkLineIfObstacle :: Point -> Point -> Integer -> Float -> 
+checkLineIfObstacle (Position x y) (Position ox oy) i theta tileMap = 
+	if (x <= ox && y <= oy)
+		then if (not ((getIsObstacle tileMap !! (truncate x)) !! (truncate y)))
+			then (checkLineIfObstacle (Position (x + (cosComponent i theta)) (y + (sinComponent i theta))) (Position ox oy) (i + 1) theta)
+			else False
+		else True
