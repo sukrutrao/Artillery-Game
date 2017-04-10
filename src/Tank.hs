@@ -136,7 +136,7 @@ stopTank (Tank {
     }
 
 
-updateTank :: Tank -> Key -> Tank
+updateTank :: Tank -> Key -> [[Tile]] -> Tank
 updateTank
     (Tank {
         tankState = (TankState {
@@ -153,10 +153,10 @@ updateTank
         color = c,
         currentWeapon = e,
         weaponCount = f
-    }) key = Tank {
+    }) key tileMatrix = Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
-            position = (updatePosition (Position x y) (getAngleAt (Position x y)) key),
+            position = (updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key),
             velocity = (Velocity vx vy),
             inclineAngle = incline_theta,
             turret = (Turret {
@@ -183,7 +183,7 @@ updateGameStateTank
         tankList = l,
         weapon = w,
         chance = c
-    }) key = let temp = ((take c l) ++ ((updateTank (l !! c) key) : (drop (c + 1) l)))
+    }) key = let temp = ((take c l) ++ ((updateTank (l !! c) key t) : (drop (c + 1) l)))
         in GameState {tileMatrix = t , tankList =  temp, weapon = w , chance = c }
 
 
