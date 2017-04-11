@@ -5,7 +5,7 @@ import Types
 import Physics
 
 defaultStartVelocity :: Float
-defaultStartVelocity = 10
+defaultStartVelocity = 2
 
 genericImpactRadius :: Float
 genericImpactRadius = 10

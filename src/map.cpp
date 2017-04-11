@@ -38,13 +38,13 @@ int main (int argc, char const* argv[])
                     cout << "Tile{tilePosition=(Position("<<(x/100.0)<<") ("<<(y/100.0)<<")),isObstacle=False},";            
             }
 
-            x += 5;
+            x += 2;
         }
         if (y == -100 )
             cout<<"]";
         else
            cout<<"],";
-        y -= 5;
+        y -= 2;
     }
     cout<<"]";
     return 0;

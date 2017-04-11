@@ -66,12 +66,12 @@ launchWeapon
     }) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True False)
 -}
 tankVelocity :: Float
-tankVelocity = 10
+tankVelocity = 1
     
 updatePosition :: Point -> Float -> Key -> Point
 updatePosition position theta key
-    | key == moveRight = constantVelocityNewPosition position tankVelocity theta
-    | key == moveLeft = constantVelocityNewPosition position (-tankVelocity) theta
+    | key == moveLeft = constantVelocityNewPosition position tankVelocity theta
+    | key == moveRight = constantVelocityNewPosition position (-tankVelocity) theta
     | otherwise = position
 
 updatePower :: Float -> Key -> Float
