@@ -67,3 +67,22 @@ data WeaponGraphics = WeaponGraphics {
     turretThickness :: Float,
     lengthOfTurret :: Float
 } deriving (Show)
+
+
+widthOfTile :: Float
+widthOfTile = 0.01
+
+heightOfTile :: Float
+heightOfTile = 0.01
+
+widthOfTank :: Integer
+widthOfTank = 9
+
+heightOfTank :: Integer
+heightOfTank = 6
+
+powerIncrement :: Float
+powerIncrement = 1
+
+angleIncrement :: Float
+angleIncrement = 0.1

@@ -199,3 +199,12 @@ checkObstacleInList (x:xs) tileMap = (getIsObstacle tileMap (truncate $ getPosit
 -}
 radianTodegree::Float -> Float
 radianTodegree x = (x*180)/pi
+
+edgeOfTriangle :: Float
+edgeOfTriangle = ((fromIntegral widthOfTank)*widthOfTile)/1.5
+
+rectHalfAngle :: Float
+rectHalfAngle = atan (2*(fromIntegral heightOfTank)/(fromIntegral widthOfTank))
+
+hypotenuseRect :: Float
+hypotenuseRect = sqrt((((fromIntegral heightOfTank)*heightOfTile)^2) + ((((fromIntegral widthOfTank)*widthOfTile)/2)^2))

@@ -45,13 +45,13 @@ int main (int argc, char const* argv[])
                 else
                     cout << "Tile{tilePosition=(Position("<<(x/100.0)<<") ("<<(y/100.0)<<")),isObstacle=True},";
             }
-            else if(y > 50)    
+            /*else if(y > 50)    
             {
                 if (x == 100 )
                     cout << "Tile{tilePosition=(Position("<<(x/100.0)<<") ("<<(y/100.0)<<")),isObstacle=True}";
                 else
                     cout << "Tile{tilePosition=(Position("<<(x/100.0)<<") ("<<(y/100.0)<<")),isObstacle=True},";
-            }
+            }*/
             else
             {
                if (x == 100 )

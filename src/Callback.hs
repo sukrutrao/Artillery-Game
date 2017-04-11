@@ -14,18 +14,10 @@ import Rectangle
 import Line
 import Triangle
 
-edgeOfTriangle :: Float
-edgeOfTriangle = ((fromIntegral Tank.widthOfTank)*widthOfTile)/1.5
 
 reshape :: ReshapeCallback
 reshape size = do
   viewport $= (Position 0 0, size)
-
-rectHalfAngle :: Float
-rectHalfAngle = atan (2*(fromIntegral Tank.heightOfTank)/(fromIntegral Tank.widthOfTank))
-
-hypotenuseRect :: Float
-hypotenuseRect = sqrt((((fromIntegral Tank.heightOfTank)*heightOfTile)^2) + ((((fromIntegral Tank.widthOfTank)*widthOfTile)/2)^2))
 
 display :: IORef Types.GameState -> IORef Float -> DisplayCallback
 display gamestate bulletRotationAngle = do
@@ -38,7 +30,7 @@ display gamestate bulletRotationAngle = do
                 loadIdentity
                 currentColor $= if(w) then Color4 0 0.5019 0 1 else Color4 0.6 0.8 1 1
                 translate $ Vector3 x y 0
-                rectangle widthOfTile heightOfTile
+                rectangle Types.widthOfTile Types.heightOfTile
                 flush
         --Drawing The White power Bar
         loadIdentity
@@ -81,17 +73,17 @@ display gamestate bulletRotationAngle = do
           --  print "\n*************\n"
             let tankCoordX = Physics.getTilePosX (Types.tileMatrix game) y x
                 tankCoordY = Physics.getTilePosY (Types.tileMatrix game) y x
-                tankWidthInGLUT = (fromIntegral Tank.widthOfTank)*widthOfTile
-                tankHeightInGLUT = (fromIntegral Tank.heightOfTank)*heightOfTile
+                tankWidthInGLUT = (fromIntegral Types.widthOfTank)*Types.widthOfTile
+                tankHeightInGLUT = (fromIntegral Types.heightOfTank)*Types.heightOfTile
 
             loadIdentity
             currentColor $= tankcolor
-            translate $ Vector3 tankCoordX (tankCoordY-0.01) 0
+            translate $ Vector3 tankCoordX (tankCoordY) 0
             rotate (Physics.radianTodegree incline_theta) $ Vector3 0 0 1 
             rectangle tankWidthInGLUT tankHeightInGLUT
 
-            let topCenterX = (tankCoordX+(hypotenuseRect*cos(incline_theta+rectHalfAngle)))
-                topCenterY = (tankCoordY+(hypotenuseRect*sin(incline_theta+rectHalfAngle)))
+            let topCenterX = (tankCoordX+(Physics.hypotenuseRect*cos(incline_theta+Physics.rectHalfAngle)))
+                topCenterY = (tankCoordY+(Physics.hypotenuseRect*sin(incline_theta+Physics.rectHalfAngle)))
 
             let perpendicularAngle = atan((-1)*(1/(tan(incline_theta))))
 
@@ -133,7 +125,7 @@ display gamestate bulletRotationAngle = do
                     currentColor $= Color4 0.5588 0.0019 0.0988 1
                     translate $ Vector3 (topCenterX-(lengthOfTurret*0.55)*cos(perpendicularAngle)) (topCenterY-(lengthOfTurret*1.90)*sin(perpendicularAngle)) 0
                     rotate (Physics.radianTodegree incline_theta) $ Vector3 0 0 1 
-                    triangle edgeOfTriangle
+                    triangle Physics.edgeOfTriangle
                     -- Drawing The Weapon If Launched
                     if checkifWeaponIsLaunched game
                         then do
@@ -141,11 +133,17 @@ display gamestate bulletRotationAngle = do
                             let currWeaponFromList = (Types.weapon game) !! current_weapon
                                 weaponX = Physics.getPositionX $ Types.currentPosition $ Types.weaponPhysics currWeaponFromList
                                 weaponY = Physics.getPositionY $ Types.currentPosition $ Types.weaponPhysics currWeaponFromList
-                            loadIdentity
-                            currentColor $= Types.bulletColor currWeaponFromList
-                            translate $ Vector3 (Physics.getTilePosX (Types.tileMatrix game) weaponY weaponX) (Physics.getTilePosY (Types.tileMatrix game) weaponY weaponX) (0::Float)
-                            rotate bulletAngle $ Vector3 0 0 1
-                            rectangle 0.03 0.03
+                            if ((truncate weaponY>((length $ Types.tileMatrix game)-2)) || 
+                                (weaponY<0) || 
+                                (truncate weaponX>((length $ Types.tileMatrix game !! 0)-2)) ||
+                                (weaponX<0))
+                                    then return()
+                                    else do 
+                                        loadIdentity
+                                        currentColor $= Types.bulletColor currWeaponFromList
+                                        translate $ Vector3 (Physics.getTilePosX (Types.tileMatrix game) weaponY weaponX) (Physics.getTilePosY (Types.tileMatrix game) weaponY weaponX) (0::Float)
+                                        rotate bulletAngle $ Vector3 0 0 1
+                                        rectangle 0.03 0.03
                         else return()
                     flush
                 else return()

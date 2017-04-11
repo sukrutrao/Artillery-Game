@@ -6,11 +6,6 @@ import Tank
 import Weapon
 import Tile
 
-widthOfTile :: Float
-widthOfTile = 0.01
-
-heightOfTile :: Float
-heightOfTile = 0.01
 
 getTankList :: [(Float , Float , Integer , Graphics.UI.GLUT.Color4 Float , Int , [Integer])] -> [Tank]
 getTankList initialPosition = [(initializeTank a b c d e f) | (a,b,c,d,e,f) <- initialPosition] 

@@ -7,20 +7,6 @@ import Input
 import qualified Graphics.UI.GLUT
 import Data.IORef
 
-
-
-widthOfTank :: Integer
-widthOfTank = 9
-
-heightOfTank :: Integer
-heightOfTank = 6
-
-powerIncrement :: Float
-powerIncrement = 1
-
-angleIncrement :: Float
-angleIncrement = 0.1
-
 initializeTankState :: Float -> Float -> TankState
 initializeTankState posX posY = TankState {direction = FacingRight, 
                                      position = (originPosition posX posY),
@@ -192,7 +178,7 @@ updateGameStateLaunchWeapon
         weapon = w,
         chance = c
     }) = let weaponChoice = currentWeapon (l !! c)
-             launched = launchWeapon (w !! weaponChoice) (l !! c) 2
+             launched = launchWeapon (w !! weaponChoice) (l !! c) 1
              newWeaponList = (take weaponChoice w) ++ (launched : (drop (weaponChoice+1) w))
          in GameState {tileMatrix = t , tankList =  l, weapon = newWeaponList , chance = c , isAcceptingInput = False}
 
