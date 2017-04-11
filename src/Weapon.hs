@@ -45,8 +45,25 @@ updatePositionWeapon     (WeaponGraphics {
         bulletRotation = bRotate,
         turretThickness = tTurr,
         lengthOfTurret = lTurr
-    }) tileMap = if islaunched then if getIsObstacle tileMap y x then (WeaponGraphics {
-                                weaponPhysics = (GenericWeapon {
+    }) tileMap = if islaunched then 
+                                if (truncate y>((length tileMap)-2) || y<0 || truncate x>((length $ tileMap !! 0)-2) || x<0) then (WeaponGraphics {
+                                    weaponPhysics = (GenericWeapon {
+                                        currentPosition = getPositionProjectile (Position x y) velocity theta,
+                                        currentVelocity = getVelocityProjectile velocity theta,
+                                        velocityMultiplyingFactor = f,
+                                        currentAngle = getAngleProjectile velocity theta, 
+                                        impactRadius = r,
+                                        isLaunched = islaunched,
+                                        hasImpacted = hasimpacted
+                                    }),
+                                    bulletColor = bColor,
+                                    turretColor = tColor,
+                                    bulletRotation = bRotate,
+                                    turretThickness = tTurr,
+                                    lengthOfTurret = lTurr
+                                    })
+                                else if getIsObstacle tileMap y x then (WeaponGraphics {
+                                    weaponPhysics = (GenericWeapon {
                                         currentPosition = (Position x y),
                                         currentVelocity = velocity,
                                         velocityMultiplyingFactor = f,
@@ -62,7 +79,7 @@ updatePositionWeapon     (WeaponGraphics {
                                     lengthOfTurret = lTurr
                                     })
                                     else (WeaponGraphics {
-                                weaponPhysics = (GenericWeapon {
+                                    weaponPhysics = (GenericWeapon {
                                         currentPosition = getPositionProjectile (Position x y) velocity theta,
                                         currentVelocity = getVelocityProjectile velocity theta,
                                         velocityMultiplyingFactor = f,

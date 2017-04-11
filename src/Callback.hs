@@ -136,8 +136,10 @@ display gamestate bulletRotationAngle = do
                             if ((truncate weaponY>((length $ Types.tileMatrix game)-2)) || 
                                 (weaponY<0) || 
                                 (truncate weaponX>((length $ Types.tileMatrix game !! 0)-2)) ||
-                                (weaponX<0))
-                                    then return()
+                                (weaponX<0)
+                                )
+                                    then do
+                                        print "NEGATIVE"
                                     else do 
                                         loadIdentity
                                         currentColor $= Types.bulletColor currWeaponFromList
