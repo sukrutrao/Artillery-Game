@@ -12,10 +12,10 @@ edgeOfTriangle :: Float
 edgeOfTriangle = 0.075
 
 widthOfTank :: Integer
-widthOfTank = 4
+widthOfTank = 2
 
 heightOfTank :: Integer
-heightOfTank = 2
+heightOfTank = 1
 
 powerIncrement :: Float
 powerIncrement = 1
