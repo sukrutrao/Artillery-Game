@@ -12,10 +12,10 @@ edgeOfTriangle :: Float
 edgeOfTriangle = 0.075
 
 widthOfTank :: Integer
-widthOfTank = 4
+widthOfTank = 2
 
 heightOfTank :: Integer
-heightOfTank = 2
+heightOfTank = 1
 
 powerIncrement :: Float
 powerIncrement = 1
@@ -66,7 +66,7 @@ launchWeapon
     }) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True False)
 -}
 tankVelocity :: Float
-tankVelocity = 10
+tankVelocity = 1
     
 updatePosition :: Point -> Float -> Key -> Point
 updatePosition position theta key
