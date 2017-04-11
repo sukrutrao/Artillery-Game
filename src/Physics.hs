@@ -157,9 +157,9 @@ getOtherEndPoint (Position x y) length theta =
 
 checkLineIfObstacle :: Point -> Point -> Integer -> Float -> [[Tile]] -> Bool
 checkLineIfObstacle (Position x y) (Position ox oy) i theta tileMap = 
-    if (x <= ox && y <= oy)
-        then if not (getIsObstacle tileMap x y)
-                then checkLineIfObstacle (Position (x + ((fromIntegral i) * cos(theta))) (y + ((fromIntegral i) * sin(theta)))) (Position ox oy) (i + 1) theta tileMap
+    if ((x + ((fromIntegral i) * cos(theta))) <= ox && (y + ((fromIntegral i) * sin(theta))) <= oy)
+        then if not (getIsObstacle tileMap (y + ((fromIntegral i) * sin(theta))) (x + ((fromIntegral i) * cos(theta))))
+                then checkLineIfObstacle (Position x y) (Position ox oy) (i + 1) theta tileMap
                 else False
         else True
 
@@ -178,7 +178,7 @@ searchForAngle (Position x y) length theta thetaMax tileMap =
     if theta < thetaMax
         then if not (checkLineSegmentObstacle (Position x y) length theta tileMap)
                 then theta
-                else (searchForAngle (Position x y) length (theta + thetaIncrement) thetaMax tileMap)
+                else searchForAngle (Position x y) length (theta + thetaIncrement) thetaMax tileMap
         else (-1.0)
 
 -- Accepts left end point of line and length of tank, and returns angle of its inclination

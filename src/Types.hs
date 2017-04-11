@@ -44,7 +44,8 @@ data GameState = GameState {
     tileMatrix :: [[Tile]],
     tankList :: [Tank],
     weapon :: [WeaponGraphics],
-    chance :: Int
+    chance :: Int,
+    isAcceptingInput :: Bool
 } deriving (Show)
 
 --Weapon

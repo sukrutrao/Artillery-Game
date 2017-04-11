@@ -29,47 +29,91 @@ initializeWeapon posX posY factor currAngle radius bullColor turrColor bullRotat
                                                    }
 
 
+updatePositionWeapon :: WeaponGraphics -> [[Tile]] -> WeaponGraphics
+updatePositionWeapon     (WeaponGraphics {
+        weaponPhysics = (GenericWeapon {
+            currentPosition = (Position x y),
+            currentVelocity = velocity,
+            velocityMultiplyingFactor = f,
+            currentAngle = theta, 
+            impactRadius = r,
+            isLaunched = islaunched,
+            hasImpacted = hasimpacted
+        }),
+        bulletColor = bColor,
+        turretColor = tColor,
+        bulletRotation = bRotate,
+        turretThickness = tTurr,
+        lengthOfTurret = lTurr
+    }) tileMap = if islaunched then if getIsObstacle tileMap y x then (WeaponGraphics {
+                                weaponPhysics = (GenericWeapon {
+                                        currentPosition = (Position x y),
+                                        currentVelocity = velocity,
+                                        velocityMultiplyingFactor = f,
+                                        currentAngle = theta, 
+                                        impactRadius = r,
+                                        isLaunched = False,
+                                        hasImpacted = True
+                                    }),
+                                    bulletColor = bColor,
+                                    turretColor = tColor,
+                                    bulletRotation = bRotate,
+                                    turretThickness = tTurr,
+                                    lengthOfTurret = lTurr
+                                    })
+                                    else (WeaponGraphics {
+                                weaponPhysics = (GenericWeapon {
+                                        currentPosition = getPositionProjectile (Position x y) velocity theta,
+                                        currentVelocity = getVelocityProjectile velocity theta,
+                                        velocityMultiplyingFactor = f,
+                                        currentAngle = getAngleProjectile velocity theta, 
+                                        impactRadius = r,
+                                        isLaunched = islaunched,
+                                        hasImpacted = hasimpacted
+                                    }),
+                                    bulletColor = bColor,
+                                    turretColor = tColor,
+                                    bulletRotation = bRotate,
+                                    turretThickness = tTurr,
+                                    lengthOfTurret = lTurr
+                                    })
+                 else (WeaponGraphics {
+                    weaponPhysics = (GenericWeapon {
+                        currentPosition = (Position x y),
+                        currentVelocity = velocity,
+                        velocityMultiplyingFactor = f,
+                        currentAngle = theta, 
+                        impactRadius = r,
+                        isLaunched = islaunched,
+                        hasImpacted = hasimpacted
+                    }),
+                    bulletColor = bColor,
+                    turretColor = tColor,
+                    bulletRotation = bRotate,
+                    turretThickness = tTurr,
+                    lengthOfTurret = lTurr
+                    })
 
-{-
-updatePositionWeapon :: Weapon -> Weapon
-updatePositionWeapon (GenericWeapon {
-    	currentPosition = (Position x y),
-    	currentVelocity = velocity,
-    	currentAngle = theta, 
-    	impactRadius = r,
-    	isLaunched = islaunched,
-    	hasImpacted = hasimpacted
-	}) = if islaunched
-			then (if (isObstacle (Position x y))
-					then	(GenericWeapon {
-    							currentPosition = (Position x y),
-    							currentVelocity = velocity,
-    							currentAngle = theta, 
-    							impactRadius = r,
-    							isLaunched = islaunched,
-								hasImpacted = True
-							})
-					else	(GenericWeapon {
-    							currentPosition = (getPositionProjectile (Position x y) velocity theta),
-    							currentVelocity = (getVelocityProjectile velocity theta),
-    							currentAngle = (getAngleProjectile velocity theta), 
-    							impactRadius = r,
-    							isLaunched = islaunched,
-    							hasImpacted = hasimpacted
-							})
-					)
-			else	(GenericWeapon {
-    					currentPosition = (Position x y),
-    					currentVelocity = velocity,
-    					currentAngle = theta, 
-    					impactRadius = r,
-    					isLaunched = islaunched,
-    					hasImpacted = hasimpacted
-					})
-					
-updateWeapon :: Weapon -> Weapon 
-updateWeapon weapon = if (not $ hasImpacted weapon)
-										then (updatePositionWeapon weapon) 
-										else weapon
+updateWeapon :: WeaponGraphics -> [[Tile]] -> WeaponGraphics 
+updateWeapon weapon tileMap = if hasImpacted (weaponPhysics weapon)
+                                then weapon
+                                else updatePositionWeapon weapon tileMap 
 
--}
+updateGameStateWeapon :: GameState -> GameState
+updateGameStateWeapon
+    (GameState {
+        tileMatrix = t,
+        tankList = l,
+        weapon = w,
+        chance = c,
+        isAcceptingInput = d
+    }) = let weaponChoice = currentWeapon (l !! c)
+             firedWeapon = w !! weaponChoice
+             newWeapon = updateWeapon firedWeapon t
+             newWeaponList = (take weaponChoice w) ++ (newWeapon : (drop (weaponChoice+1) w))
+         in GameState { tileMatrix = t , 
+                        tankList =  l,
+                        weapon = newWeaponList,
+                        chance = if (isLaunched $ weaponPhysics newWeapon) then c else ((c+1) `mod` 3) ,
+                        isAcceptingInput = if (isLaunched $ weaponPhysics newWeapon) then False else True
+                      }

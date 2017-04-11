@@ -9,7 +9,6 @@ import Tile
 
 main :: IO ()
 main = do
-    putStrLn "Hello World!\n"
     (_progName, _args) <- getArgsAndInitialize
     initialDisplayMode $= [DoubleBuffered]
     _window <- createWindow "Artillery Game"
@@ -20,9 +19,11 @@ main = do
     putStr "\tColumns : "
     print $ length ((Types.tileMatrix gameX) !! 0)
     gamestate <- newIORef gameX
+    bulletRotationAngle  <- newIORef 0.0
+
     reshapeCallback $= Just reshape
-    displayCallback $= display gamestate
-    keyboardMouseCallback $= Just (keyboardMouse gamestate)
-   -- idleCallback $= Just (idle)
+    displayCallback $= display gamestate bulletRotationAngle
+    keyboardMouseCallback $= Just (keyboardMouse gamestate bulletRotationAngle)
+    idleCallback $= Just (idle gamestate bulletRotationAngle)
    -- putStrLn $ show gameX
     mainLoop

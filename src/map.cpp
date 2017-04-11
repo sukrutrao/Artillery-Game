@@ -25,11 +25,10 @@ int main (int argc, char const* argv[])
         {
             if(-40 > y && y >= -50)
             {
-               // cout << x << " , " << y<<endl; 
+
                 if(x>op && x < lo)
                 {
-                                cout << x << " , " << y<<endl; 
-                //    cout << "Tile{tilePosition=(Position("<<(x/100.0)<<") ("<<(y/100.0)<<")),isObstacle=True},";
+                    cout << "Tile{tilePosition=(Position("<<(x/100.0)<<") ("<<(y/100.0)<<")),isObstacle=True},";
                 }
                 else
                 {
@@ -40,6 +39,13 @@ int main (int argc, char const* argv[])
                 }
             }
             else if(y < -50)    
+            {
+                if (x == 100 )
+                    cout << "Tile{tilePosition=(Position("<<(x/100.0)<<") ("<<(y/100.0)<<")),isObstacle=True}";
+                else
+                    cout << "Tile{tilePosition=(Position("<<(x/100.0)<<") ("<<(y/100.0)<<")),isObstacle=True},";
+            }
+            else if(y > 50)    
             {
                 if (x == 100 )
                     cout << "Tile{tilePosition=(Position("<<(x/100.0)<<") ("<<(y/100.0)<<")),isObstacle=True}";
@@ -64,10 +70,10 @@ int main (int argc, char const* argv[])
             
         }
                     
-       /* if (y == -100 )
+       if (y == -100 )
             cout<<"]";
         else
-           cout<<"],";*/
+           cout<<"],";
         y -= 1;
     }
     cout<<"]";

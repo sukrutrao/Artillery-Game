@@ -3,10 +3,12 @@ module Callback (reshape , display  , idle , keyboardMouse) where
 import Graphics.UI.GLUT
 import Control.Monad
 import Data.IORef
+import System.IO.Unsafe
 import qualified Types
 import qualified  Tank
 import qualified Physics
 import qualified Input
+import qualified Weapon
 import Gamestate
 import Rectangle
 import Line
@@ -25,8 +27,8 @@ rectHalfAngle = atan (2*(fromIntegral Tank.heightOfTank)/(fromIntegral Tank.widt
 hypotenuseRect :: Float
 hypotenuseRect = sqrt((((fromIntegral Tank.heightOfTank)*heightOfTile)^2) + ((((fromIntegral Tank.widthOfTank)*widthOfTile)/2)^2))
 
-display :: IORef Types.GameState -> DisplayCallback
-display gamestate = do
+display :: IORef Types.GameState -> IORef Float -> DisplayCallback
+display gamestate bulletRotationAngle = do
         clear [ColorBuffer, DepthBuffer]
         game <- get gamestate
         --Drawing The Tiles
@@ -74,11 +76,11 @@ display gamestate = do
                                     }) -> do
 
             tankcount $~! (+1)
-            print "\n*************\n"
-            print incline_theta
-            print "\n*************\n"
-            let tankCoordX = Physics.getTilePosX (Types.tileMatrix game) x y
-                tankCoordY = Physics.getTilePosY (Types.tileMatrix game) x y
+         --   print "\n*************\n"
+          --  print incline_theta
+          --  print "\n*************\n"
+            let tankCoordX = Physics.getTilePosX (Types.tileMatrix game) y x
+                tankCoordY = Physics.getTilePosY (Types.tileMatrix game) y x
                 tankWidthInGLUT = (fromIntegral Tank.widthOfTank)*widthOfTile
                 tankHeightInGLUT = (fromIntegral Tank.heightOfTank)*heightOfTile
 
@@ -116,8 +118,8 @@ display gamestate = do
 
             --Drawing The Turret
             loadIdentity
-            lineWidth $= (Types.turretThickness ((Types.weapon game) !! current_weapon))
-            currentColor $=  (Types.turretColor ((Types.weapon game) !! current_weapon))     -- grey turret
+            lineWidth $=  Types.turretThickness ((Types.weapon game) !! current_weapon)
+            currentColor $= Types.turretColor ((Types.weapon game) !! current_weapon)     -- grey turret
             translate $ Vector3 topCenterX topCenterY 0
             rotate (Physics.radianTodegree (turret_theta+incline_theta)) $ Vector3 0 0 1 
             line lengthOfTurret
@@ -132,57 +134,89 @@ display gamestate = do
                     translate $ Vector3 (topCenterX-(lengthOfTurret*0.55)*cos(perpendicularAngle)) (topCenterY-(lengthOfTurret*1.90)*sin(perpendicularAngle)) 0
                     rotate (Physics.radianTodegree incline_theta) $ Vector3 0 0 1 
                     triangle edgeOfTriangle
-                else
-                    return()
+                    -- Drawing The Weapon If Launched
+                    if checkifWeaponIsLaunched game
+                        then do
+                            bulletAngle <- get bulletRotationAngle
+                            let currWeaponFromList = (Types.weapon game) !! current_weapon
+                                weaponX = Physics.getPositionX $ Types.currentPosition $ Types.weaponPhysics currWeaponFromList
+                                weaponY = Physics.getPositionY $ Types.currentPosition $ Types.weaponPhysics currWeaponFromList
+                            loadIdentity
+                            currentColor $= Types.bulletColor currWeaponFromList
+                            translate $ Vector3 (Physics.getTilePosX (Types.tileMatrix game) weaponY weaponX) (Physics.getTilePosY (Types.tileMatrix game) weaponY weaponX) (0::Float)
+                            rotate bulletAngle $ Vector3 0 0 1
+                            rectangle 0.03 0.03
+                        else return()
+                    flush
+                else return()
+                    
         swapBuffers
         flush
 
 
-keyboardMouse :: IORef Types.GameState -> KeyboardMouseCallback
-keyboardMouse gamestate key Down _ _ = case key of
-  Char '+' -> do
-            gamestate $~! \x -> Tank.updateGameStateTank x Input.increasePower
-            postRedisplay Nothing
+keyboardMouse :: IORef Types.GameState -> IORef Float -> KeyboardMouseCallback
+keyboardMouse gamestate bulletRotationAngle key Down _ _ = do
+        game <- get gamestate
+        if Types.isAcceptingInput game
+            then
+                case key of
+            Char '+' -> do
+                    gamestate $~! \x -> Tank.updateGameStateTank x Input.increasePower
+                    postRedisplay Nothing
+            Char '-' -> do
+                    gamestate $~! \x -> Tank.updateGameStateTank x Input.decreasePower
+                    postRedisplay Nothing
+            Char 'A'  -> do
+                    gamestate $~! \x -> Tank.updateGameStateTank x Input.decreaseAngle
+                    postRedisplay Nothing
+            Char 'D' -> do
+                    gamestate $~! \x -> Tank.updateGameStateTank x Input.increaseAngle
+                    postRedisplay Nothing
+            Char 'a'  -> do
+                    gamestate $~! \x -> Tank.updateGameStateTank x Input.decreaseAngle
+                    postRedisplay Nothing
+            Char 'd' -> do
+                    gamestate $~! \x -> Tank.updateGameStateTank x Input.increaseAngle
+                    postRedisplay Nothing
+            SpecialKey KeyLeft -> do
+                    gamestate $~! \x -> Tank.updateGameStateTank x Input.moveLeft
+                    postRedisplay Nothing
+            SpecialKey KeyRight -> do
+                    gamestate $~! \x -> Tank.updateGameStateTank x Input.moveRight
+                    postRedisplay Nothing
+            Char '0' -> do
+                    gamestate $~! \x -> Tank.updateGameStateTank x Input.weapon0
+                    postRedisplay Nothing
+            Char '1' -> do
+                    gamestate $~! \x -> Tank.updateGameStateTank x Input.weapon1
+                    postRedisplay Nothing
+            Char '2' -> do
+                    gamestate $~! \x -> Tank.updateGameStateTank x Input.weapon2
+                    postRedisplay Nothing
+            Char ' ' -> do
+                    gamestate $~! \x -> Tank.updateGameStateLaunchWeapon x
+                    bulletRotationAngle $~! (*0)
+                    postRedisplay Nothing
+            _ -> return ()
+            else
+                return ()
+keyboardMouse _ _ _ _ _ _ = return ()
 
-  Char '-' -> do
-            gamestate $~! \x -> Tank.updateGameStateTank x Input.decreasePower
-            postRedisplay Nothing
+checkifWeaponIsLaunched ::Types.GameState -> Bool
+checkifWeaponIsLaunched (Types.GameState {
+        Types.tankList = l,
+        Types.weapon = w,
+        Types.chance = c
+    }) = Types.isLaunched $ Types.weaponPhysics $ (w !! (Types.currentWeapon (l !! c)))
 
-  Char 'A'  -> do
-            gamestate $~! \x -> Tank.updateGameStateTank x Input.decreaseAngle
+idle ::IORef Types.GameState ->  IORef Float -> IdleCallback
+idle gamestate bulletRotationAngle = do
+    game <- get gamestate
+    if (checkifWeaponIsLaunched game)
+        then do
+            bulletRotationAngle $~! (+20)
+            gamestate $~! \x -> Weapon.updateGameStateWeapon x
             postRedisplay Nothing
-  Char 'D' -> do
-            gamestate $~! \x -> Tank.updateGameStateTank x Input.increaseAngle
-            postRedisplay Nothing
-  Char 'a'  -> do
-            gamestate $~! \x -> Tank.updateGameStateTank x Input.decreaseAngle
-            postRedisplay Nothing
-  Char 'd' -> do
-            gamestate $~! \x -> Tank.updateGameStateTank x Input.increaseAngle
-            postRedisplay Nothing
+        else return()
 
-  SpecialKey KeyLeft -> do
-            gamestate $~! \x -> Tank.updateGameStateTank x Input.moveLeft
-            postRedisplay Nothing
-
-  SpecialKey KeyRight -> do
-            gamestate $~! \x -> Tank.updateGameStateTank x Input.moveRight
-            postRedisplay Nothing
-
-
-  Char '0' -> do
-            gamestate $~! \x -> Tank.updateGameStateTank x Input.weapon0
-            postRedisplay Nothing
-  Char '1' -> do
-            gamestate $~! \x -> Tank.updateGameStateTank x Input.weapon1
-            postRedisplay Nothing
-  Char '2' -> do
-            gamestate $~! \x -> Tank.updateGameStateTank x Input.weapon2
-            postRedisplay Nothing
-  _ -> return ()
-keyboardMouse _ _ _ _ _ = return ()
-
-
-
-idle :: IdleCallback
-idle = print "IDLE" --postRedisplay Nothing
+    

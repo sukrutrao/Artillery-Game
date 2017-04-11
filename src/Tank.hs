@@ -36,40 +36,54 @@ initializeTank posX posY score tankcolor currweapon listweaponcount = Tank {tank
                                     currentWeapon = currweapon,
                                     weaponCount = listweaponcount
                                    } 
-{-
-launchWeapon :: Weapon -> Tank -> Float -> Float -> Weapon
+
+launchWeapon :: WeaponGraphics -> Tank -> Float -> WeaponGraphics
 launchWeapon
-    (GenericWeapon {
-        currentPosition = (Position px py),
-        currentVelocity = v,
-        currentAngle = theta, 
-        impactRadius = r,
-        isLaunched = l,
-        hasImpacted = i
+    (WeaponGraphics {
+        weaponPhysics = (GenericWeapon {
+            velocityMultiplyingFactor = f,
+            impactRadius = radius
+        }),
+        bulletColor = bColor,
+        turretColor = tColor,
+        bulletRotation = bRotate,
+        turretThickness = tTurr,
+        lengthOfTurret = lTurr
     })
+    
     (Tank {
         tankState = (TankState {
-            direction = d,
             position = (Position x y),
-            velocity = (Velocity vx vy),
             inclineAngle = incline_theta,
             turret = (Turret {
                 angle = turret_theta, 
                 power = turret_power
             })
+        })
+    }) startVelocity = WeaponGraphics {
+        weaponPhysics = (GenericWeapon {
+            currentPosition = (Position x y),
+            currentVelocity = (turret_power*startVelocity*f),
+            velocityMultiplyingFactor = f,
+            currentAngle = (incline_theta+turret_theta), 
+            impactRadius = radius,
+            isLaunched = True,
+            hasImpacted = False
         }),
-        score = _,
-        color = _,
+        bulletColor = bColor,
+        turretColor = tColor,
+        bulletRotation = bRotate,
+        turretThickness = tTurr,
+        lengthOfTurret = lTurr
+    }
 
-    }) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True False)
--}
 tankVelocity :: Float
 tankVelocity = 1
     
 updatePosition :: Point -> Float -> Key -> Point
 updatePosition position theta key
-    | key == moveLeft = constantVelocityNewPosition position tankVelocity theta
-    | key == moveRight = constantVelocityNewPosition position (-tankVelocity) theta
+    | key == moveRight = constantVelocityNewPosition position tankVelocity theta
+    | key == moveLeft = constantVelocityNewPosition position (-tankVelocity) theta
     | otherwise = position
 
 updatePower :: Float -> Key -> Float
@@ -90,8 +104,8 @@ updateDirection direction key
     | key == moveLeft = FacingLeft
     | otherwise = direction
 
-updateWeapon :: Int -> Key -> Int
-updateWeapon currWeapon key
+updateWeaponChoice :: Int -> Key -> Int
+updateWeaponChoice currWeapon key
     | key == weapon0 = 0 
     | key == weapon1 = 1
     | key == weapon2 = 2
@@ -163,14 +177,24 @@ updateTank
         }),
         score = s-1,
         color = c,
-        currentWeapon = (updateWeapon e key),
+        currentWeapon = (updateWeaponChoice e key),
         weaponCount = f
     }
 
 -- check for theta = pi/2!
 
 
-
+updateGameStateLaunchWeapon :: GameState -> GameState
+updateGameStateLaunchWeapon
+    (GameState {
+        tileMatrix = t,
+        tankList = l,
+        weapon = w,
+        chance = c
+    }) = let weaponChoice = currentWeapon (l !! c)
+             launched = launchWeapon (w !! weaponChoice) (l !! c) 2
+             newWeaponList = (take weaponChoice w) ++ (launched : (drop (weaponChoice+1) w))
+         in GameState {tileMatrix = t , tankList =  l, weapon = newWeaponList , chance = c , isAcceptingInput = False}
 
 
 updateGameStateTank :: GameState -> Key -> GameState
@@ -179,8 +203,9 @@ updateGameStateTank
         tileMatrix = t,
         tankList = l,
         weapon = w,
-        chance = c
+        chance = c,
+        isAcceptingInput = d
     }) key = let temp = ((take c l) ++ ((updateTank (l !! c) key t) : (drop (c + 1) l)))
-        in GameState {tileMatrix = t , tankList =  temp, weapon = w , chance = c }
+        in GameState {tileMatrix = t , tankList =  temp, weapon = w , chance = c , isAcceptingInput = d}
 
 
