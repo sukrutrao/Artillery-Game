@@ -26,12 +26,12 @@ initializeGamestate = GameState { tileMatrix = getTileMatrix,
                                                           ]
                                                ),
 -- position x y , factor , currentAngle , impactRadius , color , color , rotation , thickness length
-                                  weapon = (getWeaponList [(30 , 30 , 2 , 0 , 30 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , Graphics.UI.GLUT.Color4 0.34 0.34 0.1686 1 , Graphics.UI.GLUT.Vector3 0 0.5 0.1 , 5 , 0.1) ,
-                                                           (30 , 30 , 3 , 0 , 20 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , Graphics.UI.GLUT.Color4 0.34 0.1686 0.34 1 , Graphics.UI.GLUT.Vector3 0.5 0.1 0 , 10 , 0.13),
-                                                           (30 , 30 , 4 , 0 , 10 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , Graphics.UI.GLUT.Color4 0.1686 0.34 0.34 1 , Graphics.UI.GLUT.Vector3 0.1 0.5 0 , 25 , 0.15)
+                                  weapon = (getWeaponList [(30 , 30 , 2 , 0 , 30 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , Graphics.UI.GLUT.Color4 0.34 0.34 0.1686 1 , Graphics.UI.GLUT.Vector3 0 0.5 0.1 , 5  ,((fromIntegral heightOfTank)*heightOfTile)),
+                                                           (30 , 30 , 3 , 0 , 20 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , Graphics.UI.GLUT.Color4 0.34 0.1686 0.34 1 , Graphics.UI.GLUT.Vector3 0.5 0.1 0 , 10 ,((fromIntegral heightOfTank)*heightOfTile)*1.5),
+                                                           (30 , 30 , 4 , 0 , 10 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , Graphics.UI.GLUT.Color4 0.1686 0.34 0.34 1 , Graphics.UI.GLUT.Vector3 0.1 0.5 0 , 25 ,((fromIntegral heightOfTank)*heightOfTile)*2)
                                                            ]
                                              ),
-                                  chance = 0
+                                  chance = 1
                                 }
 
 {-}

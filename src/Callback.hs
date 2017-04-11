@@ -12,6 +12,9 @@ import Rectangle
 import Line
 import Triangle
 
+edgeOfTriangle :: Float
+edgeOfTriangle = ((fromIntegral Tank.widthOfTank)*widthOfTile)/1.5
+
 reshape :: ReshapeCallback
 reshape size = do
   viewport $= (Position 0 0, size)
@@ -126,7 +129,7 @@ display gamestate = do
                     currentColor $= Color4 0.5588 0.0019 0.0988 1
                     translate $ Vector3 (topCenterX-(lengthOfTurret*0.55)*cos(perpendicularAngle)) (topCenterY-(lengthOfTurret*1.90)*sin(perpendicularAngle)) 0
                     rotate (Physics.radianTodegree incline_theta) $ Vector3 0 0 1 
-                    triangle Tank.edgeOfTriangle
+                    triangle edgeOfTriangle
                 else
                     return()
         swapBuffers
@@ -138,6 +141,7 @@ keyboardMouse gamestate key Down _ _ = case key of
   Char '+' -> do
             gamestate $~! \x -> Tank.updateGameStateTank x Input.increasePower
             postRedisplay Nothing
+
   Char '-' -> do
             gamestate $~! \x -> Tank.updateGameStateTank x Input.decreasePower
             postRedisplay Nothing

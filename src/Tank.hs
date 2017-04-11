@@ -8,14 +8,12 @@ import qualified Graphics.UI.GLUT
 import Data.IORef
 
 
-edgeOfTriangle :: Float
-edgeOfTriangle = 0.075
 
 widthOfTank :: Integer
-widthOfTank = 2
+widthOfTank = 3
 
 heightOfTank :: Integer
-heightOfTank = 1
+heightOfTank = 2
 
 powerIncrement :: Float
 powerIncrement = 1
