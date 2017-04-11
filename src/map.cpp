@@ -14,7 +14,7 @@ double func(double a)
 int main (int argc, char const* argv[])
 {
 
-    int x = -100 , y = 100;    
+    int x = -100 , y = 100 , op = -30 , lo = 30;    
     srand(time(NULL));
     cout<<"[";
      while(y>=-100)
@@ -23,7 +23,23 @@ int main (int argc, char const* argv[])
         cout<<"[";
         while(x<=100)
         {
-            if(y < -50)
+            if(-40 > y && y >= -50)
+            {
+               // cout << x << " , " << y<<endl; 
+                if(x>op && x < lo)
+                {
+                                cout << x << " , " << y<<endl; 
+                //    cout << "Tile{tilePosition=(Position("<<(x/100.0)<<") ("<<(y/100.0)<<")),isObstacle=True},";
+                }
+                else
+                {
+                    if (x == 100 )
+                        cout << "Tile{tilePosition=(Position("<<(x/100.0)<<") ("<<(y/100.0)<<")),isObstacle=False}";
+                    else 
+                        cout << "Tile{tilePosition=(Position("<<(x/100.0)<<") ("<<(y/100.0)<<")),isObstacle=False},";
+                }
+            }
+            else if(y < -50)    
             {
                 if (x == 100 )
                     cout << "Tile{tilePosition=(Position("<<(x/100.0)<<") ("<<(y/100.0)<<")),isObstacle=True}";
@@ -32,19 +48,27 @@ int main (int argc, char const* argv[])
             }
             else
             {
-                if (x == 100 )
+               if (x == 100 )
                     cout << "Tile{tilePosition=(Position("<<(x/100.0)<<") ("<<(y/100.0)<<")),isObstacle=False}";
                 else
-                    cout << "Tile{tilePosition=(Position("<<(x/100.0)<<") ("<<(y/100.0)<<")),isObstacle=False},";            
+                    cout << "Tile{tilePosition=(Position("<<(x/100.0)<<") ("<<(y/100.0)<<")),isObstacle=False},";      
             }
 
-            x += 2;
+            x += 1;
         }
-        if (y == -100 )
+        
+        if(-40 > y && y > -50)
+        {
+            lo+=1;
+            op-=1;
+            
+        }
+                    
+       /* if (y == -100 )
             cout<<"]";
         else
-           cout<<"],";
-        y -= 2;
+           cout<<"],";*/
+        y -= 1;
     }
     cout<<"]";
     return 0;

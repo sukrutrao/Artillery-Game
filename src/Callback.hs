@@ -74,7 +74,9 @@ display gamestate = do
                                     }) -> do
 
             tankcount $~! (+1)
-
+            print "\n*************\n"
+            print incline_theta
+            print "\n*************\n"
             let tankCoordX = Physics.getTilePosX (Types.tileMatrix game) x y
                 tankCoordY = Physics.getTilePosY (Types.tileMatrix game) x y
                 tankWidthInGLUT = (fromIntegral Tank.widthOfTank)*widthOfTile
@@ -82,7 +84,7 @@ display gamestate = do
 
             loadIdentity
             currentColor $= tankcolor
-            translate $ Vector3 tankCoordX tankCoordY 0
+            translate $ Vector3 tankCoordX (tankCoordY-0.01) 0
             rotate (Physics.radianTodegree incline_theta) $ Vector3 0 0 1 
             rectangle tankWidthInGLUT tankHeightInGLUT
 

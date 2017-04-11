@@ -10,10 +10,10 @@ import Data.IORef
 
 
 widthOfTank :: Integer
-widthOfTank = 3
+widthOfTank = 9
 
 heightOfTank :: Integer
-heightOfTank = 2
+heightOfTank = 6
 
 powerIncrement :: Float
 powerIncrement = 1
@@ -155,7 +155,7 @@ updateTank
             direction = (updateDirection d key),
             position = (updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key),
             velocity = (Velocity vx vy),
-            inclineAngle = incline_theta,
+            inclineAngle = (getAngleAt (Position x y) widthOfTank tileMatrix),--getAngleincline_theta,
             turret = (Turret {
                 angle = (updateAngle turret_theta key), 
                 power = (updatePower turret_power key)

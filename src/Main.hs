@@ -1,9 +1,11 @@
 import Graphics.UI.GLUT
 import System.IO.Unsafe
 import Data.IORef
-import Types
+import qualified Types
 import Gamestate
 import Callback
+import Physics
+import Tile
 
 main :: IO ()
 main = do
@@ -14,12 +16,13 @@ main = do
     windowSize $= Size 1280 720
     let gameX = initializeGamestate
     putStr "Tile Matrix Dimensions\n\tRows : "
-    print $ length (tileMatrix gameX)
+    print $ length (Types.tileMatrix gameX)
     putStr "\tColumns : "
-    print $ length ((tileMatrix gameX) !! 0)
+    print $ length ((Types.tileMatrix gameX) !! 0)
     gamestate <- newIORef gameX
     reshapeCallback $= Just reshape
     displayCallback $= display gamestate
     keyboardMouseCallback $= Just (keyboardMouse gamestate)
    -- idleCallback $= Just (idle)
+   -- putStrLn $ show gameX
     mainLoop
