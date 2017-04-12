@@ -20,7 +20,7 @@ originPosition x y = (Position x y)
 
 newPosition :: Point -> Point -> Point -> Float -> Point
 newPosition (Position x y) (Velocity vx vy) (Acceleration ax ay) time =
-    (Position (newOneDPosition x vx ax time) (newOneDPosition y vy ay time))
+    (Position (newOneDPosition x vx ax time) (newOneDPosition y (-vy) ay time))
 
 newVelocity :: Point -> Point -> Float -> Point
 newVelocity (Velocity vx vy) (Acceleration ax ay) time = 
