@@ -192,7 +192,7 @@ keyboardMouse gamestate bulletRotationAngle key Down _ _ = do
                     gamestate $~! \x -> Tank.updateGameStateTank x Input.moveRight
                     postRedisplay Nothing
             Char '0' -> do
-                    putStrLn $ show (Physics.getAllPointsInCircle (Types.Position 0 0) 3 )
+                    putStrLn $ show (Physics.getAllPointsInRectangle (Types.Position 0 0) 3 2 0 )
                     gamestate $~! \x -> Tank.updateGameStateTank x Input.weapon0
                     postRedisplay Nothing
             Char '1' -> do
