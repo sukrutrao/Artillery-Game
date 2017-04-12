@@ -7,8 +7,8 @@ int main () {
 	int y,x,k;
 	cout<<"Check if working \n";
 	myfile.open ("Level1.txt");
-	for(y=100;y>=-100;y=y-2)
-	for(x=-100;x<=100;x=x+2)
+	for(y=100;y>=-100;y=y-1)
+	{for(x=-100;x<=100;x=x+1)
 	{
 		k=0;
 		if(y<=-50)
@@ -20,8 +20,9 @@ int main () {
 		if((x+y)<=40 && y>=-50 && y<=0 )
 		k=1;		
 
-		myfile << x << " " << y << " " << k << "\n";
+		myfile << y << " " << x << " " << k << " ";
 		
+	}myfile <<"#\n";
 	}
 	myfile << "$\n";
 	myfile.close();
