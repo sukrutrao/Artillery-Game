@@ -6,20 +6,7 @@ import Weapon
 import Input 
 import qualified Graphics.UI.GLUT
 import Data.IORef
-
-
-
-widthOfTank :: Integer
-widthOfTank = 3
-
-heightOfTank :: Integer
-heightOfTank = 2
-
-powerIncrement :: Float
-powerIncrement = 1
-
-angleIncrement :: Float
-angleIncrement = 0.1
+import Debug.Trace
 
 initializeTankState :: Float -> Float -> TankState
 initializeTankState posX posY = TankState {direction = FacingRight, 
@@ -36,18 +23,54 @@ initializeTank posX posY score tankcolor currweapon listweaponcount = Tank {tank
                                     currentWeapon = currweapon,
                                     weaponCount = listweaponcount
                                    } 
-{-
-launchWeapon :: Weapon -> Tank -> Float -> Float -> Weapon
+
+launchWeapon :: WeaponGraphics -> Tank -> [[Tile]] -> Float -> WeaponGraphics
 launchWeapon
-    (GenericWeapon {
-        currentPosition = (Position px py),
-        currentVelocity = v,
-        currentAngle = theta, 
-        impactRadius = r,
-        isLaunched = l,
-        hasImpacted = i
+    (WeaponGraphics {
+        weaponPhysics = (GenericWeapon {
+            velocityMultiplyingFactor = f,
+            impactRadius = radius
+        }),
+        bulletColor = bColor,
+        turretColor = tColor,
+        bulletRotation = bRotate,
+        turretThickness = tTurr,
+        lengthOfTurret = lTurr
     })
+    
     (Tank {
+        tankState = (TankState {
+            position = (Position x y),
+            inclineAngle = incline_theta,
+            turret = (Turret {
+                angle = turret_theta, 
+                power = turret_power
+            })
+        })
+    }) tileMap startVelocity = let topCenterX = x+((hypotenuseRect*cos(incline_theta+rectHalfAngle))/widthOfTile)
+                                   topCenterY = y-((hypotenuseRect*sin(incline_theta+rectHalfAngle))/heightOfTile)
+                                   turretTopX = topCenterX+((lTurr*cos(incline_theta+turret_theta))/heightOfTile)
+                                   turretTopY = topCenterY-((lTurr*sin(incline_theta+turret_theta))/heightOfTile)
+                                in WeaponGraphics {
+        weaponPhysics = (GenericWeapon {
+            currentPosition = (Position turretTopX turretTopY),
+            currentVelocity = (turret_power*startVelocity*f),
+            velocityMultiplyingFactor = f,
+            currentAngle = trace("Angle of launch : " ++ show (incline_theta + turret_theta)) (incline_theta+turret_theta), 
+            impactRadius = radius,
+            isLaunched = True,
+            hasImpacted = False,
+            launchDirection = (if (incline_theta+turret_theta) <= pi/2 then FacingRight else FacingLeft)
+        }),
+        bulletColor = bColor,
+        turretColor = tColor,
+        bulletRotation = bRotate,
+        turretThickness = tTurr,
+        lengthOfTurret = lTurr
+    }
+
+decreaseWeaponCount :: Tank -> Tank
+decreaseWeaponCount (Tank {
         tankState = (TankState {
             direction = d,
             position = (Position x y),
@@ -58,18 +81,34 @@ launchWeapon
                 power = turret_power
             })
         }),
-        score = _,
-        color = _,
+        score = s,
+        color = c,
+        currentWeapon = e,
+        weaponCount = f
+    }) = Tank {
+        tankState = (TankState {
+            direction = d,
+            position = (Position x y),
+            velocity = (Velocity vx vy),
+            inclineAngle = incline_theta,
+            turret = (Turret {
+                angle = turret_theta,
+                power = turret_power
+            })
+        }),
+        score = s,
+        color = c,
+        currentWeapon = e,
+        weaponCount = changeListElementAtIndex f e ((f!!e)-1)
+    }
 
-    }) startVelocity radius = (GenericWeapon (Position x y) startVelocity (incline_theta + turret_theta) radius True False)
--}
 tankVelocity :: Float
 tankVelocity = 1
     
 updatePosition :: Point -> Float -> Key -> Point
 updatePosition position theta key
-    | key == moveLeft = constantVelocityNewPosition position tankVelocity theta
-    | key == moveRight = constantVelocityNewPosition position (-tankVelocity) theta
+    | key == moveRight = constantVelocityNewPosition position tankVelocity theta
+    | key == moveLeft = constantVelocityNewPosition position (-tankVelocity) theta
     | otherwise = position
 
 updatePower :: Float -> Key -> Float
@@ -90,8 +129,8 @@ updateDirection direction key
     | key == moveLeft = FacingLeft
     | otherwise = direction
 
-updateWeapon :: Int -> Key -> Int
-updateWeapon currWeapon key
+updateWeaponChoice :: Int -> Key -> Int
+updateWeaponChoice currWeapon key
     | key == weapon0 = 0 
     | key == weapon1 = 1
     | key == weapon2 = 2
@@ -153,24 +192,35 @@ updateTank
     }) key tileMatrix = Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
-            position = (updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key),
+            position = {-trace("x : " ++ show x ++ " y : " ++ show y ++ "\n") -}(updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key),
             velocity = (Velocity vx vy),
-            inclineAngle = incline_theta,
+            inclineAngle = (getAngleAt (Position x y) widthOfTank tileMatrix),--getAngleincline_theta,
             turret = (Turret {
                 angle = (updateAngle turret_theta key), 
                 power = (updatePower turret_power key)
             })
         }),
-        score = s-1,
+        score = s,
         color = c,
-        currentWeapon = (updateWeapon e key),
+        currentWeapon = (updateWeaponChoice e key),
         weaponCount = f
     }
 
--- check for theta = pi/2!
+-- check for theta = pi/2 
 
-
-
+updateGameStateLaunchWeapon :: GameState -> GameState
+updateGameStateLaunchWeapon
+    (GameState {
+        tileMatrix = t,
+        tankList = l,
+        weapon = w,
+        chance = c,
+        noOfPlayers = n
+    }) = let weaponChoice = currentWeapon (l !! c)
+             launched = launchWeapon (w !! weaponChoice) (l !! c) t 1
+             newWeaponList = changeListElementAtIndex w weaponChoice launched
+             newTankList = changeListElementAtIndex l c (decreaseWeaponCount (l !! c))
+         in GameState {tileMatrix = t , tankList = newTankList, weapon = newWeaponList , chance = c , noOfPlayers=n, isAcceptingInput= False}
 
 
 updateGameStateTank :: GameState -> Key -> GameState
@@ -179,8 +229,11 @@ updateGameStateTank
         tileMatrix = t,
         tankList = l,
         weapon = w,
-        chance = c
-    }) key = let temp = ((take c l) ++ ((updateTank (l !! c) key t) : (drop (c + 1) l)))
-        in GameState {tileMatrix = t , tankList =  temp, weapon = w , chance = c }
+        chance = c,
+        noOfPlayers = n,
+        isAcceptingInput = d
+    }) key = let temp = changeListElementAtIndex l c (updateTank (l !! c) key t)
+        in GameState {tileMatrix = t , tankList =  temp, weapon = w , chance = c , noOfPlayers = n, isAcceptingInput = d}
+
 
 

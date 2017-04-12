@@ -44,7 +44,9 @@ data GameState = GameState {
     tileMatrix :: [[Tile]],
     tankList :: [Tank],
     weapon :: [WeaponGraphics],
-    chance :: Int
+    chance :: Int,
+    noOfPlayers :: Integer,
+    isAcceptingInput :: Bool
 } deriving (Show)
 
 --Weapon
@@ -55,7 +57,8 @@ data Weapon = GenericWeapon {
     currentAngle :: Float, 
     impactRadius :: Float,
     isLaunched :: Bool,
-    hasImpacted :: Bool
+    hasImpacted :: Bool,
+    launchDirection :: Direction
 } deriving (Show)
 
 data WeaponGraphics = WeaponGraphics {
@@ -66,3 +69,22 @@ data WeaponGraphics = WeaponGraphics {
     turretThickness :: Float,
     lengthOfTurret :: Float
 } deriving (Show)
+
+
+widthOfTile :: Float
+widthOfTile = 0.01
+
+heightOfTile :: Float
+heightOfTile = 0.01
+
+widthOfTank :: Integer
+widthOfTank = 9
+
+heightOfTank :: Integer
+heightOfTank = 6
+
+powerIncrement :: Float
+powerIncrement = 1
+
+angleIncrement :: Float
+angleIncrement = 0.1
