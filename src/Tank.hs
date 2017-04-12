@@ -213,12 +213,13 @@ updateGameStateLaunchWeapon
         tileMatrix = t,
         tankList = l,
         weapon = w,
-        chance = c
+        chance = c,
+        noOfPlayers = n
     }) = let weaponChoice = currentWeapon (l !! c)
              launched = launchWeapon (w !! weaponChoice) (l !! c) t 1
              newWeaponList = changeListElementAtIndex w weaponChoice launched
              newTankList = changeListElementAtIndex l c (decreaseWeaponCount (l !! c))
-         in GameState {tileMatrix = t , tankList = newTankList, weapon = newWeaponList , chance = c , isAcceptingInput = False}
+         in GameState {tileMatrix = t , tankList = newTankList, weapon = newWeaponList , chance = c , noOfPlayers=n, isAcceptingInput= False}
 
 
 updateGameStateTank :: GameState -> Key -> GameState
@@ -228,8 +229,9 @@ updateGameStateTank
         tankList = l,
         weapon = w,
         chance = c,
+        noOfPlayers = n,
         isAcceptingInput = d
     }) key = let temp = changeListElementAtIndex l c (updateTank (l !! c) key t)
-        in GameState {tileMatrix = t , tankList =  temp, weapon = w , chance = c , isAcceptingInput = d}
+        in GameState {tileMatrix = t , tankList =  temp, weapon = w , chance = c , noOfPlayers = n, isAcceptingInput = d}
 
 

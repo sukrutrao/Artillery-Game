@@ -45,6 +45,7 @@ data GameState = GameState {
     tankList :: [Tank],
     weapon :: [WeaponGraphics],
     chance :: Int,
+    noOfPlayers :: Integer,
     isAcceptingInput :: Bool
 } deriving (Show)
 

@@ -228,7 +228,6 @@ checkifSufficientWeaponsAvailable (Types.GameState {
 
 
 
-
 idle ::IORef Types.GameState ->  IORef Float -> IdleCallback
 idle gamestate bulletRotationAngle = do
     game <- get gamestate
@@ -238,5 +237,3 @@ idle gamestate bulletRotationAngle = do
             gamestate $~! \x -> Weapon.updateGameStateWeapon x
             postRedisplay Nothing
         else return()
-
-    

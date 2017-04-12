@@ -28,5 +28,6 @@ initializeGamestate = GameState { tileMatrix = getTileMatrix,
                                                            ]
                                              ),
                                   chance = 1,
-                                  isAcceptingInput = True
+                                  isAcceptingInput = True,
+                                  noOfPlayers = 2
                                 }
