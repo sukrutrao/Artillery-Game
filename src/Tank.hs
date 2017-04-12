@@ -97,7 +97,7 @@ decreaseWeaponCount (Tank {
         score = s,
         color = c,
         currentWeapon = e,
-        weaponCount = (take e f) ++ (((f!!e)-1) : (drop (e+1)f))
+        weaponCount = changeListElementAtIndex f e ((f!!e)-1)
     }
 
 tankVelocity :: Float
@@ -204,8 +204,7 @@ updateTank
         weaponCount = f
     }
 
--- check for theta = pi/2!
-
+-- check for theta = pi/2 
 
 updateGameStateLaunchWeapon :: GameState -> GameState
 updateGameStateLaunchWeapon
@@ -216,8 +215,8 @@ updateGameStateLaunchWeapon
         chance = c
     }) = let weaponChoice = currentWeapon (l !! c)
              launched = launchWeapon (w !! weaponChoice) (l !! c) t 1
-             newWeaponList = (take weaponChoice w) ++ (launched : (drop (weaponChoice+1) w))
-             newTankList = (take c l) ++ ((decreaseWeaponCount (l !! c)) : (drop (c+1) l))
+             newWeaponList = changeListElementAtIndex w weaponChoice launched
+             newTankList = changeListElementAtIndex l c (decreaseWeaponCount (l !! c))
          in GameState {tileMatrix = t , tankList = newTankList, weapon = newWeaponList , chance = c , isAcceptingInput = False}
 
 
@@ -229,7 +228,7 @@ updateGameStateTank
         weapon = w,
         chance = c,
         isAcceptingInput = d
-    }) key = let temp = ((take c l) ++ ((updateTank (l !! c) key t) : (drop (c+1) l)))
+    }) key = let temp = changeListElementAtIndex l c (updateTank (l !! c) key t)
         in GameState {tileMatrix = t , tankList =  temp, weapon = w , chance = c , isAcceptingInput = d}
 
 

@@ -29,6 +29,7 @@ display gamestate bulletRotationAngle = do
             forM_ (tileList) $ \(Types.Tile {Types.tilePosition = (Types.Position x y), Types.isObstacle = w }) -> do
                 loadIdentity
                 currentColor $= if(w) then Color4 0 0.5019 0 1 else Color4 0.6 0.8 1 1
+                if (x == (Physics.getTilePosX (Types.tileMatrix game) 150 62) && y == (Physics.getTilePosY (Types.tileMatrix game) 150 62)) then currentColor $= Color4 1 0 0 1 else return()
                 translate $ Vector3 x y 0
                 rectangle Types.widthOfTile Types.heightOfTile
                 flush
