@@ -121,6 +121,10 @@ getListOfPointsInCircle (Position cx cy) radius [[]] = []
 getListOfPointsInCircle (Position cx cy) radius (x:xs) =  
     ((checkCommonPointsCircleLine (Position cx cy) radius x) ++ (getListOfPointsInCircle (Position cx cy) radius xs))
 
+getAllPointsInCircle :: Point -> Float -> [Point]
+getAllPointsInCircle (Position cx cy) radius = 
+	getListOfPointsInCircle (Position cx cy) radius $ getListOfPointsInRectangle (Position (truncate (cx - radius)) (truncate (cy - radius))) (truncate (2*radius)) (truncate (2*radius)) 
+
 checkCommonPointsCircleLine :: Point -> Float -> [Point] -> [Point]
 checkCommonPointsCircleLine (Position cx cy) radius [] = []
 checkCommonPointsCircleLine (Position cx cy) radius (x:xs) = 
