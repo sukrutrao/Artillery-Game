@@ -83,8 +83,9 @@ getPositionX (Position x _) = x
 getPositionY:: Point -> Float
 getPositionY (Position _ y) = y
 
-getAngleProjectile :: Float -> Float -> Float 
-getAngleProjectile velocity theta = trace ("+++++++++++++ theta: " ++ show theta ++ "  ,  velocity : " ++ show velocity ++ "\n") ((-1) * atan((-1) * tan(theta) + (g * unitTime)/(velocity * cos(theta))))
+getAngleProjectile :: Float -> Float -> Direction -> Float 
+getAngleProjectile velocity theta FacingRight = trace ("R+++++++++++++ theta: " ++ show theta ++ "  ,  velocity : " ++ show velocity ++ "\n") ((-1) * atan((-1) * tan(theta) + (g * unitTime)/(velocity * cos(theta))))
+getAngleProjectile velocity theta FacingLeft = trace ("L+++++++++++++ theta: " ++ show theta ++ "  ,  velocity : " ++ show velocity ++ "\n") (pi  + (-1) * atan((-1) * tan(theta) + (g * unitTime)/(velocity * cos(theta))))
 
 getPositionProjectile :: Point -> Float -> Float -> Point 
 getPositionProjectile position velocity theta = getNewPositionUnderGravity position velocity theta unitTime

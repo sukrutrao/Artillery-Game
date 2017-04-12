@@ -57,7 +57,8 @@ data Weapon = GenericWeapon {
     currentAngle :: Float, 
     impactRadius :: Float,
     isLaunched :: Bool,
-    hasImpacted :: Bool
+    hasImpacted :: Bool,
+    launchDirection :: Direction
 } deriving (Show)
 
 data WeaponGraphics = WeaponGraphics {

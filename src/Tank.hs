@@ -59,7 +59,8 @@ launchWeapon
             currentAngle = trace("Angle of launch : " ++ show (incline_theta + turret_theta)) (incline_theta+turret_theta), 
             impactRadius = radius,
             isLaunched = True,
-            hasImpacted = False
+            hasImpacted = False,
+            launchDirection = (if (incline_theta+turret_theta) <= pi/2 then FacingRight else FacingLeft)
         }),
         bulletColor = bColor,
         turretColor = tColor,

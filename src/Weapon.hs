@@ -19,7 +19,8 @@ initializeWeapon posX posY factor currAngle radius bullColor turrColor bullRotat
                                                                                       currentAngle = currAngle,
                                                                                       impactRadius = radius,
                                                                                       isLaunched = False,
-                                                                                      hasImpacted = False
+                                                                                      hasImpacted = False,
+                                                                                      launchDirection = FacingRight
                                                                                     }
                                                                      ),
                                                     bulletColor = bullColor,
@@ -39,7 +40,8 @@ updatePositionWeapon     (WeaponGraphics {
             currentAngle = theta, 
             impactRadius = r,
             isLaunched = islaunched,
-            hasImpacted = hasimpacted
+            hasImpacted = hasimpacted,
+            launchDirection = l
         }),
         bulletColor = bColor,
         turretColor = tColor,
@@ -52,10 +54,11 @@ updatePositionWeapon     (WeaponGraphics {
                                         currentPosition = trace("if if x : " ++ show x ++ " y : " ++ show y ++ "\n") getPositionProjectile (Position x y) velocity theta,
                                         currentVelocity = getVelocityProjectile velocity theta,
                                         velocityMultiplyingFactor = f,
-                                        currentAngle = getAngleProjectile velocity theta, 
+                                        currentAngle = getAngleProjectile velocity theta l,
                                         impactRadius = r,
                                         isLaunched = islaunched,
-                                        hasImpacted = hasimpacted
+                                        hasImpacted = hasimpacted,
+                                        launchDirection = l
                                     }),
                                     bulletColor = bColor,
                                     turretColor = tColor,
@@ -71,7 +74,8 @@ updatePositionWeapon     (WeaponGraphics {
                                         currentAngle = theta, 
                                         impactRadius = r,
                                         isLaunched = False,
-                                        hasImpacted = True
+                                        hasImpacted = True,
+                                        launchDirection = l
                                     }),
                                     bulletColor = bColor,
                                     turretColor = tColor,
@@ -87,7 +91,8 @@ updatePositionWeapon     (WeaponGraphics {
                                         currentAngle = theta, 
                                         impactRadius = r,
                                         isLaunched = False,
-                                        hasImpacted = True
+                                        hasImpacted = True,
+                                        launchDirection = l
                                     }),
                                     bulletColor = bColor,
                                     turretColor = tColor,
@@ -100,10 +105,12 @@ updatePositionWeapon     (WeaponGraphics {
                                         currentPosition = trace("if else else x : " ++ show x ++ " y : " ++ show y ++ "\n") getPositionProjectile (Position x y) velocity theta,
                                         currentVelocity = getVelocityProjectile velocity theta,
                                         velocityMultiplyingFactor = f,
-                                        currentAngle = getAngleProjectile velocity theta, 
+                                        currentAngle = getAngleProjectile velocity theta l,
                                         impactRadius = r,
                                         isLaunched = islaunched,
-                                        hasImpacted = hasimpacted
+                                        hasImpacted = hasimpacted,
+                                        launchDirection = l
+
                                     }),
                                     bulletColor = bColor,
                                     turretColor = tColor,
@@ -119,7 +126,8 @@ updatePositionWeapon     (WeaponGraphics {
                         currentAngle = theta, 
                         impactRadius = r,
                         isLaunched = islaunched,
-                        hasImpacted = hasimpacted
+                        hasImpacted = hasimpacted,
+                        launchDirection = l
                     }),
                     bulletColor = bColor,
                     turretColor = tColor,
