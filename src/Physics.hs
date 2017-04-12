@@ -4,7 +4,7 @@ import Types
 import Debug.Trace
 
 g :: Float
-g = 9.8
+g = 1
 
 gAcceleration :: Point
 gAcceleration = (Acceleration 0 g)
@@ -24,7 +24,8 @@ newPosition (Position x y) (Velocity vx vy) (Acceleration ax ay) time =
 
 newVelocity :: Point -> Point -> Float -> Point
 newVelocity (Velocity vx vy) (Acceleration ax ay) time = 
-    (Velocity (newOneDVelocity vx ax time) (newOneDVelocity vy ay time))
+	trace("vx in physics : " ++ show vx ++ "vy in physics : " ++ show vy ++ "\n")
+    (Velocity (newOneDVelocity vx ax time) (newOneDVelocity (-vy) ay time))
 
 newOneDPosition :: Float -> Float -> Float -> Float -> Float
 newOneDPosition x v a time = x + v * time + 0.5 * a * time * time
@@ -43,6 +44,7 @@ getComponentsVelocity quantity theta = (Velocity (cosComponent quantity theta) (
 
 gravityNewPosition :: Point -> Point -> Float -> Point
 gravityNewPosition (Position x y) (Velocity vx vy) time =
+	trace("vx component : " ++ show vx ++ " vy component : " ++ show vy ++ "\n")
     newPosition (Position x y) (Velocity vx vy) gAcceleration time
 
 newPositionVTheta :: Point -> Point -> Float -> Float -> Point
@@ -82,13 +84,13 @@ getPositionY:: Point -> Float
 getPositionY (Position _ y) = y
 
 getAngleProjectile :: Float -> Float -> Float 
-getAngleProjectile velocity theta = atan(tan(theta) + (g * unitTime)/(velocity * cos(theta)))
+getAngleProjectile velocity theta = (-1) * atan((-1) * tan(theta) + (g * unitTime)/(velocity * cos(theta)))
 
 getPositionProjectile :: Point -> Float -> Float -> Point 
 getPositionProjectile position velocity theta = getNewPositionUnderGravity position velocity theta unitTime
 
 getVelocityProjectile :: Float -> Float -> Float
-getVelocityProjectile velocity theta = sqrt((velocity * cos(theta))^2 + (velocity * sin(theta) + g * unitTime)^2)
+getVelocityProjectile velocity theta = sqrt((velocity * cos(theta))^2 + ((-1) * velocity * sin(theta) + g * unitTime)^2)
 
 data PointLineOrientation = AboveLine | BelowLine deriving(Enum, Eq) -- what about 90 degrees and its multiples?
 
@@ -162,7 +164,7 @@ getOtherEndPoint (Position x y) length theta =
 
 checkLineIfObstacle :: Point -> Point -> Integer -> Float -> Integer -> [[Tile]] -> Bool
 checkLineIfObstacle (Position x y) (Position ox oy) i theta length tileMap =  
-	trace ("i is : " ++ show i ++ " x is : " ++ show x ++ " y is : " ++ show y ++ " ox is : " ++ show ox ++ "oy is : " ++ show oy ++ "\n") 
+	--trace ("i is : " ++ show i ++ " x is : " ++ show x ++ " y is : " ++ show y ++ " ox is : " ++ show ox ++ "oy is : " ++ show oy ++ "\n") 
     (if (i < length)
         then if not (getIsObstacle tileMap (y - ((fromIntegral i) * sin(theta))) (x + ((fromIntegral i) * cos(theta))))
                 then checkLineIfObstacle (Position x y) (Position ox oy) (i + 1) theta length tileMap
@@ -183,7 +185,7 @@ thetaMax = 1.57
 
 searchForAngle :: Point -> Integer -> Float -> Float ->  [[Tile]] -> Float
 searchForAngle (Position x y) length theta thetaMax tileMap = 
-	trace("Theta is search for angle : " ++ show theta ++ "\n")
+	--trace("Theta is search for angle : " ++ show theta ++ "\n")
     (if theta < thetaMax
         then if not (checkLineSegmentObstacle (Position x y) length theta tileMap)
                 then theta
