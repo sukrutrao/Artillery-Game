@@ -132,6 +132,6 @@ updateGameStateWeapon
          in GameState { tileMatrix = t , 
                         tankList =  l,
                         weapon = newWeaponList,
-                        chance = if (isLaunched $ weaponPhysics newWeapon) then c else ((c+1) `mod` 3) ,
+                        chance = if (isLaunched $ weaponPhysics newWeapon) then c else ((c+1) `mod` 2) ,
                         isAcceptingInput = if (isLaunched $ weaponPhysics newWeapon) then False else True
                       }

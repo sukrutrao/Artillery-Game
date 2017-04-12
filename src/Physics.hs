@@ -113,17 +113,18 @@ checkPointInRectangle point (Position lx ly) length width theta =
         
 checkPointInCircle :: Point -> Point -> Float -> Bool
 checkPointInCircle (Position x y) (Position cx cy) radius
-    |    (x-cx)^2 + (y-cy)^2 <= radius^2 = True
-    |    otherwise = False
+    |    (x-cx)^2 + (y-cy)^2 <= radius^2 = trace("Tx,y,cx,cy,radius : " ++ show x ++ show y ++ show cx ++ show cy ++ show radius ++ "\n") True
+    |    otherwise = trace("Fx,y,cx,cy,radius : " ++ show x ++ show y ++ show cx ++ show cy ++ show radius ++ "\n") False
     
 getListOfPointsInCircle :: Point -> Float -> [[Point]] -> [Point]
+getListOfPointsInCircle (Position cx cy) radius [] = []
 getListOfPointsInCircle (Position cx cy) radius [[]] = []
-getListOfPointsInCircle (Position cx cy) radius (x:xs) =  
+getListOfPointsInCircle (Position cx cy) radius (x:xs) =  trace(show xs)
     ((checkCommonPointsCircleLine (Position cx cy) radius x) ++ (getListOfPointsInCircle (Position cx cy) radius xs))
 
 getAllPointsInCircle :: Point -> Float -> [Point]
 getAllPointsInCircle (Position cx cy) radius = 
-	getListOfPointsInCircle (Position cx cy) radius $ getListOfPointsInRectangle (Position (truncate (cx - radius)) (truncate (cy - radius))) (truncate (2*radius)) (truncate (2*radius)) 
+	getListOfPointsInCircle (Position cx cy) radius $ getListOfPointsInRectangle (Position (cx - radius) (cy - radius)) (truncate (2*radius)) (truncate (2*radius)) 
 
 checkCommonPointsCircleLine :: Point -> Float -> [Point] -> [Point]
 checkCommonPointsCircleLine (Position cx cy) radius [] = []
@@ -134,15 +135,16 @@ checkCommonPointsCircleLine (Position cx cy) radius (x:xs) =
     
 getListOfPointsInLine :: Point -> Integer -> [Point]
 getListOfPointsInLine (Position x y) length
-    |    length == 0 = []
+    |    length < 0 = []
     |    otherwise = ((Position x y) : (getListOfPointsInLine (Position (x+1) y) (length - 1)))
     
 getListOfPointsInRectangle :: Point -> Integer -> Integer -> [[Point]]
 getListOfPointsInRectangle (Position x y) length width
     |    width == 0 = [[]]
-    |    otherwise = ((getListOfPointsInLine (Position x y) length) : (getListOfPointsInRectangle (Position x (y-1)) length (width-1)))
+    |    otherwise = ((getListOfPointsInLine (Position x y) length) : (getListOfPointsInRectangle (Position x (y+1)) length (width-1)))
     
 flattenList :: [[Point]] -> [Point]
+flattenList [] = []
 flattenList [[]] = []
 flattenList (x:xs) = (x ++ (flattenList xs))
     
