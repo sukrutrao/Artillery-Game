@@ -3,9 +3,10 @@ module Weapon where
 import qualified Graphics.UI.GLUT
 import Types
 import Physics
+import Debug.Trace
 
 defaultStartVelocity :: Float
-defaultStartVelocity = 2
+defaultStartVelocity = 1
 
 genericImpactRadius :: Float
 genericImpactRadius = 10
@@ -48,7 +49,7 @@ updatePositionWeapon     (WeaponGraphics {
     }) tileMap = if islaunched then 
                                 if (truncate y>((length tileMap)-2) || y<0 || truncate x>((length $ tileMap !! 0)-2) || x<0) then (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
-                                        currentPosition = getPositionProjectile (Position x y) velocity theta,
+                                        currentPosition = trace("if if x : " ++ show x ++ " y : " ++ show y ++ "\n") getPositionProjectile (Position x y) velocity theta,
                                         currentVelocity = getVelocityProjectile velocity theta,
                                         velocityMultiplyingFactor = f,
                                         currentAngle = getAngleProjectile velocity theta, 
@@ -64,7 +65,7 @@ updatePositionWeapon     (WeaponGraphics {
                                     })
                                 else if getIsObstacle tileMap y x then (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
-                                        currentPosition = (Position x y),
+                                        currentPosition = trace("if else if x : " ++ show x ++ " y : " ++ show y ++ "\n") (Position x y),
                                         currentVelocity = velocity,
                                         velocityMultiplyingFactor = f,
                                         currentAngle = theta, 
@@ -80,7 +81,7 @@ updatePositionWeapon     (WeaponGraphics {
                                     })
                                     else (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
-                                        currentPosition = getPositionProjectile (Position x y) velocity theta,
+                                        currentPosition = trace("if else else x : " ++ show x ++ " y : " ++ show y ++ "\n") getPositionProjectile (Position x y) velocity theta,
                                         currentVelocity = getVelocityProjectile velocity theta,
                                         velocityMultiplyingFactor = f,
                                         currentAngle = getAngleProjectile velocity theta, 
@@ -96,7 +97,7 @@ updatePositionWeapon     (WeaponGraphics {
                                     })
                  else (WeaponGraphics {
                     weaponPhysics = (GenericWeapon {
-                        currentPosition = (Position x y),
+                        currentPosition = trace("else x : " ++ show x ++ " y : " ++ show y ++ "\n") (Position x y),
                         currentVelocity = velocity,
                         velocityMultiplyingFactor = f,
                         currentAngle = theta, 

@@ -56,7 +56,7 @@ launchWeapon
             currentPosition = (Position turretTopX turretTopY),
             currentVelocity = (turret_power*startVelocity*f),
             velocityMultiplyingFactor = f,
-            currentAngle = (incline_theta+turret_theta), 
+            currentAngle = trace("Angle of launch : " ++ show (incline_theta + turret_theta)) (incline_theta+turret_theta), 
             impactRadius = radius,
             isLaunched = True,
             hasImpacted = False
@@ -191,7 +191,7 @@ updateTank
     }) key tileMatrix = Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
-            position = trace("x : " ++ show x ++ " y : " ++ show y ++ "\n") (updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key),
+            position = {-trace("x : " ++ show x ++ " y : " ++ show y ++ "\n") -}(updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key),
             velocity = (Velocity vx vy),
             inclineAngle = (getAngleAt (Position x y) widthOfTank tileMatrix),--getAngleincline_theta,
             turret = (Turret {
@@ -233,5 +233,6 @@ updateGameStateTank
         isAcceptingInput = d
     }) key = let temp = changeListElementAtIndex l c (updateTank (l !! c) key t)
         in GameState {tileMatrix = t , tankList =  temp, weapon = w , chance = c , noOfPlayers = n, isAcceptingInput = d}
+
 
 
