@@ -127,7 +127,7 @@ updateGameStateWeapon
     }) = let weaponChoice = currentWeapon (l !! c)
              firedWeapon = w !! weaponChoice
              newWeapon = updateWeapon firedWeapon t
-             newWeaponList = (take weaponChoice w) ++ (newWeapon : (drop (weaponChoice+1) w))
+             newWeaponList = changeListElementAtIndex w weaponChoice newWeapon
          in GameState { tileMatrix = t , 
                         tankList =  l,
                         weapon = newWeaponList,

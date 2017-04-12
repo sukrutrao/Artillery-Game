@@ -64,6 +64,10 @@ constantVelocityNewPosition position velocity theta = newPosition position (getC
 getIsObstacle:: [[Tile]] -> Float -> Float -> Bool
 getIsObstacle tileMatrix row col = (isObstacle ((tileMatrix !! (truncate row)) !! (truncate col)))
 
+
+getTilePos:: [[Tile]] -> Float -> Float -> Point
+getTilePos tileMatrix row col = tilePosition ((tileMatrix !! (truncate row)) !! (truncate col))
+
 getTilePosX:: [[Tile]] -> Float -> Float -> Float
 getTilePosX tileMatrix row col = getPositionX (tilePosition ((tileMatrix !! (truncate row)) !! (truncate col)))
 
@@ -208,3 +212,8 @@ rectHalfAngle = atan (2*(fromIntegral heightOfTank)/(fromIntegral widthOfTank))
 
 hypotenuseRect :: Float
 hypotenuseRect = sqrt((((fromIntegral heightOfTank)*heightOfTile)^2) + ((((fromIntegral widthOfTank)*widthOfTile)/2)^2))
+
+makeTileNotObsAtPts :: [[Tile]] -> [Point] -> [[Tile]]
+makeTileNotObsAtPts tileMatrix points = foldr (\(Position x y) tileMap -> changeListElementAtIndex tileMap (truncate y) (changeListElementAtIndex (tileMap!!(truncate y)) (truncate x) (Tile{isObstacle=False,tilePosition=getTilePos tileMap y x}))) tileMatrix points
+
+changeListElementAtIndex originalList index newValue = (take index originalList) ++ ( newValue : (drop (index+1) originalList))
