@@ -17,7 +17,7 @@ initializeGamestate::GameState
 initializeGamestate = GameState { tileMatrix = getTileMatrix, 
 -- position x , y , score ,color , currentWeapon , weaponCount , 
                                   tankList = (getTankList [(10 , 150 , 30 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , 0 , [10,10,10]),
-                                                           (20 , 150 , 30 , Graphics.UI.GLUT.Color4 0.8 0.4 0.6 1 , 0 , [10,10,10]),
+                                                           (20 , 150 , 30 , Graphics.UI.GLUT.Color4 0.8 0.4 0.6 1 , 0 , [1,1,1]),
                                                            (30 , 150 , 30 , Graphics.UI.GLUT.Color4 0.123 0.03 0.24 1 , 0 , [10,10,10])
                                                           ]
                                                ),

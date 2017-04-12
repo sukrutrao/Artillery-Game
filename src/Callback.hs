@@ -138,14 +138,13 @@ display gamestate bulletRotationAngle = do
                                 (truncate weaponX>((length $ Types.tileMatrix game !! 0)-2)) ||
                                 (weaponX<0)
                                 )
-                                    then do
-                                        print "NEGATIVE"
+                                    then return()
                                     else do 
                                         loadIdentity
                                         currentColor $= Types.bulletColor currWeaponFromList
                                         translate $ Vector3 (Physics.getTilePosX (Types.tileMatrix game) weaponY weaponX) (Physics.getTilePosY (Types.tileMatrix game) weaponY weaponX) (0::Float)
                                         rotate bulletAngle $ Vector3 0 0 1
-                                        rectangle 0.03 0.03
+                                        rectangle 0.02 0.02
                         else return()
                     flush
                 else return()
@@ -194,9 +193,13 @@ keyboardMouse gamestate bulletRotationAngle key Down _ _ = do
                     gamestate $~! \x -> Tank.updateGameStateTank x Input.weapon2
                     postRedisplay Nothing
             Char ' ' -> do
-                    gamestate $~! \x -> Tank.updateGameStateLaunchWeapon x
-                    bulletRotationAngle $~! (*0)
-                    postRedisplay Nothing
+                    if(checkifSufficientWeaponsAvailable game)
+                        then do
+                            gamestate $~! \x -> Tank.updateGameStateLaunchWeapon x
+                            bulletRotationAngle $~! (*0)
+                            postRedisplay Nothing
+                        else do
+                            putStrLn "INSUFFICIENT WEAPON SUPPLY . CHOOSE OTHER WEAPON"
             _ -> return ()
             else
                 return ()
@@ -208,6 +211,16 @@ checkifWeaponIsLaunched (Types.GameState {
         Types.weapon = w,
         Types.chance = c
     }) = Types.isLaunched $ Types.weaponPhysics $ (w !! (Types.currentWeapon (l !! c)))
+
+checkifSufficientWeaponsAvailable ::Types.GameState -> Bool
+checkifSufficientWeaponsAvailable (Types.GameState {
+        Types.tankList = l,
+        Types.weapon = w,
+        Types.chance = c
+    }) = if ((Types.weaponCount $ l !! c) !! (Types.currentWeapon $ l !! c)) > 0 then True else False
+
+
+
 
 idle ::IORef Types.GameState ->  IORef Float -> IdleCallback
 idle gamestate bulletRotationAngle = do
