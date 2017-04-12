@@ -13,6 +13,7 @@ import Gamestate
 import Rectangle
 import Line
 import Triangle
+import Debug.Trace
 
 
 reshape :: ReshapeCallback
@@ -69,9 +70,12 @@ display gamestate bulletRotationAngle = do
                                     }) -> do
 
             tankcount $~! (+1)
-         --   print "\n*************\n"
-          --  print incline_theta
-          --  print "\n*************\n"
+            putStr "\n*****\nX: "
+            print x
+            putStr "Y: "
+            print y
+            putStr "\nTheta : "
+            print incline_theta
             let tankCoordX = Physics.getTilePosX (Types.tileMatrix game) y x
                 tankCoordY = Physics.getTilePosY (Types.tileMatrix game) y x
                 tankWidthInGLUT = (fromIntegral Types.widthOfTank)*Types.widthOfTile
@@ -179,9 +183,11 @@ keyboardMouse gamestate bulletRotationAngle key Down _ _ = do
                     gamestate $~! \x -> Tank.updateGameStateTank x Input.increaseAngle
                     postRedisplay Nothing
             SpecialKey KeyLeft -> do
+                    print("\n******************************************\n")
                     gamestate $~! \x -> Tank.updateGameStateTank x Input.moveLeft
                     postRedisplay Nothing
             SpecialKey KeyRight -> do
+                    print("\n******************************************\n")
                     gamestate $~! \x -> Tank.updateGameStateTank x Input.moveRight
                     postRedisplay Nothing
             Char '0' -> do

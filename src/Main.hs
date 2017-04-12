@@ -26,5 +26,5 @@ main = do
     keyboardMouseCallback $= Just (keyboardMouse gamestate bulletRotationAngle)
     idleCallback $= Just (idle gamestate bulletRotationAngle)
    -- putStrLn $ show gameX
-    print (show (getAngleAt (Types.Position 63 160) 9 (Types.tileMatrix gameX)))
+    print (show (getAngleAt (Types.Position 62 150) 9 (Types.tileMatrix gameX)))
     mainLoop

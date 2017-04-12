@@ -1,12 +1,13 @@
 module Physics where
 
 import Types
+import Debug.Trace
 
 g :: Float
 g = 9.8
 
 gAcceleration :: Point
-gAcceleration = (Acceleration 0 (-g))
+gAcceleration = (Acceleration 0 g)
 
 unitTime :: Float
 unitTime = 1
@@ -81,13 +82,13 @@ getPositionY:: Point -> Float
 getPositionY (Position _ y) = y
 
 getAngleProjectile :: Float -> Float -> Float 
-getAngleProjectile velocity theta = atan(tan(theta) - (g * unitTime)/(velocity * cos(theta)))
+getAngleProjectile velocity theta = atan(tan(theta) + (g * unitTime)/(velocity * cos(theta)))
 
 getPositionProjectile :: Point -> Float -> Float -> Point 
 getPositionProjectile position velocity theta = getNewPositionUnderGravity position velocity theta unitTime
 
 getVelocityProjectile :: Float -> Float -> Float
-getVelocityProjectile velocity theta = sqrt((velocity * cos(theta))^2 + (velocity * sin(theta) - g * unitTime)^2)
+getVelocityProjectile velocity theta = sqrt((velocity * cos(theta))^2 + (velocity * sin(theta) + g * unitTime)^2)
 
 data PointLineOrientation = AboveLine | BelowLine deriving(Enum, Eq) -- what about 90 degrees and its multiples?
 
@@ -101,10 +102,10 @@ checkOrientationPointLine (Position x y) first second
     
 checkPointInRectangle :: Point -> Point -> Float -> Float -> Float -> Bool
 checkPointInRectangle point (Position lx ly) length width theta = 
-    if ((checkOrientationPointLine point (Position lx ly) (Position (lx + length * cos(theta)) (ly + length * sin(theta)))) == AboveLine &&
-        (checkOrientationPointLine point (Position lx ly) (Position (lx - width * sin(theta)) (ly + width * cos(theta)))) == AboveLine &&
-        (checkOrientationPointLine point (Position (lx - width * sin(theta) + length * cos(theta)) (ly + width * cos(theta) + length * sin(theta))) (Position (lx + length * cos(theta)) (ly + length * sin(theta)))) == BelowLine &&
-        (checkOrientationPointLine point (Position (lx - width * sin(theta) + length * cos(theta)) (ly + width * cos(theta) + length * sin(theta))) (Position (lx - width * sin(theta)) (ly + width * cos(theta)))) == BelowLine)
+    if ((checkOrientationPointLine point (Position lx ly) (Position (lx + length * cos(theta)) (ly - length * sin(theta)))) == AboveLine &&
+        (checkOrientationPointLine point (Position lx ly) (Position (lx - width * sin(theta)) (ly - width * cos(theta)))) == AboveLine &&
+        (checkOrientationPointLine point (Position (lx - width * sin(theta) + length * cos(theta)) (ly - width * cos(theta) - length * sin(theta))) (Position (lx + length * cos(theta)) (ly - length * sin(theta)))) == BelowLine &&
+        (checkOrientationPointLine point (Position (lx - width * sin(theta) + length * cos(theta)) (ly - width * cos(theta) - length * sin(theta))) (Position (lx - width * sin(theta)) (ly - width * cos(theta)))) == BelowLine)
         then True
         else False
         
@@ -154,22 +155,25 @@ commonPointsBetweenCircleRectangle (Position cx cy) radius (Position x y) length
 
 getOtherEndPoint :: Point -> Integer -> Float -> Point
 getOtherEndPoint (Position x y) length theta = 
-    (Position (x + ((fromIntegral length)*(cos theta))) (y + ((fromIntegral length)*(sin theta))))
+    (Position (x + ((fromIntegral length)*(cos theta))) (y - ((fromIntegral length)*(sin theta))))
    
 
    -- TODO old version by sukrut(Position (x + (cosComponent length theta)) (y + (sinComponent length theta)))
 
-checkLineIfObstacle :: Point -> Point -> Integer -> Float -> [[Tile]] -> Bool
-checkLineIfObstacle (Position x y) (Position ox oy) i theta tileMap = 
-    if ((x + ((fromIntegral i) * cos(theta))) <= ox && (y + ((fromIntegral i) * sin(theta))) <= oy)
-        then if not (getIsObstacle tileMap (y + ((fromIntegral i) * sin(theta))) (x + ((fromIntegral i) * cos(theta))))
-                then checkLineIfObstacle (Position x y) (Position ox oy) (i + 1) theta tileMap
-                else False
-        else True
+checkLineIfObstacle :: Point -> Point -> Integer -> Float -> Integer -> [[Tile]] -> Bool
+checkLineIfObstacle (Position x y) (Position ox oy) i theta length tileMap =  
+	trace ("i is : " ++ show i ++ " x is : " ++ show x ++ " y is : " ++ show y ++ " ox is : " ++ show ox ++ "oy is : " ++ show oy ++ "\n") 
+    (if (i < length)
+        then if not (getIsObstacle tileMap (y - ((fromIntegral i) * sin(theta))) (x + ((fromIntegral i) * cos(theta))))
+                then checkLineIfObstacle (Position x y) (Position ox oy) (i + 1) theta length tileMap
+                else True
+        else False)
 
+-- returns true if line segment contains obstacle
 checkLineSegmentObstacle :: Point -> Integer -> Float -> [[Tile]] -> Bool
 checkLineSegmentObstacle (Position x y) length theta tileMap = 
-    checkLineIfObstacle (Position x y) (getOtherEndPoint (Position x y) length theta) 1 theta tileMap
+
+    checkLineIfObstacle (Position x y) (getOtherEndPoint (Position x y) length theta) 1 theta length tileMap
 
 thetaIncrement :: Float
 thetaIncrement = 0.1
@@ -179,15 +183,16 @@ thetaMax = 1.57
 
 searchForAngle :: Point -> Integer -> Float -> Float ->  [[Tile]] -> Float
 searchForAngle (Position x y) length theta thetaMax tileMap = 
-    if theta < thetaMax
+	trace("Theta is search for angle : " ++ show theta ++ "\n")
+    (if theta < thetaMax
         then if not (checkLineSegmentObstacle (Position x y) length theta tileMap)
                 then theta
                 else searchForAngle (Position x y) length (theta + thetaIncrement) thetaMax tileMap
-        else (-1.0)
+        else (-1.0))
 
 -- Accepts left end point of line and length of tank, and returns angle of its inclination
 getAngleAt :: Point -> Integer ->  [[Tile]]  -> Float
-getAngleAt (Position x y) length tileMap = searchForAngle (Position x y) length (-1.57) thetaMax tileMap
+getAngleAt (Position x y) length tileMap = searchForAngle (Position x y) length (0) thetaMax tileMap
 
 {-
 -- Accepts the centre and radius of a circle, tile map, and checks if it contains any obstacle in it or not

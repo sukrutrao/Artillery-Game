@@ -6,6 +6,7 @@ import Weapon
 import Input 
 import qualified Graphics.UI.GLUT
 import Data.IORef
+import Debug.Trace
 
 initializeTankState :: Float -> Float -> TankState
 initializeTankState posX posY = TankState {direction = FacingRight, 
@@ -190,7 +191,7 @@ updateTank
     }) key tileMatrix = Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
-            position = (updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key),
+            position = trace("x : " ++ show x ++ " y : " ++ show y ++ "\n") (updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key),
             velocity = (Velocity vx vy),
             inclineAngle = (getAngleAt (Position x y) widthOfTank tileMatrix),--getAngleincline_theta,
             turret = (Turret {
