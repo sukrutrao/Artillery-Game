@@ -115,7 +115,7 @@ updatePositionWeapon     (WeaponGraphics {
 updateWeapon :: WeaponGraphics -> [[Tile]] -> WeaponGraphics 
 updateWeapon weapon tileMap = if hasImpacted (weaponPhysics weapon)
                                 then weapon
-                                else   updatePositionWeapon weapon tileMap 
+                                else updatePositionWeapon weapon tileMap 
 
 updateGameStateWeapon :: GameState -> GameState
 updateGameStateWeapon
@@ -133,7 +133,7 @@ updateGameStateWeapon
          in GameState { tileMatrix = t , 
                         tankList =  l,
                         weapon = newWeaponList,
-                        chance = if (isLaunched $ weaponPhysics newWeapon) then c else ((c+1) `mod` 3) ,
+                        chance = if (isLaunched $ weaponPhysics newWeapon) then c else ((c+1) `mod` 2) ,
                         noOfPlayers = n,
                         isAcceptingInput = if (isLaunched $ weaponPhysics newWeapon) then False else True
                       }
