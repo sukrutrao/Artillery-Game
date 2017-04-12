@@ -24,7 +24,7 @@ newPosition (Position x y) (Velocity vx vy) (Acceleration ax ay) time =
 
 newVelocity :: Point -> Point -> Float -> Point
 newVelocity (Velocity vx vy) (Acceleration ax ay) time = 
-    trace("vx in physics : " ++ show vx ++ "vy in physics : " ++ show vy ++ "\n")
+   -- -- trace("vx in physics : " ++ show vx ++ "vy in physics : " ++ show vy ++ "\n")
     (Velocity (newOneDVelocity vx ax time) (newOneDVelocity (-vy) ay time))
 
 newOneDPosition :: Float -> Float -> Float -> Float -> Float
@@ -44,7 +44,7 @@ getComponentsVelocity quantity theta = (Velocity (cosComponent quantity theta) (
 
 gravityNewPosition :: Point -> Point -> Float -> Point
 gravityNewPosition (Position x y) (Velocity vx vy) time =
-    trace("vx component : " ++ show vx ++ " vy component : " ++ show vy ++ "\n")
+    -- trace("vx component : " ++ show vx ++ " vy component : " ++ show vy ++ "\n")
     newPosition (Position x y) (Velocity vx vy) gAcceleration time
 
 newPositionVTheta :: Point -> Point -> Float -> Float -> Point
@@ -84,7 +84,7 @@ getPositionY:: Point -> Float
 getPositionY (Position _ y) = y
 
 getAngleProjectile :: Float -> Float -> Float 
-getAngleProjectile velocity theta = (-1) * atan((-1) * tan(theta) + (g * unitTime)/(velocity * cos(theta)))
+getAngleProjectile velocity theta = trace ("+++++++++++++ theta: " ++ show theta ++ "  ,  velocity : " ++ show velocity ++ "\n") ((-1) * atan((-1) * tan(theta) + (g * unitTime)/(velocity * cos(theta))))
 
 getPositionProjectile :: Point -> Float -> Float -> Point 
 getPositionProjectile position velocity theta = getNewPositionUnderGravity position velocity theta unitTime
@@ -113,17 +113,18 @@ checkPointInRectangle point (Position lx ly) length width theta =
         
 checkPointInCircle :: Point -> Point -> Float -> Bool
 checkPointInCircle (Position x y) (Position cx cy) radius
-    |    (x-cx)^2 + (y-cy)^2 <= radius^2 = True
-    |    otherwise = False
+    |    (x-cx)^2 + (y-cy)^2 <= radius^2 = True -- trace("Tx,y,cx,cy,radius : " ++ show x ++ show y ++ show cx ++ show cy ++ show radius ++ "\n") True
+    |    otherwise = False -- trace("Fx,y,cx,cy,radius : " ++ show x ++ show y ++ show cx ++ show cy ++ show radius ++ "\n") 
     
 getListOfPointsInCircle :: Point -> Float -> [[Point]] -> [Point]
+getListOfPointsInCircle (Position cx cy) radius [] = []
 getListOfPointsInCircle (Position cx cy) radius [[]] = []
-getListOfPointsInCircle (Position cx cy) radius (x:xs) =  
+getListOfPointsInCircle (Position cx cy) radius (x:xs) =  -- trace(show xs)
     ((checkCommonPointsCircleLine (Position cx cy) radius x) ++ (getListOfPointsInCircle (Position cx cy) radius xs))
 
 getAllPointsInCircle :: Point -> Float -> [Point]
 getAllPointsInCircle (Position cx cy) radius = 
-    getListOfPointsInCircle (Position cx cy) radius $ getListOfPointsInRectangle (Position  (cx - radius) (cy - radius)) (truncate (2*radius)) (truncate (2*radius)) 
+	getListOfPointsInCircle (Position cx cy) radius $ getListOfPointsInRectangle (Position (cx - radius) (cy - radius)) (truncate (2*radius)) (truncate (2*radius)) 
 
 checkCommonPointsCircleLine :: Point -> Float -> [Point] -> [Point]
 checkCommonPointsCircleLine (Position cx cy) radius [] = []
@@ -134,15 +135,16 @@ checkCommonPointsCircleLine (Position cx cy) radius (x:xs) =
     
 getListOfPointsInLine :: Point -> Integer -> [Point]
 getListOfPointsInLine (Position x y) length
-    |    length == 0 = []
+    |    length < 0 = []
     |    otherwise = ((Position x y) : (getListOfPointsInLine (Position (x+1) y) (length - 1)))
     
 getListOfPointsInRectangle :: Point -> Integer -> Integer -> [[Point]]
 getListOfPointsInRectangle (Position x y) length width
     |    width == 0 = [[]]
-    |    otherwise = ((getListOfPointsInLine (Position x y) length) : (getListOfPointsInRectangle (Position x (y-1)) length (width-1)))
+    |    otherwise = ((getListOfPointsInLine (Position x y) length) : (getListOfPointsInRectangle (Position x (y+1)) length (width-1)))
     
 flattenList :: [[Point]] -> [Point]
+flattenList [] = []
 flattenList [[]] = []
 flattenList (x:xs) = (x ++ (flattenList xs))
     
@@ -168,7 +170,7 @@ getOtherEndPoint (Position x y) length theta =
 
 checkLineIfObstacle :: Point -> Point -> Integer -> Float -> Integer -> [[Tile]] -> Bool
 checkLineIfObstacle (Position x y) (Position ox oy) i theta length tileMap =  
-    --trace ("i is : " ++ show i ++ " x is : " ++ show x ++ " y is : " ++ show y ++ " ox is : " ++ show ox ++ "oy is : " ++ show oy ++ "\n") 
+    ---- trace ("i is : " ++ show i ++ " x is : " ++ show x ++ " y is : " ++ show y ++ " ox is : " ++ show ox ++ "oy is : " ++ show oy ++ "\n") 
     (if (i < length)
         then if not (getIsObstacle tileMap (y - ((fromIntegral i) * sin(theta))) (x + ((fromIntegral i) * cos(theta))))
                 then checkLineIfObstacle (Position x y) (Position ox oy) (i + 1) theta length tileMap
@@ -189,7 +191,7 @@ thetaMax = 1.57
 
 searchForAngle :: Point -> Integer -> Float -> Float ->  [[Tile]] -> Float
 searchForAngle (Position x y) length theta thetaMax tileMap = 
-    --trace("Theta is search for angle : " ++ show theta ++ "\n")
+    ---- trace("Theta is search for angle : " ++ show theta ++ "\n")
     (if theta < thetaMax
         then if not (checkLineSegmentObstacle (Position x y) length theta tileMap)
                 then theta
@@ -225,6 +227,6 @@ hypotenuseRect :: Float
 hypotenuseRect = sqrt((((fromIntegral heightOfTank)*heightOfTile)^2) + ((((fromIntegral widthOfTank)*widthOfTile)/2)^2))
 
 makeTileNotObsAtPts :: [[Tile]] -> [Point] -> [[Tile]]
-makeTileNotObsAtPts tileMatrix points = foldr (\(Position x y) tileMap -> changeListElementAtIndex tileMap (truncate y) (changeListElementAtIndex (tileMap !! (truncate y)) (truncate x) (Tile{isObstacle=True,tilePosition=getTilePos tileMap y x})  )  ) tileMatrix points
+makeTileNotObsAtPts tileMatrix points = foldr (\(Position x y) tileMap -> changeListElementAtIndex tileMap (truncate y) (changeListElementAtIndex (tileMap !! (truncate y)) (truncate x) (Tile{isObstacle=False,tilePosition=getTilePos tileMap y x})  )  ) tileMatrix points
 
 changeListElementAtIndex originalList index newValue = (take index originalList) ++ ( newValue : (drop (index+1) originalList))

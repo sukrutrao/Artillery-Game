@@ -75,6 +75,8 @@ display gamestate bulletRotationAngle = do
             print y
             putStr "\nTheta : "
             print incline_theta
+            putStr "\nTurret Theta : "
+            print turret_theta
             let tankCoordX = Physics.getTilePosX (Types.tileMatrix game) y x
                 tankCoordY = Physics.getTilePosY (Types.tileMatrix game) y x
                 tankWidthInGLUT = (fromIntegral Types.widthOfTank)*Types.widthOfTile
@@ -190,6 +192,7 @@ keyboardMouse gamestate bulletRotationAngle key Down _ _ = do
                     gamestate $~! \x -> Tank.updateGameStateTank x Input.moveRight
                     postRedisplay Nothing
             Char '0' -> do
+                    putStrLn $ show (Physics.getAllPointsInCircle (Types.Position 0 0) 3 )
                     gamestate $~! \x -> Tank.updateGameStateTank x Input.weapon0
                     postRedisplay Nothing
             Char '1' -> do
@@ -244,3 +247,8 @@ idle gamestate bulletRotationAngle = do
             gamestate $~! \x -> Weapon.updateGameStateWeapon x
             postRedisplay Nothing
         else return()
+
+
+
+
+    
