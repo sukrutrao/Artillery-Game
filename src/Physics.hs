@@ -233,12 +233,12 @@ changeListElementAtIndex originalList index newValue = (take index originalList)
 
 getAllPointsInLine :: Point -> Integer -> Float -> Integer -> [Point]
 getAllPointsInLine (Position x y) length theta i
-	|	i<=length = (Position x y) : getAllPointsInLine (Position (x + (fromIntegral length) * (cos theta)) (y - (fromIntegral length) * (sin theta))) length theta (i+1)
+	|	i<=length = (Position x y) : getAllPointsInLine (Position (x + (fromIntegral i) * (cos theta)) (y - (fromIntegral i) * (sin theta))) length theta (i+1)
 	|	otherwise = []
 
 getAllPointsInRectangleHelper :: Point -> Integer -> Integer -> Float -> Integer -> [[Point]]
 getAllPointsInRectangleHelper (Position x y) length width theta i
-	|	i<=width = (getAllPointsInLine (Position x y) length theta 0) : (getAllPointsInRectangleHelper (Position (x - (fromIntegral width) * (sin theta)) (y - (fromIntegral width * (cos theta)))) length width theta (i+1))
+	|	i<=width = (getAllPointsInLine (Position x y) length theta 0) : (getAllPointsInRectangleHelper (Position (x - (fromIntegral i) * (sin theta)) (y - (fromIntegral i) * (cos theta))) length width theta (i+1))
 	|	otherwise = [[]] 
 
 getAllPointsInRectangle :: Point -> Integer -> Integer -> Float -> [Point]
