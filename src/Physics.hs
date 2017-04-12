@@ -10,7 +10,7 @@ gAcceleration :: Point
 gAcceleration = (Acceleration 0 g)
 
 unitTime :: Float
-unitTime = 1
+unitTime = 0.5
 
 restVelocity :: Point
 restVelocity = (Velocity 0 0)
@@ -141,7 +141,7 @@ getListOfPointsInLine (Position x y) length
     
 getListOfPointsInRectangle :: Point -> Integer -> Integer -> [[Point]]
 getListOfPointsInRectangle (Position x y) length width
-    |    width == 0 = [[]]
+    |    width < 0 = [[]]
     |    otherwise = ((getListOfPointsInLine (Position x y) length) : (getListOfPointsInRectangle (Position x (y+1)) length (width-1)))
     
 flattenList :: [[Point]] -> [Point]
@@ -172,7 +172,7 @@ getOtherEndPoint (Position x y) length theta =
 checkLineIfObstacle :: Point -> Point -> Integer -> Float -> Integer -> [[Tile]] -> Bool
 checkLineIfObstacle (Position x y) (Position ox oy) i theta length tileMap =  
     ---- trace ("i is : " ++ show i ++ " x is : " ++ show x ++ " y is : " ++ show y ++ " ox is : " ++ show ox ++ "oy is : " ++ show oy ++ "\n") 
-    (if (i < length)
+    (if (i < length) -- or <=?
         then if not (getIsObstacle tileMap (y - ((fromIntegral i) * sin(theta))) (x + ((fromIntegral i) * cos(theta))))
                 then checkLineIfObstacle (Position x y) (Position ox oy) (i + 1) theta length tileMap
                 else True
@@ -181,7 +181,6 @@ checkLineIfObstacle (Position x y) (Position ox oy) i theta length tileMap =
 -- returns true if line segment contains obstacle
 checkLineSegmentObstacle :: Point -> Integer -> Float -> [[Tile]] -> Bool
 checkLineSegmentObstacle (Position x y) length theta tileMap = 
-
     checkLineIfObstacle (Position x y) (getOtherEndPoint (Position x y) length theta) 1 theta length tileMap
 
 thetaIncrement :: Float
@@ -231,3 +230,8 @@ makeTileNotObsAtPts :: [[Tile]] -> [Point] -> [[Tile]]
 makeTileNotObsAtPts tileMatrix points = foldr (\(Position x y) tileMap -> changeListElementAtIndex tileMap (truncate y) (changeListElementAtIndex (tileMap !! (truncate y)) (truncate x) (Tile{isObstacle=False,tilePosition=getTilePos tileMap y x})  )  ) tileMatrix points
 
 changeListElementAtIndex originalList index newValue = (take index originalList) ++ ( newValue : (drop (index+1) originalList))
+
+getAllPointsInLine :: Point -> Integer -> Float -> Integer -> [Point]
+getAllPointsInLine (Position x y) length theta i
+	|	i<=length = (Position x y) : getAllPointsInLine (Position (x + (fromIntegral length) * (cos theta)) (y - (fromIntegral length) * (sin theta))) length theta (i+1)
+	|	otherwise = []
