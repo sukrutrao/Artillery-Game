@@ -253,3 +253,21 @@ tankGravityNewPosition :: Point -> Integer -> Integer -> Float -> [[Tile]] -> Po
 tankGravityNewPosition (Position x y) length width theta tileMap
 	|	checkIfValidPosition (Position x (y+1)) length width theta tileMap == False = (Position x (y+1)) 
 	|	otherwise = (Position x y)
+
+parabolaFunction :: Point -> Float -> Float -> Float -> Float
+parabolaFunction (Position sx sy) x velocity theta = 
+	sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2)
+
+checkIntermediateObstacleInPath :: Point -> Point -> Point -> Float -> Float -> [[Tile]] -> Point
+checkIntermediateObstacleInPath (Position x y) (Position ox oy) (Position sx sy) velocity theta tileMap =
+	if x < ox
+		then if getIsObstacle tileMap (parabolaFunction (Position sx sy) (x+1) velocity theta) (x+1)
+			then (Position (x+1) (parabolaFunction (Position sx sy) (x+1) velocity theta))
+			else checkIntermediateObstacleInPath (Position (x+1) (parabolaFunction (Position sx sy) (x+1) velocity theta))
+				 (Position ox oy) (Position sx sy) velocity theta tileMap
+		else (Position ox oy)
+
+newPositionProjectile :: Point -> Point -> Float -> Float -> [[Tile]] -> Point
+newPositionProjectile initialPosition position velocity theta tileMap = 
+	checkIntermediateObstacleInPath position (getNewPositionUnderGravity position velocity theta unitTime) initialPosition
+		velocity theta tileMap
