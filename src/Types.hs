@@ -53,6 +53,8 @@ data GameState = GameState {
 data Weapon = GenericWeapon {
     currentPosition :: Point,
     currentVelocity :: Float,
+    launchVelocity :: Float,
+    launchAngle :: Float,
     velocityMultiplyingFactor :: Float,
     currentAngle :: Float, 
     impactRadius :: Float,

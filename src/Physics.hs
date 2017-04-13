@@ -69,17 +69,17 @@ constantVelocityNewPosition :: Point -> Float -> Float ->  Point
 constantVelocityNewPosition position velocity theta = newPosition position (getComponentsVelocity velocity theta) (Acceleration 0 0) unitTime
 
 getIsObstacle:: [[Tile]] -> Float -> Float -> Bool
-getIsObstacle tileMatrix row col = trace ("getTileIsObstacle stack : "++ show row ++ " " ++ show col) (isObstacle ((tileMatrix !! (truncate row)) !! (truncate col)))
+getIsObstacle tileMatrix row col = {-trace ("getTileIsObstacle stack : "++ show row ++ " " ++ show col) -}(isObstacle ((tileMatrix !! (truncate row)) !! (truncate col)))
 
 
 getTilePos:: [[Tile]] -> Float -> Float -> Point
-getTilePos tileMatrix row col = trace ("getTilePos stack : "++ show row ++ " " ++ show col) tilePosition ((tileMatrix !! (truncate row)) !! (truncate col))
+getTilePos tileMatrix row col = {-trace ("getTilePos stack : "++ show row ++ " " ++ show col)-} tilePosition ((tileMatrix !! (truncate row)) !! (truncate col))
 
 getTilePosX:: [[Tile]] -> Float -> Float -> Float
-getTilePosX tileMatrix row col = trace ("getTilePosX stack : "++ show row ++ " " ++ show col) (getPositionX (tilePosition ((tileMatrix !! (truncate row)) !! (truncate col))))
+getTilePosX tileMatrix row col = {-trace ("getTilePosX stack : "++ show row ++ " " ++ show col)-} (getPositionX (tilePosition ((tileMatrix !! (truncate row)) !! (truncate col))))
 
 getTilePosY:: [[Tile]] -> Float -> Float -> Float
-getTilePosY tileMatrix row col = trace ("getTilePosY stack : "++ show row ++ " " ++ show col) getPositionY (tilePosition ((tileMatrix !! (truncate row)) !! (truncate col)))
+getTilePosY tileMatrix row col = {-trace ("getTilePosY stack : "++ show row ++ " " ++ show col) -}getPositionY (tilePosition ((tileMatrix !! (truncate row)) !! (truncate col)))
 
 getPositionX:: Point -> Float
 getPositionX (Position x _) = x
@@ -267,15 +267,15 @@ tankGravityNewPosition (Position x y) length width theta tileMap
 	|	otherwise = (Position x y)
 
 parabolaFunction :: Point -> Float -> Float -> Float -> Float
-parabolaFunction (Position sx sy) x velocity theta = 
-	sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2)
+parabolaFunction (Position sx sy) x velocity theta = trace ("PARABOLA+++++++ SX : " ++ show sx  ++ " , SY : " ++ show sy ++ " velocity : " ++ show velocity ++ " theta : " ++ show theta ++ " X : " ++  show x ++ " , Y : " ++ show (sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2)))
+	(sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2))
 
 -- incomplete!
 checkIntermediateObstacleInPath :: Point -> Point -> Point -> Float -> Float -> [[Tile]] -> Bool -> Point
 checkIntermediateObstacleInPath (Position x y) (Position ox oy) (Position sx sy) velocity theta tileMap xIsLesser =
-    let newTheta = if xIsLesser then atan(sqrt((tan theta)^2 + (2*g)*(velocity*(cos theta))))
-    							else pi + atan(sqrt((tan theta)^2 + (2*g)*(velocity*(cos theta))))
-        newVelocity = sqrt(velocity^2 + 2*g) in
+    let newTheta = theta {-if xIsLesser then atan(sqrt((tan theta)^2 + (2*g)*(velocity*(cos theta))))
+    							else pi + atan(sqrt((tan theta)^2 + (2*g)*(velocity*(cos theta))))-}
+        newVelocity = velocity {-sqrt(velocity^2 + 2*g)-} in
     if (xIsLesser && x < ox)
         then (if getIsObstacle tileMap (parabolaFunction (Position sx sy) (x+1) newVelocity newTheta) (x+1)
                 then (Position (x+1) (parabolaFunction (Position sx sy) (x+1) newVelocity newTheta))
@@ -289,11 +289,11 @@ checkIntermediateObstacleInPath (Position x y) (Position ox oy) (Position sx sy)
                 else (Position ox oy))
 
 
-newPositionProjectile :: Point -> Point -> Float -> Float -> [[Tile]] -> Point
-newPositionProjectile initialPosition position velocity theta tileMap = 
+newPositionProjectile :: Point -> Point -> Float -> Float -> Float -> Float -> [[Tile]] -> Point
+newPositionProjectile initialPosition position velocity theta lv lt tileMap = 
     let otherPosition = getPositionProjectile position velocity theta 
         xIsLesser = getPositionX position < getPositionX otherPosition in
-    	checkIntermediateObstacleInPath position otherPosition initialPosition velocity theta tileMap xIsLesser
+    	checkIntermediateObstacleInPath position otherPosition initialPosition lv lt tileMap xIsLesser
 
 getTurretPosition :: GameState -> Float -> Point
 getTurretPosition (GameState {

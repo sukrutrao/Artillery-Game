@@ -15,6 +15,8 @@ initializeWeapon :: Float -> Float -> Float -> Float -> Float -> Graphics.UI.GLU
 initializeWeapon posX posY factor currAngle radius bullColor turrColor bullRotate turrThick turrLen =  
                                     WeaponGraphics { weaponPhysics = (GenericWeapon { currentPosition = (originPosition posX posY),
                                                                                       currentVelocity = defaultStartVelocity,
+                                                                                      launchVelocity = 0.0,
+                                                                                      launchAngle = 0.0,
                                                                                       velocityMultiplyingFactor = factor,
                                                                                       currentAngle = currAngle,
                                                                                       impactRadius = radius,
@@ -36,6 +38,8 @@ updatePositionWeapon     (WeaponGraphics {
         weaponPhysics = (GenericWeapon {
             currentPosition = (Position x y),
             currentVelocity = velocity,
+            launchVelocity = lvelocity,
+            launchAngle = lAngle,
             velocityMultiplyingFactor = f,
             currentAngle = theta, 
             impactRadius = r,
@@ -51,9 +55,11 @@ updatePositionWeapon     (WeaponGraphics {
     }) gameState tileMap = if islaunched then 
                                 if (truncate y>((length tileMap)-2) || y<0) then (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
-                                        currentPosition = trace("if if x : " ++ show x ++ " y : " ++ show y ++ "\n") {-getPositionProjectile (Position x y) velocity theta-}
-                                            newPositionProjectile (getTurretPosition gameState lTurr) (Position x y) velocity theta tileMap,
+                                        currentPosition = {-trace("if if x : " ++ show x ++ " y : " ++ show y ++ "\n") -}{-getPositionProjectile (Position x y) velocity theta-}
+                                             newPositionProjectile (getTurretPosition gameState lTurr) (Position x y) velocity theta lvelocity lAngle tileMap,
                                         currentVelocity = getVelocityProjectile velocity theta,
+                                        launchVelocity = lvelocity,
+                                        launchAngle = lAngle,
                                         velocityMultiplyingFactor = f,
                                         currentAngle = getAngleProjectile velocity theta l,
                                         impactRadius = r,
@@ -69,9 +75,11 @@ updatePositionWeapon     (WeaponGraphics {
                                     })
                                 else if (truncate x>((length $ tileMap !! 0)-2) || x<0) then (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
-                                        currentPosition = trace("HOLA$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" ++ show x ++ "  ,  " ++ show y ++ "\n") (Position x y),
+                                        currentPosition = {-trace("HOLA$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" ++ show x ++ "  ,  " ++ show y ++ "\n")-} (Position x y),
                                         currentVelocity = velocity,
                                         velocityMultiplyingFactor = f,
+                                        launchVelocity = lvelocity,
+                                        launchAngle = lAngle,
                                         currentAngle = theta, 
                                         impactRadius = r,
                                         isLaunched = False,
@@ -90,6 +98,8 @@ updatePositionWeapon     (WeaponGraphics {
                                                 currentPosition = trace("if else if x : " ++ show x ++ " y : " ++ show y ++ "\n") (Position x y),
                                                 currentVelocity = velocity,
                                                 velocityMultiplyingFactor = f,
+                                                launchVelocity = lvelocity,
+                                                launchAngle = lAngle,
                                                 currentAngle = theta, 
                                                 impactRadius = r,
                                                 isLaunched = False,
@@ -105,9 +115,11 @@ updatePositionWeapon     (WeaponGraphics {
                                     else (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
                                         currentPosition = trace(" : " ++ show x ++ " y : " ++ show y ++ "\n") {-getPositionProjectile (Position x y) velocity theta-}
-                                                newPositionProjectile (getTurretPosition gameState lTurr) (Position x y) velocity theta tileMap,
+                                                newPositionProjectile (getTurretPosition gameState lTurr) (Position x y) velocity theta lvelocity lAngle tileMap,
                                         currentVelocity = getVelocityProjectile velocity theta,
                                         velocityMultiplyingFactor = f,
+                                        launchVelocity = lvelocity,
+                                        launchAngle = lAngle,
                                         currentAngle = getAngleProjectile velocity theta l,
                                         impactRadius = r,
                                         isLaunched = islaunched,
@@ -123,8 +135,10 @@ updatePositionWeapon     (WeaponGraphics {
                                     })
                  else (WeaponGraphics {
                     weaponPhysics = (GenericWeapon {
-                        currentPosition = trace("else x : " ++ show x ++ " y : " ++ show y ++ "\n") (Position x y),
+                        currentPosition = {-trace("else x : " ++ show x ++ " y : " ++ show y ++ "\n") -}(Position x y),
                         currentVelocity = velocity,
+                        launchVelocity = lvelocity,
+                        launchAngle = lAngle,
                         velocityMultiplyingFactor = f,
                         currentAngle = theta, 
                         impactRadius = r,

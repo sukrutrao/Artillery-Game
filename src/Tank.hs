@@ -55,6 +55,8 @@ launchWeapon
         weaponPhysics = (GenericWeapon {
             currentPosition = (Position turretTopX turretTopY),
             currentVelocity = (turret_power*startVelocity*f),
+            launchVelocity = trace("TANK.hs : launchVelocity : " ++ show (turret_power*startVelocity*f) ) (turret_power*startVelocity*f),
+            launchAngle = trace("TANK.hs : launchAngle : " ++ show (incline_theta+turret_theta) ) (incline_theta+turret_theta),
             velocityMultiplyingFactor = f,
             currentAngle = trace("Angle of launch : " ++ show (incline_theta + turret_theta)) (incline_theta+turret_theta), 
             impactRadius = radius,

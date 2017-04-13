@@ -20,6 +20,11 @@ reshape :: ReshapeCallback
 reshape size = do
   viewport $= (Position 0 0, size)
 
+
+
+
+
+
 display :: IORef Types.GameState -> IORef Float -> DisplayCallback
 display gamestate bulletRotationAngle = do
         clear [ColorBuffer, DepthBuffer]
@@ -70,12 +75,12 @@ display gamestate bulletRotationAngle = do
 
             tankcount $~! (+1)
 
-            let tankCoordX =  trace ("INSIDE COORDX") (Physics.getTilePosX (Types.tileMatrix game) y x)
-                tankCoordY =  trace ("INSIDE COORDY") (Physics.getTilePosY (Types.tileMatrix game) y x)
+            let tankCoordX =  {-trace ("INSIDE COORDX")-} (Physics.getTilePosX (Types.tileMatrix game) y x)
+                tankCoordY =  {-trace ("INSIDE COORDY")-} (Physics.getTilePosY (Types.tileMatrix game) y x)
                 tankWidthInGLUT = (fromIntegral Types.widthOfTank)*Types.widthOfTile
                 tankHeightInGLUT = (fromIntegral Types.heightOfTank)*Types.heightOfTile
 
-            putStr "\n*****\nX: "
+            {-putStr "\n*****\nX: "
             print x
             putStr "Y: "
             print y
@@ -86,7 +91,7 @@ display gamestate bulletRotationAngle = do
             putStr "TankCoordX : "
             print tankCoordX
             putStr "tankCoordY : "
-            print tankCoordY
+            print tankCoordY-}
 
             loadIdentity
             currentColor $= tankcolor
@@ -106,7 +111,7 @@ display gamestate bulletRotationAngle = do
                 healthY = (topCenterY-(sin(incline_theta)*(tankWidthInGLUT/3))) - (lengthOfTurret*1.25)*sin(perpendicularAngle)
 
             --Drawing The White Health Of Tank
-            trace ("White Health") (loadIdentity)
+            loadIdentity{-trace ("White Health")-} 
             currentColor $= Color4 1 1 1 1              -- white health background
             translate $ Vector3 healthX healthY (0::Float)
             rotate (Physics.radianTodegree incline_theta) $ Vector3 0 0 1 
@@ -115,7 +120,7 @@ display gamestate bulletRotationAngle = do
 
             --Drawing The Health Of Tank
             
-            trace ("Red Health") (loadIdentity)
+            loadIdentity{-trace ("Red Health") -}
             currentColor $= if (s>20) then Color4 0 0.5019 0 1 else (if (s>10) then Color4 1 0.8196 0.10196 1 else Color4 1 0 0 1 )               -- tank color power
             translate $ Vector3 healthX healthY (0::Float)
             rotate (Physics.radianTodegree incline_theta) $ Vector3 0 0 1
@@ -124,7 +129,7 @@ display gamestate bulletRotationAngle = do
 
             --Drawing The Turret
             
-            trace ("Draw Turret") (loadIdentity)
+            loadIdentity{-trace ("Draw Turret")-}
             lineWidth $=  Types.turretThickness ((Types.weapon game) !! current_weapon)
             currentColor $= Types.turretColor ((Types.weapon game) !! current_weapon)     -- grey turret
             translate $ Vector3 topCenterX topCenterY 0
@@ -148,7 +153,7 @@ display gamestate bulletRotationAngle = do
                             let currWeaponFromList =  (Types.weapon game) !! current_weapon
                                 weaponX = Physics.getPositionX $ Types.currentPosition $ Types.weaponPhysics currWeaponFromList
                                 weaponY = Physics.getPositionY $ Types.currentPosition $ Types.weaponPhysics currWeaponFromList
-                            if trace ("In Weapon Launced"++ show weaponX ++ " " ++ show weaponY ) ((truncate weaponY>((length $ Types.tileMatrix game)-2)) || (weaponY<0))
+                            if {-trace ("In Weapon Launced"++ show weaponX ++ " " ++ show weaponY )-} ((truncate weaponY>((length $ Types.tileMatrix game)-2)) || (weaponY<0))
                                     then return()
                                     else do 
                                         loadIdentity
