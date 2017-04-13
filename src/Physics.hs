@@ -211,7 +211,7 @@ checkObstacleInCircle (Position cx cy) radius tileMap = checkObstacleInList (get
 -- Accept a list of points and tile map and returns if any of them contain an obstacle or not
 checkObstacleInList :: [Point] -> [[Tile]] -> Bool
 checkObstacleInList [] tileMap = False
-checkObstacleInList (x:xs) tileMap = (getIsObstacle tileMap (truncate $ getPositionX x) (truncate $ getPositionY x))
+checkObstacleInList (x:xs) tileMap = (getIsObstacle tileMap (getPositionX x) (getPositionY x))
     || (checkObstacleInList xs tileMap)
 
 radianTodegree::Float -> Float

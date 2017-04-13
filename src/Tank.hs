@@ -254,7 +254,7 @@ updateHealth (Tank {
     }) (GenericWeapon {
         currentPosition = (Position wx wy),
         currentVelocity = weapon_velocity,
-        velocityMultiplyingFactor = f,
+        velocityMultiplyingFactor = vf,
         currentAngle = weapon_theta, 
         impactRadius = impactradius,
         isLaunched = isL,
@@ -264,4 +264,4 @@ updateHealth (Tank {
             for weapons? if we dont want, just remove it from the formula -}
         (length $ commonPointsBetweenLists 
             (getAllPointsInCircle (Position wx wy) impactradius)
-            (getAllPointsInRectangle (Position x y) widthOfTank heightofTank incline_theta)) * weapon_velocity * damage_index    }
+            (getAllPointsInRectangle (Position x y) widthOfTank heightofTank incline_theta)) * weapon_velocity * damage_index
