@@ -27,7 +27,7 @@ data TankState = TankState {
 
 data Tank = Tank {
     tankState :: TankState,
-    score :: Integer,
+    score :: Float,
     color :: Graphics.UI.GLUT.Color4 Float,
     currentWeapon :: Int,
     weaponCount :: [Integer]

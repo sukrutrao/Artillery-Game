@@ -158,6 +158,51 @@ updateWeapon weapon gameState tileMap = if hasImpacted (weaponPhysics weapon)
                                 then weapon
                                 else updatePositionWeapon weapon gameState tileMap 
 
+
+updateHealth :: Weapon -> Tank -> Tank
+updateHealth  (GenericWeapon {
+        currentPosition = (Position wx wy),
+        currentVelocity = weapon_velocity,
+        velocityMultiplyingFactor = vf,
+        currentAngle = weapon_theta, 
+        impactRadius = impactradius,
+        isLaunched = isL,
+        hasImpacted = hasImp,
+        launchDirection = lD
+    }) (Tank {
+        tankState = (TankState {
+            direction = d,
+            position = (Position x y),
+            velocity = (Velocity vx vy),
+            inclineAngle = incline_theta,
+            turret = (Turret {
+                angle = turret_theta, 
+                power = turret_power
+            })
+        }),
+        score = s,
+        color = c,
+        currentWeapon = e,
+        weaponCount = f
+    }) =  (Tank {
+        tankState = (TankState {
+            direction = d,
+            position = (Position x y),
+            velocity = (Velocity vx vy),
+            inclineAngle = incline_theta,
+            turret = (Turret {
+                angle = turret_theta, 
+                power = turret_power
+            })
+        }),
+        score = s - (fromIntegral (length $ commonPointsBetweenLists (getAllPointsInCircle (Position wx wy) impactradius) (getAllPointsInRectangle (Position x y) widthOfTank heightOfTank incline_theta)) * weapon_velocity * 2),
+        color = c,
+        currentWeapon = e,
+        weaponCount = f
+    })
+
+
+
 updateGameStateWeapon :: GameState -> GameState
 updateGameStateWeapon
     (GameState {
@@ -181,7 +226,7 @@ updateGameStateWeapon
                                 else makeTileNotObsAtPts t (getAllPointsInCircle (currentPosition (weaponPhysics newWeapon)) (impactRadius (weaponPhysics newWeapon)))
              newWeaponList = changeListElementAtIndex w weaponChoice newWeapon
          in GameState { tileMatrix = shouldWeBlast, 
-                        tankList =  l,
+                        tankList =  map (updateHealth (weaponPhysics newWeapon)) l,
                         weapon = newWeaponList,
                         chance = if (isLaunched $ weaponPhysics newWeapon) then c else ((c+1) `mod` 2) ,
                         noOfPlayers = n,

@@ -8,7 +8,7 @@ import System.IO.Unsafe
 --import Tile
 
 
-getTankList :: [(Float , Float , Integer , Graphics.UI.GLUT.Color4 Float , Int , [Integer])] -> [Tank]
+getTankList :: [(Float , Float , Float , Graphics.UI.GLUT.Color4 Float , Int , [Integer])] -> [Tank]
 getTankList initialPosition = [(initializeTank a b c d e f) | (a,b,c,d,e,f) <- initialPosition] 
 
 getWeaponList :: [(Float,Float,Float,Float,Float,Graphics.UI.GLUT.Color4 Float,Graphics.UI.GLUT.Color4 Float,Graphics.UI.GLUT.Vector3 Float,Float,Float)] -> [WeaponGraphics]

@@ -183,7 +183,7 @@ checkLineIfObstacle (Position x y) (Position ox oy) i theta length tileMap =
         then if not $ isIndexInRange tileMap (truncate (y - ((fromIntegral i) * sin(theta))))
                     then True
              else let xTemp = (x +((fromIntegral i) * cos(theta))) 
-                  in if not $ getIsObstacle tileMap (y - ((fromIntegral i) * sin(theta))) (if(truncate xTemp >= tileMatrixColumnSize) then (fromIntegral tileMatrixColumnSize) - (fromIntegral widthOfTank) else xTemp)
+                  in if not $ getIsObstacle tileMap (y - ((fromIntegral i) * sin(theta))) (if(truncate xTemp >= tileMatrixColumnSize) then (fromIntegral tileMatrixColumnSize) - ((fromIntegral widthOfTank)*3) else xTemp)
                         then checkLineIfObstacle (Position x y) (Position ox oy) (i + 1) theta length tileMap
                         else True
         else False)
@@ -267,7 +267,7 @@ tankGravityNewPosition (Position x y) length width theta tileMap
 	|	otherwise = (Position x y)
 
 parabolaFunction :: Point -> Float -> Float -> Float -> Float
-parabolaFunction (Position sx sy) x velocity theta = trace ("PARABOLA+++++++ SX : " ++ show sx  ++ " , SY : " ++ show sy ++ " velocity : " ++ show velocity ++ " theta : " ++ show theta ++ " X : " ++  show x ++ " , Y : " ++ show (sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2)))
+parabolaFunction (Position sx sy) x velocity theta = {-trace ("PARABOLA+++++++ SX : " ++ show sx  ++ " , SY : " ++ show sy ++ " velocity : " ++ show velocity ++ " theta : " ++ show theta ++ " X : " ++  show x ++ " , Y : " ++ show (sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2)))-}
 	(sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2))
 
 -- incomplete!

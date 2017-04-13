@@ -101,13 +101,15 @@ display gamestate bulletRotationAngle = do
 
             let topCenterX = (tankCoordX+(Physics.hypotenuseRect*cos(incline_theta+Physics.rectHalfAngle)))
                 topCenterY = (tankCoordY+(Physics.hypotenuseRect*sin(incline_theta+Physics.rectHalfAngle)))
-
-            let perpendicularAngle = atan((-1)*(1/(tan(incline_theta))))
+            let taninverse = atan((-1)*(1/(tan(fromIntegral $ truncate incline_theta))))
+            let perpendicularAngle =  if (taninverse > 0) 
+                                        then taninverse
+                                        else ((pi)-taninverse)
 
             let lengthOfTurret = (Types.lengthOfTurret ((Types.weapon game) !! current_weapon))
             
 
-            let healthX = trace ("Length Of Turret : " ++ show lengthOfTurret) (topCenterX-(cos(incline_theta)*(tankWidthInGLUT/3))) - (lengthOfTurret*0.35)*cos(perpendicularAngle)
+            let healthX =  (topCenterX-(cos(incline_theta)*(tankWidthInGLUT/3))) - (lengthOfTurret*0.35)*cos(perpendicularAngle)
                 healthY = (topCenterY-(sin(incline_theta)*(tankWidthInGLUT/3))) - (lengthOfTurret*1.25)*sin(perpendicularAngle)
 
             --Drawing The White Health Of Tank
@@ -124,7 +126,7 @@ display gamestate bulletRotationAngle = do
             currentColor $= if (s>20) then Color4 0 0.5019 0 1 else (if (s>10) then Color4 1 0.8196 0.10196 1 else Color4 1 0 0 1 )               -- tank color power
             translate $ Vector3 healthX healthY (0::Float)
             rotate (Physics.radianTodegree incline_theta) $ Vector3 0 0 1
-            rectangle (max (0.0)  (((fromIntegral s)*((tankWidthInGLUT/1.5)))/30)) 0.02
+            rectangle (max (0.0)  ((s*((tankWidthInGLUT/1.5)))/30)) 0.02
             flush
 
             --Drawing The Turret
