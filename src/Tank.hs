@@ -118,9 +118,9 @@ updatePower power key
     | otherwise = power
 
 updateAngle :: Float -> Key -> Float
-updateAngle angle key
-    | key == increaseAngle = if(angle+angleIncrement > pi) then pi else angle+angleIncrement
-    | key == decreaseAngle = if(angle-angleIncrement < 0) then 0 else angle-angleIncrement  -- check for negative
+updateAngle angle key 
+    | key ==  decreaseAngle = if(angle+angleIncrement > pi) then pi else angle+angleIncrement
+    | key == increaseAngle = if(angle-angleIncrement < 0) then 0 else angle-angleIncrement  -- check for negative
     | otherwise = angle
 
 updateDirection :: Direction -> Key -> Direction
@@ -235,6 +235,7 @@ updateGameStateTank
     }) key = let temp = changeListElementAtIndex l c (updateTank (l !! c) key t)
         in GameState {tileMatrix = t , tankList =  temp, weapon = w , chance = c , noOfPlayers = n, isAcceptingInput = d}
 
+{-
 updateHealth :: Tank -> Weapon -> Tank
 updateHealth (Tank {
         tankState = (TankState {
@@ -260,8 +261,9 @@ updateHealth (Tank {
         isLaunched = isL,
         hasImpacted = hasImp,
         launchDirection = lD
-    }) = {- create a new tank here and subtract the value below from its score. also, how about having a damage index
-            for weapons? if we dont want, just remove it from the formula -}
+    }) =  create a new tank here and subtract the value below from its score. also, how about having a damage index
+            for weapons? if we dont want, just remove it from the formula 
         (length $ commonPointsBetweenLists 
             (getAllPointsInCircle (Position wx wy) impactradius)
             (getAllPointsInRectangle (Position x y) widthOfTank heightofTank incline_theta)) * weapon_velocity * damage_index    }
+-}
