@@ -84,23 +84,24 @@ updatePositionWeapon     (WeaponGraphics {
                                     turretThickness = tTurr,
                                     lengthOfTurret = lTurr
                                     })
-                                    else if getIsObstacle tileMap y x then (WeaponGraphics {
-                                    weaponPhysics = (GenericWeapon {
-                                        currentPosition = trace("if else if x : " ++ show x ++ " y : " ++ show y ++ "\n") (Position x y),
-                                        currentVelocity = velocity,
-                                        velocityMultiplyingFactor = f,
-                                        currentAngle = theta, 
-                                        impactRadius = r,
-                                        isLaunched = False,
-                                        hasImpacted = True,
-                                        launchDirection = l
-                                    }),
-                                    bulletColor = bColor,
-                                    turretColor = tColor,
-                                    bulletRotation = bRotate,
-                                    turretThickness = tTurr,
-                                    lengthOfTurret = lTurr
-                                    })
+                                    else if getIsObstacle tileMap y x || checkAllTanksForHit gameState (Position x y)
+                                        then (WeaponGraphics {
+                                            weaponPhysics = (GenericWeapon {
+                                                currentPosition = trace("if else if x : " ++ show x ++ " y : " ++ show y ++ "\n") (Position x y),
+                                                currentVelocity = velocity,
+                                                velocityMultiplyingFactor = f,
+                                                currentAngle = theta, 
+                                                impactRadius = r,
+                                                isLaunched = False,
+                                                hasImpacted = True,
+                                                launchDirection = l
+                                            }),
+                                            bulletColor = bColor,
+                                            turretColor = tColor,
+                                            bulletRotation = bRotate,
+                                            turretThickness = tTurr,
+                                            lengthOfTurret = lTurr
+                                            })
                                     else (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
                                         currentPosition = trace("if else else x : " ++ show x ++ " y : " ++ show y ++ "\n") {-getPositionProjectile (Position x y) velocity theta-}

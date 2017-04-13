@@ -94,6 +94,7 @@ getAngleProjectile velocity theta FacingLeft = trace ("L+++++++++++++ theta: " +
 getPositionProjectile :: Point -> Float -> Float -> Point 
 getPositionProjectile position velocity theta = getNewPositionUnderGravity position velocity theta unitTime
 
+-- teleport!
 getVelocityProjectile :: Float -> Float -> Float
 getVelocityProjectile velocity theta = sqrt((velocity * cos(theta))^2 + ((-1) * velocity * sin(theta) + g * unitTime)^2)
 
@@ -107,8 +108,10 @@ checkOrientationPointLine (Position x y) first second
     |    y > x*fst(getLineSlopeIntercept first second) + snd(getLineSlopeIntercept first second) = AboveLine
     |    otherwise = BelowLine -- for multiples of 90 degrees?
     
-checkPointInRectangle :: Point -> Point -> Float -> Float -> Float -> Bool
-checkPointInRectangle point (Position lx ly) length width theta = 
+checkPointInRectangle :: Point -> Point -> Integer -> Integer -> Float -> Bool
+checkPointInRectangle point (Position lx ly) ilength iwidth theta = 
+    let length = fromIntegral ilength
+        width = fromIntegral iwidth in
     if ((checkOrientationPointLine point (Position lx ly) (Position (lx + length * cos(theta)) (ly - length * sin(theta)))) == AboveLine &&
         (checkOrientationPointLine point (Position lx ly) (Position (lx - width * sin(theta)) (ly - width * cos(theta)))) == AboveLine &&
         (checkOrientationPointLine point (Position (lx - width * sin(theta) + length * cos(theta)) (ly - width * cos(theta) - length * sin(theta))) (Position (lx + length * cos(theta)) (ly - length * sin(theta)))) == BelowLine &&
@@ -217,7 +220,7 @@ checkObstacleInCircle (Position cx cy) radius tileMap = checkObstacleInList (get
 -- Accept a list of points and tile map and returns if any of them contain an obstacle or not
 checkObstacleInList :: [Point] -> [[Tile]] -> Bool
 checkObstacleInList [] tileMap = False
-checkObstacleInList (x:xs) tileMap = (getIsObstacle tileMap (getPositionX x) (getPositionY x))
+checkObstacleInList (x:xs) tileMap = (getIsObstacle tileMap (getPositionY x) (getPositionX x))
     || (checkObstacleInList xs tileMap)
 
 radianTodegree::Float -> Float
@@ -247,6 +250,7 @@ getAllPointsInRectangleHelper (Position x y) length width theta i
 	|	i<=width = (getAllPointsInLine (Position x y) length theta 0) : (getAllPointsInRectangleHelper (Position (x - (fromIntegral i) * (sin theta)) (y - (fromIntegral i) * (cos theta))) length width theta (i+1))
 	|	otherwise = [[]] 
 
+-- horizontal shots!
 getAllPointsInRectangle :: Point -> Integer -> Integer -> Float -> [Point]
 getAllPointsInRectangle (Position x y) length width theta = 
 	flattenList $ getAllPointsInRectangleHelper (Position x y) length width theta 0
@@ -265,21 +269,22 @@ parabolaFunction :: Point -> Float -> Float -> Float -> Float
 parabolaFunction (Position sx sy) x velocity theta = 
 	sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2)
 
+-- incomplete!
 checkIntermediateObstacleInPath :: Point -> Point -> Point -> Float -> Float -> [[Tile]] -> Bool -> Point
 checkIntermediateObstacleInPath (Position x y) (Position ox oy) (Position sx sy) velocity theta tileMap xIsLesser =
-	if xIsLesser
-		then if x < ox
-			then if getIsObstacle tileMap (parabolaFunction (Position sx sy) (x+1) velocity theta) (x+1)
-				then (Position (x+1) (parabolaFunction (Position sx sy) (x+1) velocity theta))
-				else checkIntermediateObstacleInPath (Position (x+1) (parabolaFunction (Position sx sy) (x+1) velocity theta))
-					 (Position ox oy) (Position sx sy) velocity theta tileMap xIsLesser
-			else (Position ox oy)
-		else if ox < x
-			then if getIsObstacle tileMap (parabolaFunction (Position sx sy) (x-1) velocity theta) (x-1)
-				then (Position (x-1) (parabolaFunction (Position sx sy) (x-1) velocity theta))
-				else checkIntermediateObstacleInPath (Position (x-1) (parabolaFunction (Position sx sy) (x-1) velocity theta))
-					 (Position ox oy) (Position sx sy) velocity theta tileMap xIsLesser
-			else (Position ox oy)
+    let newTheta = theta
+        newVelocity = velocity in
+    if (xIsLesser && x < ox)
+        then (if getIsObstacle tileMap (parabolaFunction (Position sx sy) (x+1) newVelocity newTheta) (x+1)
+                then (Position (x+1) (parabolaFunction (Position sx sy) (x+1) newVelocity newTheta))
+                else checkIntermediateObstacleInPath (Position (x+1) (parabolaFunction (Position sx sy) (x+1) newVelocity newTheta))
+                      (Position ox oy) (Position sx sy) newVelocity newTheta tileMap xIsLesser)		
+        else (if ((not xIsLesser) && ox < x)
+                then (if getIsObstacle tileMap (parabolaFunction (Position sx sy) (x-1) newVelocity newTheta) (x-1)
+                        then (Position (x-1) (parabolaFunction (Position sx sy) (x-1) newVelocity newTheta))
+                        else checkIntermediateObstacleInPath (Position (x-1) (parabolaFunction (Position sx sy) (x-1) newVelocity newTheta))
+                              (Position ox oy) (Position sx sy) newVelocity newTheta tileMap xIsLesser)
+                else (Position ox oy))
 
 
 newPositionProjectile :: Point -> Point -> Float -> Float -> [[Tile]] -> Point
@@ -302,4 +307,20 @@ getTurretPosition (GameState {
         topCenterY = y-((hypotenuseRect*sin(incline_theta+rectHalfAngle))/heightOfTile)
         turretTopX = topCenterX+((lTurr*cos(incline_theta+turret_theta))/heightOfTile)
         turretTopY = topCenterY-((lTurr*sin(incline_theta+turret_theta))/heightOfTile)
-        in  (Position (turretTopX+x) (turretTopY+y))
+        in  (Position (turretTopX) (turretTopY))
+
+checkAllTanksForHitHelper :: GameState -> Point -> Int -> Bool
+checkAllTanksForHitHelper (GameState {
+	    tankList = tanks,
+	    chance = c
+	}) (Position x y) i
+	|	i < c = checkPointInRectangle (Position x y) (position (tankState (tanks !! i))) widthOfTank
+					heightOfTank (angle (turret (tankState (tanks !! i)))) ||
+						checkAllTanksForHitHelper (GameState {
+				   						 tankList = tanks,
+									    chance = c
+									}) (Position x y) (i+1)
+	|	otherwise = False
+
+checkAllTanksForHit :: GameState -> Point -> Bool
+checkAllTanksForHit gameState position = checkAllTanksForHitHelper gameState position 0
