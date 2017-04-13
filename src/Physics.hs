@@ -271,3 +271,19 @@ newPositionProjectile :: Point -> Point -> Float -> Float -> [[Tile]] -> Point
 newPositionProjectile initialPosition position velocity theta tileMap = 
 	checkIntermediateObstacleInPath position (getPositionProjectile position velocity theta) initialPosition
 		velocity theta tileMap
+
+getTurretPosition :: GameState -> Float -> Point
+getTurretPosition (GameState {
+	    tileMatrix = tileMap,
+	    tankList = tanks,
+	    chance = c
+	}) lTurr = 
+    let incline_theta = (inclineAngle (tankState (tanks !! c)))
+        x = (getPositionX (position (tankState (tanks !! c))))
+        y = (getPositionY (position (tankState (tanks !! c))))
+        turret_theta = angle (turret (tankState (tanks !! c)))
+        topCenterX = x+((hypotenuseRect*cos(incline_theta+rectHalfAngle))/widthOfTile)
+        topCenterY = y-((hypotenuseRect*sin(incline_theta+rectHalfAngle))/heightOfTile)
+        turretTopX = topCenterX+((lTurr*cos(incline_theta+turret_theta))/heightOfTile)
+        turretTopY = topCenterY-((lTurr*sin(incline_theta+turret_theta))/heightOfTile)
+        in  (Position (turretTopX+x) (turretTopY+y))

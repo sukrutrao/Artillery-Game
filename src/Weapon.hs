@@ -31,7 +31,7 @@ initializeWeapon posX posY factor currAngle radius bullColor turrColor bullRotat
                                                    }
 
 
-updatePositionWeapon :: WeaponGraphics -> [[Tile]] -> WeaponGraphics
+updatePositionWeapon :: WeaponGraphics -> GameState -> [[Tile]] -> WeaponGraphics
 updatePositionWeapon     (WeaponGraphics {
         weaponPhysics = (GenericWeapon {
             currentPosition = (Position x y),
@@ -48,10 +48,11 @@ updatePositionWeapon     (WeaponGraphics {
         bulletRotation = bRotate,
         turretThickness = tTurr,
         lengthOfTurret = lTurr
-    }) tileMap = if islaunched then 
+    }) gameState tileMap = if islaunched then 
                                 if (truncate y>((length tileMap)-2) || y<0) then (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
-                                        currentPosition = trace("if if x : " ++ show x ++ " y : " ++ show y ++ "\n") getPositionProjectile (Position x y) velocity theta,
+                                        currentPosition = trace("if if x : " ++ show x ++ " y : " ++ show y ++ "\n") {-getPositionProjectile (Position x y) velocity theta-}
+                                            newPositionProjectile (getTurretPosition gameState lTurr) (Position x y) velocity theta tileMap,
                                         currentVelocity = getVelocityProjectile velocity theta,
                                         velocityMultiplyingFactor = f,
                                         currentAngle = getAngleProjectile velocity theta l,
@@ -102,7 +103,8 @@ updatePositionWeapon     (WeaponGraphics {
                                     })
                                     else (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
-                                        currentPosition = trace("if else else x : " ++ show x ++ " y : " ++ show y ++ "\n") getPositionProjectile (Position x y) velocity theta,
+                                        currentPosition = trace("if else else x : " ++ show x ++ " y : " ++ show y ++ "\n") {-getPositionProjectile (Position x y) velocity theta-}
+                                                newPositionProjectile (getTurretPosition gameState lTurr) (Position x y) velocity theta tileMap,
                                         currentVelocity = getVelocityProjectile velocity theta,
                                         velocityMultiplyingFactor = f,
                                         currentAngle = getAngleProjectile velocity theta l,
@@ -136,10 +138,10 @@ updatePositionWeapon     (WeaponGraphics {
                     lengthOfTurret = lTurr
                     })
 
-updateWeapon :: WeaponGraphics -> [[Tile]] -> WeaponGraphics 
-updateWeapon weapon tileMap = if hasImpacted (weaponPhysics weapon)
+updateWeapon :: WeaponGraphics -> GameState -> [[Tile]] -> WeaponGraphics 
+updateWeapon weapon gameState tileMap = if hasImpacted (weaponPhysics weapon)
                                 then weapon
-                                else updatePositionWeapon weapon tileMap 
+                                else updatePositionWeapon weapon gameState tileMap 
 
 updateGameStateWeapon :: GameState -> GameState
 updateGameStateWeapon
@@ -152,7 +154,14 @@ updateGameStateWeapon
         isAcceptingInput = d
     }) = let weaponChoice = currentWeapon (l !! c)
              firedWeapon = w !! weaponChoice
-             newWeapon = updateWeapon firedWeapon t
+             newWeapon = updateWeapon firedWeapon (GameState {
+                                                    tileMatrix = t,
+                                                    tankList = l,
+                                                    weapon = w,
+                                                    chance = c,
+                                                    noOfPlayers = n,
+                                                    isAcceptingInput = d
+                                                }) t
              shouldWeBlast =  if(isLaunched $ weaponPhysics newWeapon) then t
                                 else makeTileNotObsAtPts t (getAllPointsInCircle (currentPosition (weaponPhysics newWeapon)) (impactRadius (weaponPhysics newWeapon)))
              newWeaponList = changeListElementAtIndex w weaponChoice newWeapon
