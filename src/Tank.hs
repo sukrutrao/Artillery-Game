@@ -235,5 +235,33 @@ updateGameStateTank
     }) key = let temp = changeListElementAtIndex l c (updateTank (l !! c) key t)
         in GameState {tileMatrix = t , tankList =  temp, weapon = w , chance = c , noOfPlayers = n, isAcceptingInput = d}
 
-
-
+updateHealth :: Tank -> Weapon -> Tank
+updateHealth (Tank {
+        tankState = (TankState {
+            direction = d,
+            position = (Position x y),
+            velocity = (Velocity vx vy),
+            inclineAngle = incline_theta,
+            turret = (Turret {
+                angle = turret_theta, 
+                power = turret_power
+            })
+        }),
+        score = s,
+        color = c,
+        currentWeapon = e,
+        weaponCount = f
+    }) (GenericWeapon {
+        currentPosition = (Position wx wy),
+        currentVelocity = weapon_velocity,
+        velocityMultiplyingFactor = f,
+        currentAngle = weapon_theta, 
+        impactRadius = impactradius,
+        isLaunched = isL,
+        hasImpacted = hasImp,
+        launchDirection = lD
+    }) = {- create a new tank here and subtract the value below from its score. also, how about having a damage index
+            for weapons? if we dont want, just remove it from the formula -}
+        (length $ commonPointsBetweenLists 
+            (getAllPointsInCircle (Position wx wy) impactradius)
+            (getAllPointsInRectangle (Position x y) widthOfTank heightofTank incline_theta)) * weapon_velocity * damage_index    }
