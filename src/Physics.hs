@@ -202,7 +202,7 @@ searchForAngle (Position x y) length theta thetaMax tileMap =
 getAngleAt :: Point -> Integer ->  [[Tile]]  -> Float
 getAngleAt (Position x y) length tileMap = searchForAngle (Position x y) length (-pi/2) thetaMax tileMap
 
-{-
+
 -- Accepts the centre and radius of a circle, tile map, and checks if it contains any obstacle in it or not
 checkObstacleInCircle :: Point -> Float ->  [[Tile]] -> Bool
 checkObstacleInCircle (Position cx cy) radius tileMap = checkObstacleInList (getListOfPointsInCircle (Position cx cy) radius 
@@ -213,7 +213,7 @@ checkObstacleInList :: [Point] -> [[Tile]] -> Bool
 checkObstacleInList [] tileMap = False
 checkObstacleInList (x:xs) tileMap = (getIsObstacle tileMap (truncate $ getPositionX x) (truncate $ getPositionY x))
     || (checkObstacleInList xs tileMap)
--}
+
 radianTodegree::Float -> Float
 radianTodegree x = (x*180)/pi
 
@@ -243,4 +243,13 @@ getAllPointsInRectangleHelper (Position x y) length width theta i
 
 getAllPointsInRectangle :: Point -> Integer -> Integer -> Float -> [Point]
 getAllPointsInRectangle (Position x y) length width theta = 
-	flattenList $ getAllPointsInRectangleHelper (Position x y) length width theta 0	
+	flattenList $ getAllPointsInRectangleHelper (Position x y) length width theta 0
+
+checkIfValidPosition :: Point -> Integer -> Integer -> Float -> [[Tile]] -> Bool
+checkIfValidPosition (Position x y) length width theta tileMap = 
+	checkObstacleInList (getAllPointsInRectangle (Position x y) length width theta) tileMap
+
+tankGravityNewPosition :: Point -> Integer -> Integer -> Float -> [[Tile]] -> Point
+tankGravityNewPosition (Position x y) length width theta tileMap
+	|	checkIfValidPosition (Position x (y+1)) length width theta tileMap == False = (Position x (y+1)) 
+	|	otherwise = (Position x y)
