@@ -187,7 +187,7 @@ thetaIncrement :: Float
 thetaIncrement = 0.1
 
 thetaMax :: Float
-thetaMax = 1.57
+thetaMax = pi/2
 
 searchForAngle :: Point -> Integer -> Float -> Float ->  [[Tile]] -> Float
 searchForAngle (Position x y) length theta thetaMax tileMap = 
@@ -196,11 +196,11 @@ searchForAngle (Position x y) length theta thetaMax tileMap =
         then if not (checkLineSegmentObstacle (Position x y) length theta tileMap)
                 then theta
                 else searchForAngle (Position x y) length (theta + thetaIncrement) thetaMax tileMap
-        else (-1.0))
+        else (pi))
 
 -- Accepts left end point of line and length of tank, and returns angle of its inclination
 getAngleAt :: Point -> Integer ->  [[Tile]]  -> Float
-getAngleAt (Position x y) length tileMap = searchForAngle (Position x y) length (0) thetaMax tileMap
+getAngleAt (Position x y) length tileMap = searchForAngle (Position x y) length (-pi/2) thetaMax tileMap
 
 {-
 -- Accepts the centre and radius of a circle, tile map, and checks if it contains any obstacle in it or not
