@@ -272,7 +272,8 @@ parabolaFunction (Position sx sy) x velocity theta =
 -- incomplete!
 checkIntermediateObstacleInPath :: Point -> Point -> Point -> Float -> Float -> [[Tile]] -> Bool -> Point
 checkIntermediateObstacleInPath (Position x y) (Position ox oy) (Position sx sy) velocity theta tileMap xIsLesser =
-    let newTheta = atan(sqrt((tan theta)^2 + (2*g)*(velocity*(cos theta))))
+    let newTheta = if xIsLesser then atan(sqrt((tan theta)^2 + (2*g)*(velocity*(cos theta))))
+    							else pi + atan(sqrt((tan theta)^2 + (2*g)*(velocity*(cos theta))))
         newVelocity = sqrt(velocity^2 + 2*g) in
     if (xIsLesser && x < ox)
         then (if getIsObstacle tileMap (parabolaFunction (Position sx sy) (x+1) newVelocity newTheta) (x+1)
