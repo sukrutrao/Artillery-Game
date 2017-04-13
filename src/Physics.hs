@@ -251,7 +251,8 @@ checkIfValidPosition (Position x y) length width theta tileMap =
 
 tankGravityNewPosition :: Point -> Integer -> Integer -> Float -> [[Tile]] -> Point
 tankGravityNewPosition (Position x y) length width theta tileMap
-	|	checkIfValidPosition (Position x (y+1)) length width theta tileMap == False = (Position x (y+1)) 
+	|	checkIfValidPosition (Position x (y+1)) length width theta tileMap == False = 
+			tankGravityNewPosition (Position x (y+1)) length width theta tileMap
 	|	otherwise = (Position x y)
 
 parabolaFunction :: Point -> Float -> Float -> Float -> Float
