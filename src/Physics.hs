@@ -265,21 +265,28 @@ parabolaFunction :: Point -> Float -> Float -> Float -> Float
 parabolaFunction (Position sx sy) x velocity theta = 
 	sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2)
 
-checkIntermediateObstacleInPath :: Point -> Point -> Point -> Float -> Float -> [[Tile]] -> Point
-checkIntermediateObstacleInPath (Position x y) (Position ox oy) (Position sx sy) velocity theta tileMap =
-	if x < ox
-		then if getIsObstacle tileMap (parabolaFunction (Position sx sy) (x+1) velocity theta) (x+1)
-			then (Position (x+1) (parabolaFunction (Position sx sy) (x+1) velocity theta))
-			else checkIntermediateObstacleInPath (Position (x+1) (parabolaFunction (Position sx sy) (x+1) velocity theta))
-				 (Position ox oy) (Position sx sy) velocity theta tileMap
-		else (Position ox oy)
+checkIntermediateObstacleInPath :: Point -> Point -> Point -> Float -> Float -> [[Tile]] -> Bool -> Point
+checkIntermediateObstacleInPath (Position x y) (Position ox oy) (Position sx sy) velocity theta tileMap xIsLesser =
+	if xIsLesser
+		then if x < ox
+			then if getIsObstacle tileMap (parabolaFunction (Position sx sy) (x+1) velocity theta) (x+1)
+				then (Position (x+1) (parabolaFunction (Position sx sy) (x+1) velocity theta))
+				else checkIntermediateObstacleInPath (Position (x+1) (parabolaFunction (Position sx sy) (x+1) velocity theta))
+					 (Position ox oy) (Position sx sy) velocity theta tileMap xIsLesser
+			else (Position ox oy)
+		else if ox < x
+			then if getIsObstacle tileMap (parabolaFunction (Position sx sy) (x-1) velocity theta) (x-1)
+				then (Position (x-1) (parabolaFunction (Position sx sy) (x-1) velocity theta))
+				else checkIntermediateObstacleInPath (Position (x-1) (parabolaFunction (Position sx sy) (x-1) velocity theta))
+					 (Position ox oy) (Position sx sy) velocity theta tileMap xIsLesser
+			else (Position ox oy)
+
 
 newPositionProjectile :: Point -> Point -> Float -> Float -> [[Tile]] -> Point
 newPositionProjectile initialPosition position velocity theta tileMap = 
-    let otherPosition = getPositionProjectile position velocity theta in
-    if getPositionX position < getPositionX otherPosition
-	then checkIntermediateObstacleInPath position otherPosition initialPosition velocity theta tileMap
-	else checkIntermediateObstacleInPath otherPosition position initialPosition velocity theta tileMap
+    let otherPosition = getPositionProjectile position velocity theta 
+        xIsLesser = getPositionX position < getPositionX otherPosition in
+    	checkIntermediateObstacleInPath position otherPosition initialPosition velocity theta tileMap xIsLesser
 
 getTurretPosition :: GameState -> Float -> Point
 getTurretPosition (GameState {
