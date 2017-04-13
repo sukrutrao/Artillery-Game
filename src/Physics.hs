@@ -277,7 +277,7 @@ checkIntermediateObstacleInPath (Position x y) (Position ox oy) (Position sx sy)
 newPositionProjectile :: Point -> Point -> Float -> Float -> [[Tile]] -> Point
 newPositionProjectile initialPosition position velocity theta tileMap = 
     let otherPosition = getPositionProjectile position velocity theta in
-    if getPositionX positio < getPositionX otherposition
+    if getPositionX position < getPositionX otherPosition
 	then checkIntermediateObstacleInPath position otherPosition initialPosition velocity theta tileMap
 	else checkIntermediateObstacleInPath otherPosition position initialPosition velocity theta tileMap
 
