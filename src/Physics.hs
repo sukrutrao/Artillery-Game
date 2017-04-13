@@ -269,5 +269,5 @@ checkIntermediateObstacleInPath (Position x y) (Position ox oy) (Position sx sy)
 
 newPositionProjectile :: Point -> Point -> Float -> Float -> [[Tile]] -> Point
 newPositionProjectile initialPosition position velocity theta tileMap = 
-	checkIntermediateObstacleInPath position (getNewPositionUnderGravity position velocity theta unitTime) initialPosition
+	checkIntermediateObstacleInPath position (getPositionProjectile position velocity theta) initialPosition
 		velocity theta tileMap
