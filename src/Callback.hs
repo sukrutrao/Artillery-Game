@@ -145,10 +145,10 @@ display gamestate bulletRotationAngle = do
                     if checkifWeaponIsLaunched game
                         then do
                             bulletAngle <- get bulletRotationAngle
-                            let currWeaponFromList = trace ("In Weapon Launced") (Types.weapon game) !! current_weapon
+                            let currWeaponFromList =  (Types.weapon game) !! current_weapon
                                 weaponX = Physics.getPositionX $ Types.currentPosition $ Types.weaponPhysics currWeaponFromList
                                 weaponY = Physics.getPositionY $ Types.currentPosition $ Types.weaponPhysics currWeaponFromList
-                            if ((truncate weaponY>((length $ Types.tileMatrix game)-2)) || (weaponY<0))
+                            if trace ("In Weapon Launced"++ show weaponX ++ " " ++ show weaponY ) ((truncate weaponY>((length $ Types.tileMatrix game)-2)) || (weaponY<0))
                                     then return()
                                     else do 
                                         loadIdentity

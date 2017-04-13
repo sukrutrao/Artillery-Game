@@ -69,17 +69,17 @@ constantVelocityNewPosition :: Point -> Float -> Float ->  Point
 constantVelocityNewPosition position velocity theta = newPosition position (getComponentsVelocity velocity theta) (Acceleration 0 0) unitTime
 
 getIsObstacle:: [[Tile]] -> Float -> Float -> Bool
-getIsObstacle tileMatrix row col =  (isObstacle ((tileMatrix !! (truncate row)) !! (truncate col)))
+getIsObstacle tileMatrix row col = trace ("getTileIsObstacle stack : "++ show row ++ " " ++ show col) (isObstacle ((tileMatrix !! (truncate row)) !! (truncate col)))
 
 
 getTilePos:: [[Tile]] -> Float -> Float -> Point
-getTilePos tileMatrix row col = tilePosition ((tileMatrix !! (truncate row)) !! (truncate col))
+getTilePos tileMatrix row col = trace ("getTilePos stack : "++ show row ++ " " ++ show col) tilePosition ((tileMatrix !! (truncate row)) !! (truncate col))
 
 getTilePosX:: [[Tile]] -> Float -> Float -> Float
-getTilePosX tileMatrix row col = getPositionX (tilePosition ((tileMatrix !! (truncate row)) !! (truncate col)))
+getTilePosX tileMatrix row col = trace ("getTilePosX stack : "++ show row ++ " " ++ show col) (getPositionX (tilePosition ((tileMatrix !! (truncate row)) !! (truncate col))))
 
 getTilePosY:: [[Tile]] -> Float -> Float -> Float
-getTilePosY tileMatrix row col = getPositionY (tilePosition ((tileMatrix !! (truncate row)) !! (truncate col)))
+getTilePosY tileMatrix row col = trace ("getTilePosY stack : "++ show row ++ " " ++ show col) getPositionY (tilePosition ((tileMatrix !! (truncate row)) !! (truncate col)))
 
 getPositionX:: Point -> Float
 getPositionX (Position x _) = x
@@ -179,7 +179,8 @@ checkLineIfObstacle (Position x y) (Position ox oy) i theta length tileMap =
     (if (i < length) -- or <=?
         then if not $ isIndexInRange tileMap (truncate (y - ((fromIntegral i) * sin(theta))))
                     then True
-             else if not $ getIsObstacle tileMap (y - ((fromIntegral i) * sin(theta))) (x +((fromIntegral i) * cos(theta)))
+             else let xTemp = (x +((fromIntegral i) * cos(theta))) 
+                  in if not $ getIsObstacle tileMap (y - ((fromIntegral i) * sin(theta))) (if(truncate xTemp >= tileMatrixColumnSize) then (fromIntegral tileMatrixColumnSize) - (fromIntegral widthOfTank) else xTemp)
                         then checkLineIfObstacle (Position x y) (Position ox oy) (i + 1) theta length tileMap
                         else True
         else False)

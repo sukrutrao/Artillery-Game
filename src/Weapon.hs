@@ -103,7 +103,7 @@ updatePositionWeapon     (WeaponGraphics {
                                     })
                                     else (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
-                                        currentPosition = trace("if else else x : " ++ show x ++ " y : " ++ show y ++ "\n") {-getPositionProjectile (Position x y) velocity theta-}
+                                        currentPosition = trace(" : " ++ show x ++ " y : " ++ show y ++ "\n") {-getPositionProjectile (Position x y) velocity theta-}
                                                 newPositionProjectile (getTurretPosition gameState lTurr) (Position x y) velocity theta tileMap,
                                         currentVelocity = getVelocityProjectile velocity theta,
                                         velocityMultiplyingFactor = f,
