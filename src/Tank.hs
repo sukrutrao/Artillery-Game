@@ -255,7 +255,7 @@ updateHealth (Tank {
     }) (GenericWeapon {
         currentPosition = (Position wx wy),
         currentVelocity = weapon_velocity,
-        velocityMultiplyingFactor = f,
+        velocityMultiplyingFactor = vf,
         currentAngle = weapon_theta, 
         impactRadius = impactradius,
         isLaunched = isL,

@@ -30,8 +30,10 @@ initializeWeapon posX posY factor currAngle radius bullColor turrColor bullRotat
                                                     lengthOfTurret = turrLen
                                                    }
 
-updatePositionWeapon :: Weapon -> [[Tile]] -> Weapon
-updatePositionWeapon (GenericWeapon {
+
+updatePositionWeapon :: WeaponGraphics -> GameState -> [[Tile]] -> WeaponGraphics
+updatePositionWeapon     (WeaponGraphics {
+        weaponPhysics = (GenericWeapon {
             currentPosition = (Position x y),
             currentVelocity = velocity,
             velocityMultiplyingFactor = f,
@@ -40,9 +42,17 @@ updatePositionWeapon (GenericWeapon {
             isLaunched = islaunched,
             hasImpacted = hasimpacted,
             launchDirection = l
-        }) tileMap = if islaunched then 
-                                if (truncate y>((length tileMap)-2) || y<0) then (GenericWeapon {
-                                        currentPosition = trace("if if x : " ++ show x ++ " y : " ++ show y ++ "\n") getPositionProjectile (Position x y) velocity theta,
+        }),
+        bulletColor = bColor,
+        turretColor = tColor,
+        bulletRotation = bRotate,
+        turretThickness = tTurr,
+        lengthOfTurret = lTurr
+    }) gameState tileMap = if islaunched then 
+                                if (truncate y>((length tileMap)-2) || y<0) then (WeaponGraphics {
+                                    weaponPhysics = (GenericWeapon {
+                                        currentPosition = trace("if if x : " ++ show x ++ " y : " ++ show y ++ "\n") {-getPositionProjectile (Position x y) velocity theta-}
+                                            newPositionProjectile (getTurretPosition gameState lTurr) (Position x y) velocity theta tileMap,
                                         currentVelocity = getVelocityProjectile velocity theta,
                                         velocityMultiplyingFactor = f,
                                         currentAngle = getAngleProjectile velocity theta l,
@@ -50,18 +60,32 @@ updatePositionWeapon (GenericWeapon {
                                         isLaunched = islaunched,
                                         hasImpacted = hasimpacted,
                                         launchDirection = l
+                                    }),
+                                    bulletColor = bColor,
+                                    turretColor = tColor,
+                                    bulletRotation = bRotate,
+                                    turretThickness = tTurr,
+                                    lengthOfTurret = lTurr
                                     })
-                                else if ((truncate x) == 0 || (truncate x) == (tileMatrixColumnSize-1)) then (GenericWeapon {
-                                        currentPosition = (Position x y),
+                                else if (truncate x>((length $ tileMap !! 0)-2) || x<0) then (WeaponGraphics {
+                                    weaponPhysics = (GenericWeapon {
+                                        currentPosition = trace("HOLA$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" ++ show x ++ "  ,  " ++ show y ++ "\n") (Position x y),
                                         currentVelocity = velocity,
                                         velocityMultiplyingFactor = f,
                                         currentAngle = theta, 
                                         impactRadius = r,
                                         isLaunched = False,
-                                        hasImpacted = False,
+                                        hasImpacted = True,
                                         launchDirection = l
+                                    }),
+                                    bulletColor = bColor,
+                                    turretColor = tColor,
+                                    bulletRotation = bRotate,
+                                    turretThickness = tTurr,
+                                    lengthOfTurret = lTurr
                                     })
-                                    else if getIsObstacle tileMap y x then (GenericWeapon {
+                                    else if getIsObstacle tileMap y x then (WeaponGraphics {
+                                    weaponPhysics = (GenericWeapon {
                                         currentPosition = trace("if else if x : " ++ show x ++ " y : " ++ show y ++ "\n") (Position x y),
                                         currentVelocity = velocity,
                                         velocityMultiplyingFactor = f,
@@ -70,9 +94,17 @@ updatePositionWeapon (GenericWeapon {
                                         isLaunched = False,
                                         hasImpacted = True,
                                         launchDirection = l
+                                    }),
+                                    bulletColor = bColor,
+                                    turretColor = tColor,
+                                    bulletRotation = bRotate,
+                                    turretThickness = tTurr,
+                                    lengthOfTurret = lTurr
                                     })
-                                    else (GenericWeapon {
-                                        currentPosition = trace("if else else x : " ++ show x ++ " y : " ++ show y ++ "\n") getPositionProjectile (Position x y) velocity theta,
+                                    else (WeaponGraphics {
+                                    weaponPhysics = (GenericWeapon {
+                                        currentPosition = trace("if else else x : " ++ show x ++ " y : " ++ show y ++ "\n") {-getPositionProjectile (Position x y) velocity theta-}
+                                                newPositionProjectile (getTurretPosition gameState lTurr) (Position x y) velocity theta tileMap,
                                         currentVelocity = getVelocityProjectile velocity theta,
                                         velocityMultiplyingFactor = f,
                                         currentAngle = getAngleProjectile velocity theta l,
@@ -80,8 +112,16 @@ updatePositionWeapon (GenericWeapon {
                                         isLaunched = islaunched,
                                         hasImpacted = hasimpacted,
                                         launchDirection = l
+
+                                    }),
+                                    bulletColor = bColor,
+                                    turretColor = tColor,
+                                    bulletRotation = bRotate,
+                                    turretThickness = tTurr,
+                                    lengthOfTurret = lTurr
                                     })
-                 else (GenericWeapon {
+                 else (WeaponGraphics {
+                    weaponPhysics = (GenericWeapon {
                         currentPosition = trace("else x : " ++ show x ++ " y : " ++ show y ++ "\n") (Position x y),
                         currentVelocity = velocity,
                         velocityMultiplyingFactor = f,
@@ -90,60 +130,18 @@ updatePositionWeapon (GenericWeapon {
                         isLaunched = islaunched,
                         hasImpacted = hasimpacted,
                         launchDirection = l
+                    }),
+                    bulletColor = bColor,
+                    turretColor = tColor,
+                    bulletRotation = bRotate,
+                    turretThickness = tTurr,
+                    lengthOfTurret = lTurr
                     })
 
-updateWeapon :: WeaponGraphics -> [[Tile]] -> WeaponGraphics 
-updateWeapon (WeaponGraphics {
-        weaponPhysics = (GenericWeapon {
-            currentPosition = (Position x y),
-            currentVelocity = velocity,
-            velocityMultiplyingFactor = f,
-            currentAngle = theta, 
-            impactRadius = r,
-            isLaunched = islaunched,
-            hasImpacted = hasimpacted,
-            launchDirection = l
-        }),
-        bulletColor = bColor,
-        turretColor = tColor,
-        bulletRotation = bRotate,
-        turretThickness = tTurr,
-        lengthOfTurret = lTurr
-    })  tileMap = if hasimpacted then (WeaponGraphics {
-        weaponPhysics = (GenericWeapon {
-            currentPosition = (Position x y),
-            currentVelocity = velocity,
-            velocityMultiplyingFactor = f,
-            currentAngle = theta, 
-            impactRadius = r,
-            isLaunched = islaunched,
-            hasImpacted = hasimpacted,
-            launchDirection = l
-        }),
-        bulletColor = bColor,
-        turretColor = tColor,
-        bulletRotation = bRotate,
-        turretThickness = tTurr,
-        lengthOfTurret = lTurr
-    })
-                else (WeaponGraphics {
-        weaponPhysics = updatePositionWeapon (GenericWeapon {
-            currentPosition = (Position x y),
-            currentVelocity = velocity,
-            velocityMultiplyingFactor = f,
-            currentAngle = theta, 
-            impactRadius = r,
-            isLaunched = islaunched,
-            hasImpacted = hasimpacted,
-            launchDirection = l
-        }) tileMap,
-        bulletColor = bColor,
-        turretColor = tColor,
-        bulletRotation = bRotate,
-        turretThickness = tTurr,
-        lengthOfTurret = lTurr
-    }) 
-                    
+updateWeapon :: WeaponGraphics -> GameState -> [[Tile]] -> WeaponGraphics 
+updateWeapon weapon gameState tileMap = if hasImpacted (weaponPhysics weapon)
+                                then weapon
+                                else updatePositionWeapon weapon gameState tileMap 
 
 updateGameStateWeapon :: GameState -> GameState
 updateGameStateWeapon
@@ -156,16 +154,21 @@ updateGameStateWeapon
         isAcceptingInput = d
     }) = let weaponChoice = currentWeapon (l !! c)
              firedWeapon = w !! weaponChoice
-             newWeapon =  updateWeapon firedWeapon t
+             newWeapon = updateWeapon firedWeapon (GameState {
+                                                    tileMatrix = t,
+                                                    tankList = l,
+                                                    weapon = w,
+                                                    chance = c,
+                                                    noOfPlayers = n,
+                                                    isAcceptingInput = d
+                                                }) t
              shouldWeBlast =  if(isLaunched $ weaponPhysics newWeapon) then t
-                                else if(hasImpacted $ weaponPhysics newWeapon)
-                                        then makeTileNotObsAtPts t (getAllPointsInCircle (currentPosition (weaponPhysics newWeapon)) (impactRadius (weaponPhysics newWeapon)))
-                                        else t
+                                else makeTileNotObsAtPts t (getAllPointsInCircle (currentPosition (weaponPhysics newWeapon)) (impactRadius (weaponPhysics newWeapon)))
              newWeaponList = changeListElementAtIndex w weaponChoice newWeapon
          in GameState { tileMatrix = shouldWeBlast, 
                         tankList =  l,
                         weapon = newWeaponList,
-                        chance = if (isLaunched $ weaponPhysics newWeapon) then c else ((c+1) `mod` n) ,
+                        chance = if (isLaunched $ weaponPhysics newWeapon) then c else ((c+1) `mod` 2) ,
                         noOfPlayers = n,
                         isAcceptingInput = if (isLaunched $ weaponPhysics newWeapon) then False else True
                       }

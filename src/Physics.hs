@@ -208,7 +208,7 @@ searchForAngle (Position x y) length theta thetaMax tileMap =
 getAngleAt :: Point -> Integer ->  [[Tile]]  -> Float
 getAngleAt (Position x y) length tileMap = searchForAngle (Position x y) length (-pi/2) thetaMax tileMap
 
-{-
+
 -- Accepts the centre and radius of a circle, tile map, and checks if it contains any obstacle in it or not
 checkObstacleInCircle :: Point -> Float ->  [[Tile]] -> Bool
 checkObstacleInCircle (Position cx cy) radius tileMap = checkObstacleInList (getListOfPointsInCircle (Position cx cy) radius 
@@ -217,9 +217,9 @@ checkObstacleInCircle (Position cx cy) radius tileMap = checkObstacleInList (get
 -- Accept a list of points and tile map and returns if any of them contain an obstacle or not
 checkObstacleInList :: [Point] -> [[Tile]] -> Bool
 checkObstacleInList [] tileMap = False
-checkObstacleInList (x:xs) tileMap = (getIsObstacle tileMap (truncate $ getPositionX x) (truncate $ getPositionY x))
+checkObstacleInList (x:xs) tileMap = (getIsObstacle tileMap (getPositionX x) (getPositionY x))
     || (checkObstacleInList xs tileMap)
--}
+
 radianTodegree::Float -> Float
 radianTodegree x = (x*180)/pi
 
@@ -249,4 +249,47 @@ getAllPointsInRectangleHelper (Position x y) length width theta i
 
 getAllPointsInRectangle :: Point -> Integer -> Integer -> Float -> [Point]
 getAllPointsInRectangle (Position x y) length width theta = 
-	flattenList $ getAllPointsInRectangleHelper (Position x y) length width theta 0	
+	flattenList $ getAllPointsInRectangleHelper (Position x y) length width theta 0
+
+checkIfValidPosition :: Point -> Integer -> Integer -> Float -> [[Tile]] -> Bool
+checkIfValidPosition (Position x y) length width theta tileMap = 
+	checkObstacleInList (getAllPointsInRectangle (Position x y) length width theta) tileMap
+
+tankGravityNewPosition :: Point -> Integer -> Integer -> Float -> [[Tile]] -> Point
+tankGravityNewPosition (Position x y) length width theta tileMap
+	|	checkIfValidPosition (Position x (y+1)) length width theta tileMap == False = (Position x (y+1)) 
+	|	otherwise = (Position x y)
+
+parabolaFunction :: Point -> Float -> Float -> Float -> Float
+parabolaFunction (Position sx sy) x velocity theta = 
+	sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2)
+
+checkIntermediateObstacleInPath :: Point -> Point -> Point -> Float -> Float -> [[Tile]] -> Point
+checkIntermediateObstacleInPath (Position x y) (Position ox oy) (Position sx sy) velocity theta tileMap =
+	if x < ox
+		then if getIsObstacle tileMap (parabolaFunction (Position sx sy) (x+1) velocity theta) (x+1)
+			then (Position (x+1) (parabolaFunction (Position sx sy) (x+1) velocity theta))
+			else checkIntermediateObstacleInPath (Position (x+1) (parabolaFunction (Position sx sy) (x+1) velocity theta))
+				 (Position ox oy) (Position sx sy) velocity theta tileMap
+		else (Position ox oy)
+
+newPositionProjectile :: Point -> Point -> Float -> Float -> [[Tile]] -> Point
+newPositionProjectile initialPosition position velocity theta tileMap = 
+	checkIntermediateObstacleInPath position (getPositionProjectile position velocity theta) initialPosition
+		velocity theta tileMap
+
+getTurretPosition :: GameState -> Float -> Point
+getTurretPosition (GameState {
+	    tileMatrix = tileMap,
+	    tankList = tanks,
+	    chance = c
+	}) lTurr = 
+    let incline_theta = (inclineAngle (tankState (tanks !! c)))
+        x = (getPositionX (position (tankState (tanks !! c))))
+        y = (getPositionY (position (tankState (tanks !! c))))
+        turret_theta = angle (turret (tankState (tanks !! c)))
+        topCenterX = x+((hypotenuseRect*cos(incline_theta+rectHalfAngle))/widthOfTile)
+        topCenterY = y-((hypotenuseRect*sin(incline_theta+rectHalfAngle))/heightOfTile)
+        turretTopX = topCenterX+((lTurr*cos(incline_theta+turret_theta))/heightOfTile)
+        turretTopY = topCenterY-((lTurr*sin(incline_theta+turret_theta))/heightOfTile)
+        in  (Position (turretTopX+x) (turretTopY+y))
