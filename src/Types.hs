@@ -45,7 +45,7 @@ data GameState = GameState {
     tankList :: [Tank],
     weapon :: [WeaponGraphics],
     chance :: Int,
-    noOfPlayers :: Integer,
+    noOfPlayers :: Int,
     isAcceptingInput :: Bool
 } deriving (Show)
 
@@ -71,6 +71,12 @@ data WeaponGraphics = WeaponGraphics {
 } deriving (Show)
 
 
+tileMatrixRowSize :: Int
+tileMatrixRowSize = 201
+
+tileMatrixColumnSize :: Int
+tileMatrixColumnSize = 201
+
 widthOfTile :: Float
 widthOfTile = 0.01
 
@@ -88,3 +94,8 @@ powerIncrement = 1
 
 angleIncrement :: Float
 angleIncrement = 0.1
+
+isIndexInRange :: [a] -> Int -> Bool
+isIndexInRange list index  = if (index < 0 || index >= length list) then False else True
+
+

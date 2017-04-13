@@ -19,8 +19,12 @@ originPosition :: Float -> Float -> Point
 originPosition x y = (Position x y)
 
 newPosition :: Point -> Point -> Point -> Float -> Point
-newPosition (Position x y) (Velocity vx vy) (Acceleration ax ay) time =
-    (Position (newOneDPosition x vx ax time) (newOneDPosition y (-vy) ay time))
+newPosition (Position x y) (Velocity vx vy) (Acceleration ax ay) time = let temp = (Position (newOneDPosition x vx ax time) (newOneDPosition y (-vy) ay time))
+                                                                        in if((truncate $ getPositionX temp) < 0)
+                                                                                then Position 0 y
+                                                                            else if((truncate $ getPositionX temp) >= tileMatrixColumnSize)
+                                                                                    then Position (fromIntegral (tileMatrixColumnSize-1)) y
+                                                                                 else temp
 
 newVelocity :: Point -> Point -> Float -> Point
 newVelocity (Velocity vx vy) (Acceleration ax ay) time = 
@@ -65,7 +69,7 @@ constantVelocityNewPosition :: Point -> Float -> Float ->  Point
 constantVelocityNewPosition position velocity theta = newPosition position (getComponentsVelocity velocity theta) (Acceleration 0 0) unitTime
 
 getIsObstacle:: [[Tile]] -> Float -> Float -> Bool
-getIsObstacle tileMatrix row col = (isObstacle ((tileMatrix !! (truncate row)) !! (truncate col)))
+getIsObstacle tileMatrix row col =  (isObstacle ((tileMatrix !! (truncate row)) !! (truncate col)))
 
 
 getTilePos:: [[Tile]] -> Float -> Float -> Point
@@ -173,9 +177,11 @@ checkLineIfObstacle :: Point -> Point -> Integer -> Float -> Integer -> [[Tile]]
 checkLineIfObstacle (Position x y) (Position ox oy) i theta length tileMap =  
     ---- trace ("i is : " ++ show i ++ " x is : " ++ show x ++ " y is : " ++ show y ++ " ox is : " ++ show ox ++ "oy is : " ++ show oy ++ "\n") 
     (if (i < length) -- or <=?
-        then if not (getIsObstacle tileMap (y - ((fromIntegral i) * sin(theta))) (x + ((fromIntegral i) * cos(theta))))
-                then checkLineIfObstacle (Position x y) (Position ox oy) (i + 1) theta length tileMap
-                else True
+        then if not $ isIndexInRange tileMap (truncate (y - ((fromIntegral i) * sin(theta))))
+                    then True
+             else if not $ getIsObstacle tileMap (y - ((fromIntegral i) * sin(theta))) (x +((fromIntegral i) * cos(theta)))
+                        then checkLineIfObstacle (Position x y) (Position ox oy) (i + 1) theta length tileMap
+                        else True
         else False)
 
 -- returns true if line segment contains obstacle

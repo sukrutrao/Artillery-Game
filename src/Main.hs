@@ -5,7 +5,7 @@ import qualified Types
 import Gamestate
 import Callback
 import Physics
-import Tile
+
 
 main :: IO ()
 main = do

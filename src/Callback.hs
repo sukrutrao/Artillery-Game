@@ -40,7 +40,6 @@ display gamestate bulletRotationAngle = do
         rectangle 0.75 0.01
         flush
 
-
         --Drawing The Red Power Bar
 
         loadIdentity
@@ -48,6 +47,7 @@ display gamestate bulletRotationAngle = do
         translate $ Vector3 (-0.375) (-0.9) (0::Float)
         rectangle ((Types.power(Types.turret (Types.tankState ((Types.tankList game) !! (Types.chance game))))  *0.75)/100) 0.01
         flush
+        
 
         tankcount <- newIORef (-1)
 
@@ -69,18 +69,24 @@ display gamestate bulletRotationAngle = do
                                     }) -> do
 
             tankcount $~! (+1)
+
+            let tankCoordX =  trace ("INSIDE COORDX") (Physics.getTilePosX (Types.tileMatrix game) y x)
+                tankCoordY =  trace ("INSIDE COORDY") (Physics.getTilePosY (Types.tileMatrix game) y x)
+                tankWidthInGLUT = (fromIntegral Types.widthOfTank)*Types.widthOfTile
+                tankHeightInGLUT = (fromIntegral Types.heightOfTank)*Types.heightOfTile
+
             putStr "\n*****\nX: "
             print x
             putStr "Y: "
             print y
-            putStr "\nTheta : "
+            putStr "Theta : "
             print incline_theta
-            putStr "\nTurret Theta : "
+            putStr "Turret Theta : "
             print turret_theta
-            let tankCoordX = Physics.getTilePosX (Types.tileMatrix game) y x
-                tankCoordY = Physics.getTilePosY (Types.tileMatrix game) y x
-                tankWidthInGLUT = (fromIntegral Types.widthOfTank)*Types.widthOfTile
-                tankHeightInGLUT = (fromIntegral Types.heightOfTank)*Types.heightOfTile
+            putStr "TankCoordX : "
+            print tankCoordX
+            putStr "tankCoordY : "
+            print tankCoordY
 
             loadIdentity
             currentColor $= tankcolor
@@ -94,12 +100,13 @@ display gamestate bulletRotationAngle = do
             let perpendicularAngle = atan((-1)*(1/(tan(incline_theta))))
 
             let lengthOfTurret = (Types.lengthOfTurret ((Types.weapon game) !! current_weapon))
+            
 
-            let healthX = (topCenterX-(cos(incline_theta)*(tankWidthInGLUT/3))) - (lengthOfTurret*0.35)*cos(perpendicularAngle)
+            let healthX = trace ("Length Of Turret : " ++ show lengthOfTurret) (topCenterX-(cos(incline_theta)*(tankWidthInGLUT/3))) - (lengthOfTurret*0.35)*cos(perpendicularAngle)
                 healthY = (topCenterY-(sin(incline_theta)*(tankWidthInGLUT/3))) - (lengthOfTurret*1.25)*sin(perpendicularAngle)
 
             --Drawing The White Health Of Tank
-            loadIdentity
+            trace ("White Health") (loadIdentity)
             currentColor $= Color4 1 1 1 1              -- white health background
             translate $ Vector3 healthX healthY (0::Float)
             rotate (Physics.radianTodegree incline_theta) $ Vector3 0 0 1 
@@ -107,7 +114,8 @@ display gamestate bulletRotationAngle = do
             flush
 
             --Drawing The Health Of Tank
-            loadIdentity
+            
+            trace ("Red Health") (loadIdentity)
             currentColor $= if (s>20) then Color4 0 0.5019 0 1 else (if (s>10) then Color4 1 0.8196 0.10196 1 else Color4 1 0 0 1 )               -- tank color power
             translate $ Vector3 healthX healthY (0::Float)
             rotate (Physics.radianTodegree incline_theta) $ Vector3 0 0 1
@@ -115,7 +123,8 @@ display gamestate bulletRotationAngle = do
             flush
 
             --Drawing The Turret
-            loadIdentity
+            
+            trace ("Draw Turret") (loadIdentity)
             lineWidth $=  Types.turretThickness ((Types.weapon game) !! current_weapon)
             currentColor $= Types.turretColor ((Types.weapon game) !! current_weapon)     -- grey turret
             translate $ Vector3 topCenterX topCenterY 0
@@ -136,14 +145,10 @@ display gamestate bulletRotationAngle = do
                     if checkifWeaponIsLaunched game
                         then do
                             bulletAngle <- get bulletRotationAngle
-                            let currWeaponFromList = (Types.weapon game) !! current_weapon
+                            let currWeaponFromList = trace ("In Weapon Launced") (Types.weapon game) !! current_weapon
                                 weaponX = Physics.getPositionX $ Types.currentPosition $ Types.weaponPhysics currWeaponFromList
                                 weaponY = Physics.getPositionY $ Types.currentPosition $ Types.weaponPhysics currWeaponFromList
-                            if ((truncate weaponY>((length $ Types.tileMatrix game)-2)) || 
-                                (weaponY<0) || 
-                                (truncate weaponX>((length $ Types.tileMatrix game !! 0)-2)) ||
-                                (weaponX<0)
-                                )
+                            if ((truncate weaponY>((length $ Types.tileMatrix game)-2)) || (weaponY<0))
                                     then return()
                                     else do 
                                         loadIdentity
@@ -184,11 +189,9 @@ keyboardMouse gamestate bulletRotationAngle key Down _ _ = do
                     gamestate $~! \x -> Tank.updateGameStateTank x Input.increaseAngle
                     postRedisplay Nothing
             SpecialKey KeyLeft -> do
-                    print("\n******************************************\n")
                     gamestate $~! \x -> Tank.updateGameStateTank x Input.moveLeft
                     postRedisplay Nothing
             SpecialKey KeyRight -> do
-                    print("\n******************************************\n")
                     gamestate $~! \x -> Tank.updateGameStateTank x Input.moveRight
                     postRedisplay Nothing
             Char '0' -> do
