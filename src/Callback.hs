@@ -109,7 +109,7 @@ display gamestate bulletRotationAngle = do
             let lengthOfTurret = (Types.lengthOfTurret ((Types.weapon game) !! current_weapon))
             
 
-            let healthX =  (topCenterX-(cos(incline_theta)*(tankWidthInGLUT/3))) - (lengthOfTurret*0.35)*cos(perpendicularAngle)
+            let healthX = (topCenterX-(cos(incline_theta)*(tankWidthInGLUT/3))) - (lengthOfTurret*0.35)*cos(perpendicularAngle)
                 healthY = (topCenterY-(sin(incline_theta)*(tankWidthInGLUT/3))) - (lengthOfTurret*1.25)*sin(perpendicularAngle)
 
             --Drawing The White Health Of Tank

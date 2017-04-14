@@ -7,6 +7,7 @@ import Input
 import qualified Graphics.UI.GLUT
 import Data.IORef
 import Debug.Trace
+import qualified Graphics.Gloss
 
 initializeTankState :: Float -> Float -> TankState
 initializeTankState posX posY = TankState {direction = FacingRight, 
@@ -16,10 +17,10 @@ initializeTankState posX posY = TankState {direction = FacingRight,
                                      turret = Turret {angle = 0.7853981633974483 , power = 0}
                                     }
 
-initializeTank :: Float -> Float -> Float -> Graphics.UI.GLUT.Color4 Float -> Int -> [Integer] -> Tank
-initializeTank posX posY score tankcolor currweapon listweaponcount = Tank {tankState = (initializeTankState posX posY),
+initializeTank :: Float -> Float -> Float -> Graphics.Gloss.Color -> Int -> [Integer] -> Tank
+initializeTank posX posY score tankcol currweapon listweaponcount = Tank {tankState = (initializeTankState posX posY),
                                     score = score,
-                                    color = tankcolor,
+                                    tankcolor = tankcol,
                                     currentWeapon = currweapon,
                                     weaponCount = listweaponcount
                                    } 
@@ -84,7 +85,7 @@ decreaseWeaponCount (Tank {
             })
         }),
         score = s,
-        color = c,
+        tankcolor = c,
         currentWeapon = e,
         weaponCount = f
     }) = Tank {
@@ -99,7 +100,7 @@ decreaseWeaponCount (Tank {
             })
         }),
         score = s,
-        color = c,
+        tankcolor = c,
         currentWeapon = e,
         weaponCount = changeListElementAtIndex f e ((f!!e)-1)
     }
@@ -152,7 +153,7 @@ stopTank (Tank {
             })
         }),
         score = s,
-        color = c,
+        tankcolor = c,
         currentWeapon = e,
         weaponCount = f
         
@@ -168,7 +169,7 @@ stopTank (Tank {
             })
         }),
         score = s,
-        color = c,
+        tankcolor = c,
         currentWeapon = e,
         weaponCount = f
     }
@@ -188,7 +189,7 @@ updateTank
             })
         }),
         score = s,
-        color = c,
+        tankcolor = c,
         currentWeapon = e,
         weaponCount = f
     }) key tileMatrix = Tank {
@@ -203,7 +204,7 @@ updateTank
             })
         }),
         score = s,
-        color = c,
+        tankcolor = c,
         currentWeapon = (updateWeaponChoice e key),
         weaponCount = f
     }

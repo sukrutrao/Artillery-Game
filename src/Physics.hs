@@ -159,7 +159,7 @@ getListOfPointsInRectangle (Position x y) length width
     |    width < 0 = [[]]
     |    otherwise = ((getListOfPointsInLine (Position x y) length) : (getListOfPointsInRectangle (Position x (y+1)) length (width-1)))
     
-flattenList :: [[Point]] -> [Point]
+
 flattenList [] = []
 flattenList [[]] = []
 flattenList (x:xs) = (x ++ (flattenList xs))

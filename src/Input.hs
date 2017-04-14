@@ -2,7 +2,6 @@ module Input where
 
 import qualified Graphics.UI.GLUT
 import Types
-import Graphics.Gloss.Interface.Pure.Game
 
 moveLeft :: Key
 moveLeft = Key $ Graphics.UI.GLUT.SpecialKey Graphics.UI.GLUT.KeyLeft

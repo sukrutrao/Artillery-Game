@@ -4,7 +4,7 @@ import qualified Graphics.UI.GLUT
 import qualified Graphics.Gloss
 
 --Input Keys
-data Key = Key Graphics.Gloss Key deriving (Eq)
+data Key = Key (Graphics.UI.GLUT.Key) deriving (Eq)
 
 --Physics Types
 data Point = Position Float Float | Velocity Float Float | Acceleration Float Float deriving (Show, Eq)
@@ -66,9 +66,9 @@ data Weapon = GenericWeapon {
 
 data WeaponGraphics = WeaponGraphics {
     weaponPhysics :: Weapon,
-    bulletColor :: Graphics.UI.GLUT.Color4 Float,
-    turretColor :: Graphics.UI.GLUT.Color4 Float,
-    bulletRotation :: Graphics.UI.GLUT.Vector3 Float,
+    bulletColor :: Graphics.Gloss.Color,
+    turretColor :: Graphics.Gloss.Color,
+    bulletRotation :: Graphics.Gloss.Color,
     turretThickness :: Float,
     lengthOfTurret :: Float
 } deriving (Show)
@@ -81,10 +81,10 @@ tileMatrixColumnSize :: Int
 tileMatrixColumnSize = 201
 
 widthOfTile :: Float
-widthOfTile = 1
+widthOfTile = 0.01
 
 heightOfTile :: Float
-heightOfTile = 1
+heightOfTile = 0.01
 
 widthOfTank :: Integer
 widthOfTank = 9

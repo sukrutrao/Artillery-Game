@@ -3,27 +3,28 @@ import Graphics.Gloss
 import Graphics.Gloss.Data.ViewPort
 import System.IO.Unsafe
 import Types
+import Render
 import Gamestate
 
 main :: IO ()
-main = play window background fps initializeGamestate disp handlekeys update
+main = play window background fps initializeGamestate render handlekeys update
 
 window :: Display
-window = InWindow "Tanki" (200, 200) (500, 500)
+window = InWindow "Tanki" ( 800 , 800 ) (500, 500)
 
 background :: Color
 background = white
 
 disp :: GameState -> Picture
-disp game = rect 10 50
+disp game = rectangleSolid 10 50
 
 fps :: Int
 fps = 60
 
-handlekeys :: Event -> Types.GameState -> Types.GameState
+handlekeys :: Event -> GameState -> GameState
 handlekeys _ game = game
 
-update :: Float -> Types.GameState -> Types.GameState
+update :: Float -> GameState -> GameState
 update _ game = game
 
 
