@@ -16,8 +16,8 @@ getWeaponList initialWeaponPosition = [(initializeWeapon a b c d e f g h i j) | 
 initializeGamestate::GameState
 initializeGamestate = GameState { tileMatrix = getTileMatrix, 
 -- position x , y , score ,color , currentWeapon , weaponCount ,
-                                  tankList = (getTankList [(10 , 149, 30 , Graphics.Gloss.green , 0 , [10,10,10]),
-                                                           (30 , 149, 30 , Graphics.Gloss.blue , 0 , [10,10,10])--,
+                                  tankList = (getTankList [(10 , 150, 30 , Graphics.Gloss.green , 0 , [10,10,10]),
+                                                           (30 , 150, 30 , Graphics.Gloss.blue , 0 , [10,10,10])--,
                                                         --   (67 , 149 , 30 , Graphics.Gloss.magenta , 0 , [10,10,10])
                                                           ]
                                                ),
