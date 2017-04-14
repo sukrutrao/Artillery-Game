@@ -19,7 +19,7 @@ getIsObstacleTilesList tilemap = [ (Physics.getPositionX $ Types.tilePosition xs
 
 
 getTankListGraphics :: Types.GameState -> [[Picture]]
-getTankListGraphics game = [ [ translate ((tankCoordX*500)+(tankWidthInGLUT*125)) ((tankCoordY*250)+(tankHeightInGLUT*62.5)) $ color tankcolor $ rotate (Physics.radianTodegree incline_theta) $ rectangleSolid (tankWidthInGLUT*250) (tankHeightInGLUT*125),
+getTankListGraphics game = [ [ translate ((tankCoordX*500)+(tankWidthInGLUT*125)) ((tankCoordY*250)+(tankHeightInGLUT*62.5)) $ color tankcolor $ rotate (Physics.radianTodegree incline_theta) $ unsafePerformIO (loadBMP "tank2.bmp"), -- (tankWidthInGLUT*250) (tankHeightInGLUT*125),
                                trace(show healthY) (translate ((healthX*500)+(tankWidthInGLUT*125/1.5)) ((healthY*500)+12.5) $ color white $ rotate (Physics.radianTodegree incline_theta) $ rectangleSolid (tankWidthInGLUT*250/1.5) 2.5)  
                                {-translate ((healthX*500)+((max (0.0)  ((s*((tankWidthInGLUT/1.5)))/30))*5*2.5)) ((tankCoordY*250)-(0.0625)) $ color (getcolor s)  $ rotate (Physics.radianTodegree incline_theta) $ rectangleSolid ((max (0.0)  ((s*((tankWidthInGLUT/1.5)))/30))*5) 0.05, 
                                translate ((topCenterX*500)+(lengthOfTurret*5*2.5)) ((topCenterY*250)-(0.25*1.25)) $ color (Types.turretColor ((Types.weapon game) !! current_weapon)) $ rotate (Physics.radianTodegree (turret_theta+incline_theta)) $ rectangleSolid (lengthOfTurret*5) 0.25-}
@@ -53,7 +53,7 @@ getTankListGraphics game = [ [ translate ((tankCoordX*500)+(tankWidthInGLUT*125)
 
 
 render :: Types.GameState -> Picture
-render game = pictures ((getTileList (getIsObstacleTilesList (Types.tileMatrix game))) ++ 
+render game = pictures ( [( scale (1000/1200) (500/600) $ unsafePerformIO (loadBMP "map.bmp"))] ++ (getTileList (getIsObstacleTilesList (Types.tileMatrix game))) ++ 
                         [ translate (-37.5) (-90) $ color white $ rectangleSolid 75 1 , translate (-37.5) (-90) $ color red $ rectangleSolid ((Types.power(Types.turret (Types.tankState ((Types.tankList game) !! (Types.chance game))))  *75)/100) 1 ] ++
                           (Physics.flattenList(getTankListGraphics game))
                         )
