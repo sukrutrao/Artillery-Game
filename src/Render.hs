@@ -21,10 +21,10 @@ getIsObstacleTilesList :: [Types.Tile] -> [(Float , Float)]
 getIsObstacleTilesList tilemap = [ (Physics.getPositionX $ Types.tilePosition xs , Physics.getPositionY $ Types.tilePosition xs) |  xs <- (tilemap) , (Types.isObstacle xs) == False ]
 
 getTankListGraphics :: Types.GameState -> [[Picture]]
-getTankListGraphics game = [ [ trace ("*********************\n THETA : " ++ show incline_theta) (translate ((tankCoordX+(tankWidthInGLUT*0.5*cos(incline_theta))-(tankHeightInGLUT*0.5*sin(incline_theta)))*(Types.widthOfScreen/2)) ((tankCoordY+(tankWidthInGLUT*0.5*sin(incline_theta))+(tankHeightInGLUT*0.5*cos(incline_theta)))*(Types.heightOfScreen/2)) $ rotate (Physics.radianTodegree incline_theta) $ color tankcolor  $ rectangleSolid (tankWidthInGLUT*(Types.widthOfScreen/2)) (tankHeightInGLUT*(Types.heightOfScreen/2)))
-                             {-  trace ("healthX : " ++ show healthX) (translate ((healthX*500)+(tankWidthInGLUT*125/1.5)) ((healthY*250)+1.25) $ color white $ rotate (Physics.radianTodegree incline_theta) $ rectangleSolid (tankWidthInGLUT*250/1.5) 2.5)  ,
-                               translate ((healthX*500)+(tankWidthInGLUT*125/1.5)) ((healthY*250)+1.25) $ color (getcolor s)  $ rotate (Physics.radianTodegree incline_theta) $ rectangleSolid ((max (0.0)  ((s*((tankWidthInGLUT/1.5)))/30))*5) 0.05, 
-                               translate ((topCenterX*500)+(lengthOfTurret*5*2.5)) ((topCenterY*250)-(0.25*1.25)) $ color (Types.turretColor ((Types.weapon game) !! current_weapon)) $ rotate (Physics.radianTodegree (turret_theta+incline_theta)) $ rectangleSolid (lengthOfTurret*5) 0.25-}
+getTankListGraphics game = [ [ trace ("*********************\n THETA : " ++ show incline_theta++ " " ++ show tankCoordX) (translate ((tankCoordX+(tankWidthInGLUT*0.5*cos(incline_theta))-(tankHeightInGLUT*0.5*sin(incline_theta)))*(Types.widthOfScreen/2)) ((tankCoordY+(tankWidthInGLUT*0.5*sin(incline_theta))+(tankHeightInGLUT*0.5*cos(incline_theta)))*(Types.heightOfScreen/2)) $ rotate (Physics.radianTodegree (-incline_theta)) $ color tankcolor  $ rectangleSolid (tankWidthInGLUT*(Types.widthOfScreen/2)) (tankHeightInGLUT*(Types.heightOfScreen/2))),
+                               trace ("healthX : " ++ show healthY) (translate (healthX*(Types.widthOfScreen/2)) (healthY*(Types.heightOfScreen/2)) $ color white $ rotate (Physics.radianTodegree (-incline_theta)) $ rectangleSolid (tankWidthInGLUT*250/1.5) 2.5)  ,
+                             --  translate ((healthX*500)+(tankWidthInGLUT*125/1.5)) ((healthY*250)+1.25) $ color (getcolor s)  $ rotate (Physics.radianTodegree incline_theta) $ rectangleSolid ((max (0.0)  ((s*((tankWidthInGLUT/1.5)))/30))*5) 0.05,
+                               trace(show ((topCenterY))) (translate ((topCenterX + (lengthOfTurret*cos(incline_theta+turret_theta)/2))*(Types.widthOfScreen/2)) ((topCenterY + (lengthOfTurret*sin(incline_theta+turret_theta)/2))*(Types.heightOfScreen/2)) $ color red $ rotate (Physics.radianTodegree (-(turret_theta+incline_theta))) $ rectangleSolid (lengthOfTurret*(Types.widthOfScreen/2)) 2.5)
                              ] |        (Types.Tank  { Types.tankState = (Types.TankState {
                                             Types.direction = d,
                                             Types.position = (Types.Position x y),
@@ -44,13 +44,14 @@ getTankListGraphics game = [ [ trace ("*********************\n THETA : " ++ show
                                             tankCoordY = (Physics.getTilePosY (Types.tileMatrix game) y x)
                                             tankWidthInGLUT = ((fromIntegral Types.widthOfTank)*Types.widthOfTile)
                                             tankHeightInGLUT = (fromIntegral Types.heightOfTank)*Types.heightOfTile
-                                            topCenterX = (tankCoordX+(Physics.hypotenuseRect*cos(incline_theta+Physics.rectHalfAngle)))
-                                            topCenterY = (tankCoordY+(Physics.hypotenuseRect*sin(incline_theta+Physics.rectHalfAngle)))
+                                            topCenterX = (tankCoordX-tankHeightInGLUT*sin(incline_theta)+(tankWidthInGLUT*cos(incline_theta))/2)
+                                            topCenterY = (tankCoordY+tankHeightInGLUT*cos(incline_theta)+(tankWidthInGLUT*sin(incline_theta))/2)
                                             taninverse = atan((-1)*(1/(tan(fromIntegral $ truncate incline_theta))))
                                             perpendicularAngle =  if (taninverse > 0) then taninverse else ((pi)-taninverse)
-                                            lengthOfTurret = (Types.lengthOfTurret ((Types.weapon game) !! current_weapon))
-                                            healthY = (topCenterY-(sin(incline_theta)*(tankWidthInGLUT/3))) - (lengthOfTurret*1.25)*sin(perpendicularAngle)
-                                            healthX = ((topCenterX-(cos(incline_theta)*(tankWidthInGLUT/3))) - (lengthOfTurret*0.35)*cos(perpendicularAngle))
+                                            lengthOfTurret = 0.1
+                                            healthY = (topCenterY+(lengthOfTurret+0.01)*cos(incline_theta))
+                                            healthX = (topCenterX-(lengthOfTurret+0.01)*sin(incline_theta))
+                                           
                                          ]
 
 
