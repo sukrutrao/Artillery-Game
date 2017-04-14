@@ -2,7 +2,7 @@ module Common where
 
 import Types
 import Physics
-
+import Debug.Trace
 applyGravityOnAll :: [[Tile]] -> Tank -> Tank
 applyGravityOnAll tileMatrix (Tank {
         tankState = (TankState {
@@ -19,7 +19,7 @@ applyGravityOnAll tileMatrix (Tank {
         color = c,
         currentWeapon = e,
         weaponCount = f
-    })  = let gravityPosition = (tankGravityNewPosition (Position x y) widthOfTank heightOfTank incline_theta tileMatrix)
+    })  = let gravityPosition = trace("GRAVITY HERE")  (tankGravityNewPosition (Position x y) widthOfTank heightOfTank incline_theta tileMatrix)
                         in Tank {
         tankState = (TankState {
             direction = d,

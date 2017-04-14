@@ -191,15 +191,19 @@ updateTank
         score = s,
         color = c,
         currentWeapon = e,
-        weaponCount = f
-    }) key tileMatrix = let newTankPosition = (updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key)
+        weaponCount = f 
+    }) key tileMatrix = let newTankPosition = updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key
                             isPositionValid = checkIfValidPosition newTankPosition widthOfTank heightOfTank incline_theta tileMatrix
+                            newValidTankPosition = if (isPositionValid) then newTankPosition else (Position (getPositionX newTankPosition) ((getPositionY newTankPosition)-1)) 
+                            newTheta = getAngleAt newValidTankPosition widthOfTank tileMatrix
+                            isThetaValid = checkThetaValidRange newTheta
+                            newValidValidTankPosition = if(isThetaValid) then newValidTankPosition else (Position x y) 
                         in Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
-            position = if(isPositionValid) then newTankPosition else (Position (getPositionX newTankPosition) ((getPositionY newTankPosition)-1)) ,
+            position = newValidValidTankPosition ,
             velocity = (Velocity vx vy),
-            inclineAngle = (getAngleAt (Position x y) widthOfTank tileMatrix),--getAngleincline_theta,
+            inclineAngle = if(isThetaValid) then newTheta else incline_theta,
             turret = (Turret {
                 angle = (updateAngle turret_theta key), 
                 power = (updatePower turret_power key)

@@ -4,7 +4,7 @@ import Types
 import Debug.Trace
 
 g :: Float
-g = 1
+g = 10
 
 gAcceleration :: Point
 gAcceleration = (Acceleration 0 g)
@@ -69,18 +69,61 @@ constantVelocityNewPosition :: Point -> Float -> Float ->  Point
 constantVelocityNewPosition position velocity theta = newPosition position (getComponentsVelocity velocity theta) (Acceleration 0 0) unitTime
 
 getIsObstacle:: [[Tile]] -> Float -> Float -> Bool
-getIsObstacle tileMatrix row col = {-trace ("getTileIsObstacle stack : "++ show row ++ " " ++ show col) -}(isObstacle ((tileMatrix !! (truncate row)) !! (truncate col)))
-
+getIsObstacle tileMatrix row col 
+    | ((col < 0 || col >= (fromIntegral tileMatrixColumnSize) || row >= (fromIntegral tileMatrixRowSize))) = (True)
+    | (row < 0) = (False)
+    | otherwise = (isObstacle ((tileMatrix !! (truncate row)) !! (truncate col)))
 
 getTilePos:: [[Tile]] -> Float -> Float -> Point
-getTilePos tileMatrix row col = {-trace ("getTilePos stack : "++ show row ++ " " ++ show col)-} tilePosition ((tileMatrix !! (truncate row)) !! (truncate col))
+getTilePos tileMatrix row col 
+    | (row < 0 && col < 0) = tilePosition ((tileMatrix !! 0) !! 0)
+    | (row < 0 && col > matrColSize) = tilePosition ((tileMatrix !! 0) !! truncatedmatrColSize)
+    | (row > matrRowSize && col < 0 ) = tilePosition ((tileMatrix !! truncatedmatrRowSize) !! 0)
+    | (row > matrRowSize && col > matrColSize) = tilePosition ((tileMatrix !! truncatedmatrRowSize) !! truncatedmatrColSize)
+    | (row > matrRowSize) = tilePosition ((tileMatrix !! truncatedmatrRowSize) !! truncatedCol)
+    | (col > matrColSize) = tilePosition ((tileMatrix !! truncatedRow) !! truncatedmatrColSize)
+    | (col < 0) = tilePosition ((tileMatrix !! truncatedRow) !! 0) 
+    | otherwise = tilePosition ((tileMatrix !! truncatedRow) !! truncatedCol)
+    where matrColSize = (fromIntegral tileMatrixColumnSize)-1
+          truncatedmatrColSize = truncate matrColSize
+          matrRowSize = (fromIntegral tileMatrixRowSize)-1
+          truncatedmatrRowSize = truncate matrRowSize
+          truncatedCol = truncate col
+          truncatedRow = truncate row
 
 getTilePosX:: [[Tile]] -> Float -> Float -> Float
-getTilePosX tileMatrix row col = {-trace ("getTilePosX stack : "++ show row ++ " " ++ show col)-} (getPositionX (tilePosition ((tileMatrix !! (truncate row)) !! (truncate col))))
+getTilePosX tileMatrix row col 
+    | (row < 0 && col < 0) = getPositionX $ tilePosition ((tileMatrix !! 0) !! 0)
+    | (row < 0 && col > matrColSize) = getPositionX $ tilePosition ((tileMatrix !! 0) !! truncatedmatrColSize)
+    | (row > matrRowSize && col < 0 ) = getPositionX $ tilePosition ((tileMatrix !! truncatedmatrRowSize) !! 0)
+    | (row > matrRowSize && col > matrColSize) = getPositionX $ tilePosition ((tileMatrix !! truncatedmatrRowSize) !! truncatedmatrColSize)
+    | (row > matrRowSize) = getPositionX $ tilePosition ((tileMatrix !! truncatedmatrRowSize) !! truncatedCol)
+    | (col > matrColSize) = getPositionX $ tilePosition ((tileMatrix !! truncatedRow) !! truncatedmatrColSize)
+    | (col < 0) = getPositionX $ tilePosition ((tileMatrix !! truncatedRow) !! 0) 
+    | otherwise = getPositionX $ tilePosition ((tileMatrix !! truncatedRow) !! truncatedCol)
+    where matrColSize = (fromIntegral tileMatrixColumnSize)-1
+          truncatedmatrColSize = truncate matrColSize
+          matrRowSize = (fromIntegral tileMatrixRowSize)-1
+          truncatedmatrRowSize = truncate matrRowSize
+          truncatedCol = truncate col
+          truncatedRow = truncate row
 
 getTilePosY:: [[Tile]] -> Float -> Float -> Float
-getTilePosY tileMatrix row col = {-trace ("getTilePosY stack : "++ show row ++ " " ++ show col) -}getPositionY (tilePosition ((tileMatrix !! (truncate row)) !! (truncate col)))
-
+getTilePosY tileMatrix row col 
+    | (row < 0 && col < 0) = getPositionY $ tilePosition ((tileMatrix !! 0) !! 0)
+    | (row < 0 && col > matrColSize) = getPositionY $ tilePosition ((tileMatrix !! 0) !! truncatedmatrColSize)
+    | (row > matrRowSize && col < 0 ) = getPositionY $ tilePosition ((tileMatrix !! truncatedmatrRowSize) !! 0)
+    | (row > matrRowSize && col > matrColSize) = getPositionY $ tilePosition ((tileMatrix !! truncatedmatrRowSize) !! truncatedmatrColSize)
+    | (row > matrRowSize) = getPositionY $ tilePosition ((tileMatrix !! truncatedmatrRowSize) !! truncatedCol)
+    | (col > matrColSize) = getPositionY $ tilePosition ((tileMatrix !! truncatedRow) !! truncatedmatrColSize)
+    | (col < 0) = getPositionY $ tilePosition ((tileMatrix !! truncatedRow) !! 0) 
+    | otherwise = getPositionY $ tilePosition ((tileMatrix !! truncatedRow) !! truncatedCol)
+    where matrColSize = (fromIntegral tileMatrixColumnSize)-1
+          truncatedmatrColSize = truncate matrColSize
+          matrRowSize = (fromIntegral tileMatrixRowSize)-1
+          truncatedmatrRowSize = truncate matrRowSize
+          truncatedCol = truncate col
+          truncatedRow = truncate row
 getPositionX:: Point -> Float
 getPositionX (Position x _) = x
 
@@ -115,7 +158,7 @@ checkPointInRectangle point (Position lx ly) ilength iwidth theta =
         pointX = getPositionX point
         pointY = getPositionY point
     in
-	    trace("CPIR : " ++ show point ++ " " ++ show lx ++ " " ++ show ly ++ " " ++ show ilength ++ " " ++ show iwidth ++ " " ++ show theta ++ " " ++ show (not (theta == 0)))
+	   -- trace("CPIR : " ++ show point ++ " " ++ show lx ++ " " ++ show ly ++ " " ++ show ilength ++ " " ++ show iwidth ++ " " ++ show theta ++ " " ++ show (not (theta == 0)))
 	    (if (not (theta == 0))
 	    	then if ((checkOrientationPointLine point (Position lx ly) (Position (lx + length * cos(theta)) (ly - length * sin(theta)))) == AboveLine &&
 			        (checkOrientationPointLine point (Position lx ly) (Position (lx - width * sin(theta)) (ly - width * cos(theta)))) == AboveLine &&
@@ -249,18 +292,18 @@ hypotenuseRect :: Float
 hypotenuseRect = sqrt((((fromIntegral heightOfTank)*heightOfTile)^2) + ((((fromIntegral widthOfTank)*widthOfTile)/2)^2))
 
 makeTileNotObsAtPts :: [[Tile]] -> [Point] -> [[Tile]]
-makeTileNotObsAtPts tileMatrix points = foldr (\(Position x y) tileMap -> changeListElementAtIndex tileMap (truncate y) (changeListElementAtIndex (tileMap !! (truncate y)) (truncate x) (Tile{isObstacle=False,tilePosition=getTilePos tileMap y x})  )  ) tileMatrix points
+makeTileNotObsAtPts tileMatrix points = (foldr (\(Position x y) tileMap -> changeListElementAtIndex tileMap (truncate y) (changeListElementAtIndex (tileMap !! (truncate y)) (truncate x) (Tile{isObstacle=False,tilePosition=getTilePos tileMap y x})  )  ) tileMatrix points)
 
 changeListElementAtIndex originalList index newValue = (take index originalList) ++ ( newValue : (drop (index+1) originalList))
 
 getAllPointsInLine :: Point -> Integer -> Float -> Integer -> [Point]
 getAllPointsInLine (Position x y) length theta i
-	|	i<=length = (Position x y) : getAllPointsInLine (Position (x + (fromIntegral i) * (cos theta)) (y - (fromIntegral i) * (sin theta))) length theta (i+1)
+	|	i<=length = (Position (x + (fromIntegral i) * (cos theta)) (y - (fromIntegral i) * (sin theta))) : getAllPointsInLine (Position x y) length theta (i+1)
 	|	otherwise = []
 
 getAllPointsInRectangleHelper :: Point -> Integer -> Integer -> Float -> Integer -> [[Point]]
 getAllPointsInRectangleHelper (Position x y) length width theta i
-	|	i<=width = (getAllPointsInLine (Position x y) length theta 0) : (getAllPointsInRectangleHelper (Position (x - (fromIntegral i) * (sin theta)) (y - (fromIntegral i) * (cos theta))) length width theta (i+1))
+	|	i<=width = (getAllPointsInLine (Position (x - (fromIntegral i) * (sin theta)) (y - (fromIntegral i) * (cos theta))) length theta 0) : (getAllPointsInRectangleHelper (Position x y) length width theta (i+1))
 	|	otherwise = [[]] 
 
 -- horizontal shots!
@@ -344,10 +387,10 @@ checkAllTanksForHit gameState position = trace("CATCH : " ++ show (checkAllTanks
 											(checkAllTanksForHitHelper gameState position 0)
 
 minValid :: Float
-minValid = (-(2*pi)/5)
+minValid = (-(1*pi)/5)
 
 maxValid :: Float
-maxValid = ((2*pi)/5)
+maxValid = ((1*pi)/5)
 
 checkThetaValidRange :: Float -> Bool
 checkThetaValidRange theta = if (theta >= minValid && theta <= maxValid) then True else False
