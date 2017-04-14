@@ -10,7 +10,7 @@ main :: IO ()
 main = play window background fps initializeGamestate render handlekeys update
 
 window :: Display
-window = InWindow "Tanki" ( 800 , 800 ) (500, 500)
+window = InWindow "Tanki" ( 1000 , 500 ) (500, 500)
 
 background :: Color
 background = white

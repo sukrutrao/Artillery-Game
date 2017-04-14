@@ -78,13 +78,13 @@ tileMatrixRowSize :: Int
 tileMatrixRowSize = 201
 
 tileMatrixColumnSize :: Int
-tileMatrixColumnSize = 201
+tileMatrixColumnSize = 401
 
 widthOfTile :: Float
-widthOfTile = 0.01
+widthOfTile = 0.02
 
 heightOfTile :: Float
-heightOfTile = 0.01
+heightOfTile = 0.02
 
 widthOfTank :: Integer
 widthOfTank = 9
