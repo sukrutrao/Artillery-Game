@@ -14,7 +14,7 @@ initializeTankState posX posY = TankState {direction = FacingRight,
                                      position = (originPosition posX posY),
                                      velocity = restVelocity,
                                      inclineAngle = 0,
-                                     turret = Turret {angle = 0.7853981633974483 , power = 0}
+                                     turret = Turret {angle = 0.7853981633974483 , power = 1}
                                     }
 
 initializeTank posX posY score tankcolor currweapon listweaponcount = Tank {tankState = (initializeTankState posX posY),
@@ -49,11 +49,11 @@ launchWeapon
         })
     }) tileMap startVelocity = let topCenterX = x+((hypotenuseRect*cos(incline_theta+rectHalfAngle))/widthOfTile)
                                    topCenterY = y-((hypotenuseRect*sin(incline_theta+rectHalfAngle))/heightOfTile)
-                                   turretTopX = topCenterX+((lTurr*cos(incline_theta+turret_theta))/heightOfTile)
+                                   turretTopX = topCenterX+((lTurr*cos(incline_theta+turret_theta))/widthOfTile)
                                    turretTopY = topCenterY-((lTurr*sin(incline_theta+turret_theta))/heightOfTile)
                                 in WeaponGraphics {
         weaponPhysics = (GenericWeapon {
-            currentPosition = (Position turretTopX turretTopY),
+            currentPosition = (Position (turretTopX+5) (turretTopY-5)),
             currentVelocity = (turret_power*startVelocity*f),
             launchVelocity = trace("TANK.hs : launchVelocity : " ++ show (turret_power*startVelocity*f) ) (turret_power*startVelocity*f),
             launchAngle = trace("TANK.hs : launchAngle : " ++ show (incline_theta+turret_theta) ) (incline_theta+turret_theta),
@@ -116,7 +116,7 @@ updatePosition position theta key
 updatePower :: Float -> Key -> Float
 updatePower power key
     | (key == increasePower) = if(power+powerIncrement > 100) then 100 else power+powerIncrement
-    | (key == decreasePower) = if(power-powerIncrement < 0) then 0 else power-powerIncrement
+    | (key == decreasePower) = if(power-powerIncrement < 1) then 1 else power-powerIncrement
     | otherwise = power
 
 updateAngle :: Float -> Key -> Float

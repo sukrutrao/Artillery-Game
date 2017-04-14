@@ -93,13 +93,13 @@ heightOfTile :: Float
 heightOfTile = 0.02
 
 widthOfTank :: Integer
-widthOfTank = 9
+widthOfTank = 6
 
 heightOfTank :: Integer
-heightOfTank = 6
+heightOfTank = 3
 
 powerIncrement :: Float
-powerIncrement = 1
+powerIncrement = 2
 
 angleIncrement :: Float
 angleIncrement = 0.1

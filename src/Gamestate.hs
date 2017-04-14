@@ -15,15 +15,15 @@ getWeaponList initialWeaponPosition = [(initializeWeapon a b c d e f g h i j) | 
 initializeGamestate::GameState
 initializeGamestate = GameState { tileMatrix = getTileMatrix, 
 -- position x , y , score ,color , currentWeapon , weaponCount ,
-                                  tankList = (getTankList [(10 , 149, 30 , Graphics.Gloss.green , 0 , [10,10,10]),
-                                                           (30 , 149, 30 , Graphics.Gloss.blue , 0 , [10,10,10])--,
+                                  tankList = (getTankList [(10 , 130, 30 , Graphics.Gloss.green , 0 , [10,10,10]),
+                                                           (40 , 130, 30 , Graphics.Gloss.blue , 0 , [10,10,10])--,
                                                         --   (67 , 149 , 30 , Graphics.Gloss.magenta , 0 , [10,10,10])
                                                           ]
                                                ),
 -- position x y , factor , currentAngle , impactRadius , bullcolor , turrcolor , rotation , thickness length
-                                  weapon = (getWeaponList [(0 , 0 , 2 , 1 , 15 , Graphics.Gloss.red , Graphics.Gloss.rose , 0 , 5  , (fromIntegral heightOfTank)* heightOfTile),
-                                                           (0 , 0 , 3 , 2 , 10 , Graphics.Gloss.yellow , Graphics.Gloss.rose , 0 , 10 , (fromIntegral heightOfTank)*heightOfTile*1.5),
-                                                           (0 , 0 , 4 , 3 , 5 , Graphics.Gloss.black , Graphics.Gloss.rose ,  0 , 25 , (fromIntegral heightOfTank)*heightOfTile*2)
+                                  weapon = (getWeaponList [(0 , 0 , 2 , 1 , 15 , Graphics.Gloss.red , Graphics.Gloss.rose , 0 , 5  , 0.1),
+                                                           (0 , 0 , 3 , 2 , 10 , Graphics.Gloss.yellow , Graphics.Gloss.rose , 0 , 10 , 0.1),
+                                                           (0 , 0 , 4 , 3 , 5 , Graphics.Gloss.black , Graphics.Gloss.rose ,  0 , 25 , 0.1)
                                                            ]
                                              ),
                                   chance = 1,

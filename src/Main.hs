@@ -22,9 +22,5 @@ fps :: Int
 fps = 60
 
 
-update :: Float -> GameState -> GameState
-update _ game = game
-
-
 
 
