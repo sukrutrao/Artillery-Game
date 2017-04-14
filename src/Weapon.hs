@@ -184,7 +184,8 @@ updateHealth  (GenericWeapon {
         color = c,
         currentWeapon = e,
         weaponCount = f
-    }) =  (Tank {
+    }) =  let scoreDiff = (fromIntegral (length $ commonPointsBetweenLists (getAllPointsInCircle (Position wx wy) impactradius) (getAllPointsInRectangle (Position x y) widthOfTank heightOfTank incline_theta)) * weapon_velocity * 2)
+          in (Tank {
         tankState = (TankState {
             direction = d,
             position = (Position x y),
@@ -195,8 +196,8 @@ updateHealth  (GenericWeapon {
                 power = turret_power
             })
         }),
-        score = s - (fromIntegral (length $ commonPointsBetweenLists (getAllPointsInCircle (Position wx wy) impactradius) (getAllPointsInRectangle (Position x y) widthOfTank heightOfTank incline_theta)) * weapon_velocity * 2),
-        color = c,
+        score = s - scoreDiff,
+        color = if(s-scoreDiff<=0) then Graphics.UI.GLUT.Color4 1 0 0 0  else c,
         currentWeapon = e,
         weaponCount = f
     })
@@ -225,10 +226,19 @@ updateGameStateWeapon
              shouldWeBlast =  if(isLaunched $ weaponPhysics newWeapon) then t
                                 else makeTileNotObsAtPts t (getAllPointsInCircle (currentPosition (weaponPhysics newWeapon)) (impactRadius (weaponPhysics newWeapon)))
              newWeaponList = changeListElementAtIndex w weaponChoice newWeapon
+             updatedTankHealth = if(isLaunched $ weaponPhysics newWeapon) then l
+                                    else map (updateHealth (weaponPhysics newWeapon)) l
          in GameState { tileMatrix = shouldWeBlast, 
-                        tankList =  map (updateHealth (weaponPhysics newWeapon)) l,
+                        tankList =  updatedTankHealth,
                         weapon = newWeaponList,
-                        chance = if (isLaunched $ weaponPhysics newWeapon) then c else ((c+1) `mod` 2) ,
+                        chance = if (isLaunched $ weaponPhysics newWeapon) then c else (nextTankChance updatedTankHealth c n) ,
                         noOfPlayers = n,
                         isAcceptingInput = if (isLaunched $ weaponPhysics newWeapon) then False else True
                       }
+
+
+nextTankChance::[Tank] -> Int -> Int -> Int
+nextTankChance tankList currChance noOfPlayers = let nextChance = (currChance+1) `mod` noOfPlayers
+                                             in if(score (tankList !! nextChance) <= 0)
+                                                    then  nextTankChance tankList nextChance noOfPlayers
+                                                    else nextChance
