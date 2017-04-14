@@ -18,8 +18,8 @@ initializeGamestate::GameState
 initializeGamestate = GameState { tileMatrix = getTileMatrix, 
 -- position x , y , score ,color , currentWeapon , weaponCount ,
                                   tankList = (getTankList [(10 , 149, 30 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , 0 , [10,10,10]),
-                                                           (20 , 149, 0 , Graphics.UI.GLUT.Color4 0.8 0.4 0.6 1 , 0 , [10,10,10]),--,
-                                                           (30 , 149 , 30 , Graphics.UI.GLUT.Color4 0.123 0.03 0.24 1 , 0 , [10,10,10])
+                                                           (20 , 149, 30 , Graphics.UI.GLUT.Color4 0.8 0.4 0.6 1 , 0 , [10,10,10])--,
+                                                          -- (30 , 149 , 30 , Graphics.UI.GLUT.Color4 0.123 0.03 0.24 1 , 0 , [10,10,10])
                                                           ]
                                                ),
 -- position x y , factor , currentAngle , impactRadius , color , color , rotation , thickness length
@@ -30,7 +30,7 @@ initializeGamestate = GameState { tileMatrix = getTileMatrix,
                                              ),
                                   chance = 0,
                                   isAcceptingInput = True,
-                                  noOfPlayers = 3
+                                  noOfPlayers = 2
                                 }
 
 

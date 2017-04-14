@@ -164,18 +164,22 @@ flattenList [] = []
 flattenList [[]] = []
 flattenList (x:xs) = (x ++ (flattenList xs))
     
-commonPointsBetweenLists :: [Point] -> [Point] -> [Point]
+commonPointsBetweenLists :: [(Integer,Integer)] -> [(Integer,Integer)] -> [(Integer,Integer)]
 commonPointsBetweenLists [] [] = [] 
 commonPointsBetweenLists (x:xs) [] = []
 commonPointsBetweenLists [] y = []
 commonPointsBetweenLists (x:xs) y = if (x `elem` y) then (x : (commonPointsBetweenLists xs y))
                                     else (commonPointsBetweenLists xs y)
 
+convertPointListToInteger :: [Point] -> [(Integer,Integer)]
+convertPointListToInteger [] = []
+convertPointListToInteger (x:xs) = (((truncate $ getPositionX x), (truncate $ getPositionY x)) : (convertPointListToInteger xs))
+
                               
-commonPointsBetweenCircleRectangle :: Point -> Float -> Point -> Float -> Float -> [Point]
+commonPointsBetweenCircleRectangle :: Point -> Float -> Point -> Float -> Float -> [(Integer,Integer)]
 commonPointsBetweenCircleRectangle (Position cx cy) radius (Position x y) length width = 
-    (commonPointsBetweenLists (flattenList $ (getListOfPointsInRectangle (Position x y) (truncate length) (truncate width)))
-        (getListOfPointsInCircle (Position cx cy) radius (getListOfPointsInRectangle (Position (cx-radius) (cy-radius)) (truncate (2*radius)) (truncate (2*radius)) )))
+    (commonPointsBetweenLists (convertPointListToInteger(flattenList $ (getListOfPointsInRectangle (Position x y) (truncate length) (truncate width))))
+        (convertPointListToInteger(getListOfPointsInCircle (Position cx cy) radius (getListOfPointsInRectangle (Position (cx-radius) (cy-radius)) (truncate (2*radius)) (truncate (2*radius)) ))))
 
 getOtherEndPoint :: Point -> Integer -> Float -> Point
 getOtherEndPoint (Position x y) length theta = 
@@ -325,16 +329,16 @@ getTurretPosition (GameState {
 checkAllTanksForHitHelper :: GameState -> Point -> Int -> Bool
 checkAllTanksForHitHelper (GameState {
 	    tankList = tanks,
-	    chance = c
+        noOfPlayers = n
 	}) (Position x y) i
-	|	i < 2 = trace("CATFHH : " ++ show i) (checkPointInRectangle (Position x y) (position (tankState (tanks !! i))) widthOfTank
+	|	i < n = trace("CATFHH : " ++ show i) (checkPointInRectangle (Position x y) (position (tankState (tanks !! i))) widthOfTank
 					heightOfTank (inclineAngle (tankState (tanks !! i))) ||
 						checkAllTanksForHitHelper (GameState {
 				   						 tankList = tanks,
-									    chance = c
+									     noOfPlayers = n
 									}) (Position x y) (i+1))
 	|	otherwise = False
 
 checkAllTanksForHit :: GameState -> Point -> Bool
-checkAllTanksForHit gameState position = trace("CATFH : " ++ show (checkAllTanksForHitHelper gameState position 0))
+checkAllTanksForHit gameState position = trace("CATCH : " ++ show (checkAllTanksForHitHelper gameState position 0))
 											(checkAllTanksForHitHelper gameState position 0)

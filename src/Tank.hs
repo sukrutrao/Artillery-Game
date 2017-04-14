@@ -4,6 +4,7 @@ import Types
 import Physics
 import Weapon
 import Input 
+import Common
 import qualified Graphics.UI.GLUT
 import Data.IORef
 import Debug.Trace
@@ -191,10 +192,12 @@ updateTank
         color = c,
         currentWeapon = e,
         weaponCount = f
-    }) key tileMatrix = Tank {
+    }) key tileMatrix = let newTankPosition = (updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key)
+                            isPositionValid = checkIfValidPosition newTankPosition widthOfTank heightOfTank incline_theta tileMatrix
+                        in Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
-            position = {-trace("x : " ++ show x ++ " y : " ++ show y ++ "\n") -}(updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key),
+            position = if(isPositionValid) then newTankPosition else (Position (getPositionX newTankPosition) ((getPositionY newTankPosition)-1)) ,
             velocity = (Velocity vx vy),
             inclineAngle = (getAngleAt (Position x y) widthOfTank tileMatrix),--getAngleincline_theta,
             turret = (Turret {
@@ -237,3 +240,20 @@ updateGameStateTank
     }) key = let temp = changeListElementAtIndex l c (updateTank (l !! c) key t)
         in GameState {tileMatrix = t , tankList =  temp, weapon = w , chance = c , noOfPlayers = n, isAcceptingInput = d}
 
+
+
+updateTankGravity :: GameState -> GameState
+updateTankGravity
+    (GameState {
+        tileMatrix = t,
+        tankList = l,
+        weapon = w,
+        chance = c,
+        noOfPlayers = n,
+        isAcceptingInput = d
+    }) = GameState {tileMatrix = t , 
+                    tankList =  (map (applyGravityOnAll t) l) , 
+                    weapon = w , chance = c , 
+                    noOfPlayers = n, 
+                    isAcceptingInput = d
+                  }
