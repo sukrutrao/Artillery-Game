@@ -254,18 +254,18 @@ thetaIncrement = 0.1
 thetaMax :: Float
 thetaMax = pi/2
 
-searchForAngle :: Point -> Integer -> Float -> Float ->  [[Tile]] -> Float
-searchForAngle (Position x y) length theta thetaMax tileMap = 
+searchForAngle :: Point -> Integer -> Integer -> Float -> Float ->  [[Tile]] -> Float
+searchForAngle (Position x y) length width theta thetaMax tileMap = 
     ---- trace("Theta is search for angle : " ++ show theta ++ "\n")
     (if theta < thetaMax
-        then if not (checkLineSegmentObstacle (Position x y) length theta tileMap)
-                then theta
-                else searchForAngle (Position x y) length (theta + thetaIncrement) thetaMax tileMap
+        then if not (checkIfNotValidPosition (Position x y) length width theta tileMap)
+                then (theta+thetaIncrement)
+                else searchForAngle (Position x y) length width (theta + thetaIncrement) thetaMax tileMap
         else (pi))
 
 -- Accepts left end point of line and length of tank, and returns angle of its inclination
-getAngleAt :: Point -> Integer ->  [[Tile]]  -> Float
-getAngleAt (Position x y) length tileMap = searchForAngle (Position x y) length (-pi/2) thetaMax tileMap
+getAngleAt :: Point -> Integer ->  Integer -> [[Tile]]  -> Float
+getAngleAt (Position x y) length width tileMap = searchForAngle (Position x y) length width (-pi/2) thetaMax tileMap
 
 
 -- Accepts the centre and radius of a circle, tile map, and checks if it contains any obstacle in it or not
@@ -311,13 +311,13 @@ getAllPointsInRectangle :: Point -> Integer -> Integer -> Float -> [Point]
 getAllPointsInRectangle (Position x y) length width theta = 
 	flattenList $ getAllPointsInRectangleHelper (Position x y) length width theta 0
 
-checkIfValidPosition :: Point -> Integer -> Integer -> Float -> [[Tile]] -> Bool
-checkIfValidPosition (Position x y) length width theta tileMap = 
+checkIfNotValidPosition :: Point -> Integer -> Integer -> Float -> [[Tile]] -> Bool
+checkIfNotValidPosition (Position x y) length width theta tileMap = 
 	checkObstacleInList (getAllPointsInRectangle (Position x y) length width theta) tileMap
 
 tankGravityNewPosition :: Point -> Integer -> Integer -> Float -> [[Tile]] -> Point
 tankGravityNewPosition (Position x y) length width theta tileMap
-	|	checkIfValidPosition (Position x (y+1)) length width theta tileMap == False = 
+	|	checkIfNotValidPosition (Position x (y+1)) length width theta tileMap == False = 
 			tankGravityNewPosition (Position x (y+1)) length width theta tileMap
 	|	otherwise = (Position x y)
 
@@ -387,10 +387,10 @@ checkAllTanksForHit gameState position = trace("CATCH : " ++ show (checkAllTanks
 											(checkAllTanksForHitHelper gameState position 0)
 
 minValid :: Float
-minValid = (-(1*pi)/5)
+minValid = (-(3*pi)/5)
 
 maxValid :: Float
-maxValid = ((1*pi)/5)
+maxValid = ((3*pi)/5)
 
 checkThetaValidRange :: Float -> Bool
 checkThetaValidRange theta = if (theta >= minValid && theta <= maxValid) then True else False

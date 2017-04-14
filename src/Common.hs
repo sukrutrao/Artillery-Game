@@ -19,13 +19,13 @@ applyGravityOnAll tileMatrix (Tank {
         color = c,
         currentWeapon = e,
         weaponCount = f
-    })  = let gravityPosition = trace("GRAVITY HERE")  (tankGravityNewPosition (Position x y) widthOfTank heightOfTank incline_theta tileMatrix)
+    })  = let gravityPosition = (tankGravityNewPosition (Position x y) widthOfTank heightOfTank incline_theta tileMatrix)
                         in Tank {
         tankState = (TankState {
             direction = d,
-            position = gravityPosition,
+            position =  trace("GRAVITY HERE , X : " ++ show x ++ " , Y : " ++ show y ++ " , grav : " ++ show gravityPosition)  (gravityPosition),
             velocity = (Velocity vx vy),
-            inclineAngle = getAngleAt gravityPosition widthOfTank tileMatrix,--getAngleincline_theta,
+            inclineAngle = getAngleAt gravityPosition widthOfTank heightOfTank tileMatrix,--getAngleincline_theta,
             turret = (Turret {
                 angle = turret_theta, 
                 power = turret_power

@@ -80,7 +80,7 @@ display gamestate bulletRotationAngle = do
                 tankWidthInGLUT = (fromIntegral Types.widthOfTank)*Types.widthOfTile
                 tankHeightInGLUT = (fromIntegral Types.heightOfTank)*Types.heightOfTile
 
-            {-putStr "\n*****\nX: "
+            putStr "\n*****\nX: "
             print x
             putStr "Y: "
             print y
@@ -91,7 +91,7 @@ display gamestate bulletRotationAngle = do
             putStr "TankCoordX : "
             print tankCoordX
             putStr "tankCoordY : "
-            print tankCoordY-}
+            print tankCoordY
 
             loadIdentity
             currentColor $= tankcolor
@@ -196,12 +196,12 @@ keyboardMouse gamestate bulletRotationAngle key Down _ _ = do
                     gamestate $~! \x -> Tank.updateGameStateTank x Input.increaseAngle
                     postRedisplay Nothing
             SpecialKey KeyLeft -> do
-                    gamestate $~! \x -> Tank.updateGameStateTank x Input.moveLeft
                     gamestate $~! \x -> Tank.updateTankGravity x
+                    gamestate $~! \x -> Tank.updateGameStateTank x Input.moveLeft
                     postRedisplay Nothing
             SpecialKey KeyRight -> do
-                    gamestate $~! \x -> Tank.updateGameStateTank x Input.moveRight
                     gamestate $~! \x -> Tank.updateTankGravity x
+                    gamestate $~! \x -> Tank.updateGameStateTank x Input.moveRight
                     postRedisplay Nothing
             Char '0' -> do
                  --   putStrLn $ show (length $ Physics.commonPointsBetweenLists [(Types.Position 1 2), (Types.Position 2 3)] [(Types.Position 2 3)])

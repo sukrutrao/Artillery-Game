@@ -192,10 +192,10 @@ updateTank
         color = c,
         currentWeapon = e,
         weaponCount = f 
-    }) key tileMatrix = let newTankPosition = updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key
-                            isPositionValid = checkIfValidPosition newTankPosition widthOfTank heightOfTank incline_theta tileMatrix
-                            newValidTankPosition = if (isPositionValid) then newTankPosition else (Position (getPositionX newTankPosition) ((getPositionY newTankPosition)-1)) 
-                            newTheta = getAngleAt newValidTankPosition widthOfTank tileMatrix
+    }) key tileMatrix = let newTankPosition = updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank heightOfTank tileMatrix) key
+                            isPositionValid = checkIfNotValidPosition newTankPosition widthOfTank heightOfTank incline_theta tileMatrix
+                            newValidTankPosition = if (not isPositionValid) then newTankPosition else (Position (getPositionX newTankPosition) ((getPositionY newTankPosition)-1)) 
+                            newTheta = getAngleAt newValidTankPosition widthOfTank heightOfTank tileMatrix
                             isThetaValid = checkThetaValidRange newTheta
                             newValidValidTankPosition = if(isThetaValid) then newValidTankPosition else (Position x y) 
                         in Tank {
