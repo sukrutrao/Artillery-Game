@@ -195,7 +195,8 @@ updateHealth  (GenericWeapon {
                 power = turret_power
             })
         }),
-        score = s - (fromIntegral (length $ commonPointsBetweenLists (getAllPointsInCircle (Position wx wy) impactradius) (getAllPointsInRectangle (Position x y) widthOfTank heightOfTank incline_theta)) * weapon_velocity * 2),
+        score = trace("Old score : " ++ show s ++ " New score : " ++ show (convertPointListToInteger $ getAllPointsInCircle (Position wx wy) impactradius) ++ " " ++ show (convertPointListToInteger $ getAllPointsInRectangle (Position x y) widthOfTank heightOfTank incline_theta))
+            (s - (fromIntegral (length $ commonPointsBetweenLists (convertPointListToInteger $  getAllPointsInCircle (Position wx wy) impactradius) (convertPointListToInteger $ getAllPointsInRectangle (Position x y) widthOfTank heightOfTank incline_theta)) * weapon_velocity * 0.001)),
         color = c,
         currentWeapon = e,
         weaponCount = f
