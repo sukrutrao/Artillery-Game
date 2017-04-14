@@ -342,3 +342,12 @@ checkAllTanksForHitHelper (GameState {
 checkAllTanksForHit :: GameState -> Point -> Bool
 checkAllTanksForHit gameState position = trace("CATCH : " ++ show (checkAllTanksForHitHelper gameState position 0))
 											(checkAllTanksForHitHelper gameState position 0)
+
+minValid :: Float
+minValid = (-(2*pi)/5)
+
+maxValid :: Float
+maxValid = ((2*pi)/5)
+
+checkThetaValidRange :: Float -> Bool
+checkThetaValidRange theta = if (theta >= minValid && theta <= maxValid) then True else False
