@@ -21,8 +21,6 @@ disp game = rectangleSolid 10 50
 fps :: Int
 fps = 60
 
-handlekeys :: Event -> GameState -> GameState
-handlekeys _ game = game
 
 update :: Float -> GameState -> GameState
 update _ game = game

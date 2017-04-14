@@ -1,11 +1,10 @@
 module Gamestate where
 
-import qualified Graphics.UI.GLUT
+import qualified Graphics.Gloss
 import Types
 import Tank
 import Weapon
 import System.IO.Unsafe
-import qualified Graphics.Gloss
 --import Tile
 
 
@@ -34,7 +33,6 @@ initializeGamestate = GameState { tileMatrix = getTileMatrix,
 
 
 
-
 getTileMatrix :: [[Tile]]
 getTileMatrix = (readrow contents i []) 
   where contents = ( lines str) 
@@ -52,7 +50,7 @@ readcolumn :: [String] -> Int -> [Tile] -> [Tile]
 readcolumn contents j startlist
   | contents!!j == "#" = startlist
   | otherwise = (readcolumn contents (j+3) tile )
-  where tile = ( startlist ++ [Tile{tilePosition = (Types.Position ((read ((contents!!j)) :: Float)/200) ((read (contents!!(j + 1)) :: Float)/100)), isObstacle = (tf (contents!!(j+2)) ) } ])
+  where tile = ( startlist ++ [Tile{tilePosition = (Types.Position ((read (contents!!j) :: Float)/200) ((read (contents!!(j + 1)) :: Float)/100)), isObstacle = (tf (contents!!(j+2)) ) } ])
 
   --readcolumn 
 
@@ -61,5 +59,4 @@ tf value
   | value == "0" = False
   | value == "1" = True
   | otherwise = False
-
 
