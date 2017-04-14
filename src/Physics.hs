@@ -3,52 +3,71 @@ module Physics where
 import Types
 import Debug.Trace
 
+-- | Acceleration due to gravity
 g :: Float
 g = 10
 
+-- | Acceleration due to gravity in two dimensions
 gAcceleration :: Point
 gAcceleration = (Acceleration 0 g)
 
+-- | A single unit of time for motion
 unitTime :: Float
 unitTime = 0.5
 
+-- | To denote zero velocity in two dimensions
 restVelocity :: Point
 restVelocity = (Velocity 0 0)
 
+-- | Function to accept two floats and return a point corresponding to them
 originPosition :: Float -> Float -> Point
 originPosition x y = (Position x y)
 
+-- | Function to obtain the new position in two dimensions given the position,
+--   velocity, acceleration, and time based on Newton's second kinematic equation
 newPosition :: Point -> Point -> Point -> Float -> Point
-newPosition (Position x y) (Velocity vx vy) (Acceleration ax ay) time = let temp = (Position (newOneDPosition x vx ax time) (newOneDPosition y (-vy) ay time))
-                                                                        in if((truncate $ getPositionX temp) < 0)
-                                                                                then Position 0 y
-                                                                            else if((truncate $ getPositionX temp) >= tileMatrixColumnSize)
-                                                                                    then Position (fromIntegral (tileMatrixColumnSize-1)) y
-                                                                                 else temp
+newPosition (Position x y) (Velocity vx vy) (Acceleration ax ay) time = 
+	let temp = (Position (newOneDPosition x vx ax time) (newOneDPosition y (-vy) ay time))
+    in if((truncate $ getPositionX temp) < 0)
+            then Position 0 y
+        	else if((truncate $ getPositionX temp) >= tileMatrixColumnSize)
+          		  	then Position (fromIntegral (tileMatrixColumnSize-1)) y
+             		else temp
 
+-- | Function to obtain the new velocity in two dimensions given the velocity,
+--   acceleration, and time based on Newton's first kinematic equation
 newVelocity :: Point -> Point -> Float -> Point
 newVelocity (Velocity vx vy) (Acceleration ax ay) time = 
    -- -- trace("vx in physics : " ++ show vx ++ "vy in physics : " ++ show vy ++ "\n")
     (Velocity (newOneDVelocity vx ax time) (newOneDVelocity (-vy) ay time))
 
+-- | Function to obtain the new position in one dimension given the position,
+--   velocity, acceleration, and time based on Newton's second kinematic equation
 newOneDPosition :: Float -> Float -> Float -> Float -> Float
 newOneDPosition x v a time = x + v * time + 0.5 * a * time * time
 
+-- | Function to obtain the new velocity in one dimenstion given the velocity,
+--   acceleration, and time based on Newton's first kinematic equation
 newOneDVelocity :: Float -> Float -> Float -> Float
 newOneDVelocity v a time = v + a * time
 
+-- | Function to give the cosine component of a given quantity with respect to an angle theta
 cosComponent :: Float -> Float -> Float
 cosComponent quantity theta = quantity * cos(theta)
 
+-- | Function to give the sine component of a given quantity with respect to an angle theta
 sinComponent :: Float -> Float -> Float
 sinComponent quantity theta = quantity * sin(theta)
 
+-- | Function to return the components of the velocity in two dimensions given angle and magnitude
 getComponentsVelocity :: Float -> Float -> Point
 getComponentsVelocity quantity theta = (Velocity (cosComponent quantity theta) (sinComponent quantity theta))
 
+-- | Function to accept a two dimensional position and velocity, and time, and return the 
+--   new position under the influence of gravity
 gravityNewPosition :: Point -> Point -> Float -> Point
 gravityNewPosition (Position x y) (Velocity vx vy) time =
-    -- trace("vx component : " ++ show vx ++ " vy component : " ++ show vy ++ "\n")
+     trace("vx component : " ++ show vx ++ " vy component : " ++ show vy ++ "\n")
     newPosition (Position x y) (Velocity vx vy) gAcceleration time
 
 newPositionVTheta :: Point -> Point -> Float -> Float -> Point
@@ -80,7 +99,7 @@ getTilePos tileMatrix row col
     | (row < 0 && col > matrColSize) = tilePosition ((tileMatrix !! 0) !! truncatedmatrColSize)
     | (row > matrRowSize && col < 0 ) = tilePosition ((tileMatrix !! truncatedmatrRowSize) !! 0)
     | (row > matrRowSize && col > matrColSize) = tilePosition ((tileMatrix !! truncatedmatrRowSize) !! truncatedmatrColSize)
-    | (row > matrRowSize) = tilePosition ((tileMatrix !! truncatedmatrRowSize) !! truncatedCol)
+    | (row > matrRowSize) = trace("Correct case!") (tilePosition ((tileMatrix !! truncatedmatrRowSize) !! truncatedCol))
     | (col > matrColSize) = tilePosition ((tileMatrix !! truncatedRow) !! truncatedmatrColSize)
     | (col < 0) = tilePosition ((tileMatrix !! truncatedRow) !! 0) 
     | otherwise = tilePosition ((tileMatrix !! truncatedRow) !! truncatedCol)
@@ -387,10 +406,10 @@ checkAllTanksForHit gameState position = trace("CATCH : " ++ show (checkAllTanks
 											(checkAllTanksForHitHelper gameState position 0)
 
 minValid :: Float
-minValid = (-(3*pi)/5)
+minValid = (-(4*pi)/5)
 
 maxValid :: Float
-maxValid = ((3*pi)/5)
+maxValid = ((4*pi)/5)
 
 checkThetaValidRange :: Float -> Bool
 checkThetaValidRange theta = if (theta >= minValid && theta <= maxValid) then True else False
