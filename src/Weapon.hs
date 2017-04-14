@@ -56,7 +56,7 @@ updatePositionWeapon     (WeaponGraphics {
                                 if (truncate y>((length tileMap)-2) || y<0) then (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
                                         currentPosition = {-trace("if if x : " ++ show x ++ " y : " ++ show y ++ "\n") -}{-getPositionProjectile (Position x y) velocity theta-}
-                                             newPositionProjectile (getTurretPosition gameState lTurr) (Position x y) velocity theta lvelocity lAngle tileMap,
+                                             newPositionProjectile gameState (getTurretPosition gameState lTurr) (Position x y) velocity theta lvelocity lAngle tileMap,
                                         currentVelocity = getVelocityProjectile velocity theta,
                                         launchVelocity = lvelocity,
                                         launchAngle = lAngle,
@@ -115,7 +115,7 @@ updatePositionWeapon     (WeaponGraphics {
                                     else (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
                                         currentPosition = trace(" : " ++ show x ++ " y : " ++ show y ++ "\n") {-getPositionProjectile (Position x y) velocity theta-}
-                                                newPositionProjectile (getTurretPosition gameState lTurr) (Position x y) velocity theta lvelocity lAngle tileMap,
+                                                newPositionProjectile gameState (getTurretPosition gameState lTurr) (Position x y) velocity theta lvelocity lAngle tileMap,
                                         currentVelocity = getVelocityProjectile velocity theta,
                                         velocityMultiplyingFactor = f,
                                         launchVelocity = lvelocity,
