@@ -3,57 +3,82 @@ module Physics where
 import Types
 import Debug.Trace
 
+-- | Acceleration due to gravity
 g :: Float
 g = 10
 
+-- | Acceleration due to gravity in two dimensions
 gAcceleration :: Point
 gAcceleration = (Acceleration 0 g)
 
+-- | A single unit of time for motion
 unitTime :: Float
 unitTime = 0.5
 
+-- | To denote zero velocity in two dimensions
 restVelocity :: Point
 restVelocity = (Velocity 0 0)
 
+-- | Function to accept two floats and return a point corresponding to them
 originPosition :: Float -> Float -> Point
 originPosition x y = (Position x y)
 
+-- | Function to obtain the new position in two dimensions given the position,
+--   velocity, acceleration, and time based on Newton's second kinematic equation
 newPosition :: Point -> Point -> Point -> Float -> Point
-newPosition (Position x y) (Velocity vx vy) (Acceleration ax ay) time = let temp = (Position (newOneDPosition x vx ax time) (newOneDPosition y (-vy) ay time))
-                                                                        in if((truncate $ getPositionX temp) < 0)
-                                                                                then Position 0 y
-                                                                            else if((truncate $ getPositionX temp) >= tileMatrixColumnSize)
-                                                                                    then Position (fromIntegral (tileMatrixColumnSize-1)) y
-                                                                                 else temp
+newPosition (Position x y) (Velocity vx vy) (Acceleration ax ay) time = 
+	let temp = (Position (newOneDPosition x vx ax time) (newOneDPosition y (-vy) ay time))
+    in if((truncate $ getPositionX temp) < 0)
+            then Position 0 y
+        	else if((truncate $ getPositionX temp) >= tileMatrixColumnSize)
+          		  	then Position (fromIntegral (tileMatrixColumnSize-1)) y
+             		else temp
 
+-- | Function to obtain the new velocity in two dimensions given the velocity,
+--   acceleration, and time based on Newton's first kinematic equation
 newVelocity :: Point -> Point -> Float -> Point
 newVelocity (Velocity vx vy) (Acceleration ax ay) time = 
    -- -- trace("vx in physics : " ++ show vx ++ "vy in physics : " ++ show vy ++ "\n")
     (Velocity (newOneDVelocity vx ax time) (newOneDVelocity (-vy) ay time))
 
+-- | Function to obtain the new position in one dimension given the position,
+--   velocity, acceleration, and time based on Newton's second kinematic equation
 newOneDPosition :: Float -> Float -> Float -> Float -> Float
 newOneDPosition x v a time = x + v * time + 0.5 * a * time * time
 
+-- | Function to obtain the new velocity in one dimenstion given the velocity,
+--   acceleration, and time based on Newton's first kinematic equation
 newOneDVelocity :: Float -> Float -> Float -> Float
 newOneDVelocity v a time = v + a * time
 
+-- | Function to give the cosine component of a given quantity with respect to an angle theta
 cosComponent :: Float -> Float -> Float
 cosComponent quantity theta = quantity * cos(theta)
 
+-- | Function to give the sine component of a given quantity with respect to an angle theta
 sinComponent :: Float -> Float -> Float
 sinComponent quantity theta = quantity * sin(theta)
 
+-- | Function to return the components of the velocity in two dimensions given angle and magnitude
 getComponentsVelocity :: Float -> Float -> Point
 getComponentsVelocity quantity theta = (Velocity (cosComponent quantity theta) (sinComponent quantity theta))
 
+-- | Function to accept a two dimensional position and velocity, and time, and return the 
+--   new position under the influence of gravity
 gravityNewPosition :: Point -> Point -> Float -> Point
 gravityNewPosition (Position x y) (Velocity vx vy) time =
-    -- trace("vx component : " ++ show vx ++ " vy component : " ++ show vy ++ "\n")
+     trace("vx component : " ++ show vx ++ " vy component : " ++ show vy ++ "\n")
     newPosition (Position x y) (Velocity vx vy) gAcceleration time
 
+-- | Function to return the new position in two dimensions given the position,
+--   magnitude of velocity, angle, and acceleration in the first dimenstion,
+--   with the acceleration in the other direction taken to be that of gravity
+--   and time taken to be the unit time
 newPositionVTheta :: Point -> Point -> Float -> Float -> Point
 newPositionVTheta position velocity acceleration theta = newPosition position velocity (Acceleration acceleration g) unitTime
 
+-- | Function to return the new position in two dimensions given position and time
+--   under gravity when starting from rest
 gravityNewPositionFromRest :: Point -> Float -> Point
 gravityNewPositionFromRest (Position x y) time = gravityNewPosition (Position x y) restVelocity time
 
@@ -80,7 +105,7 @@ getTilePos tileMatrix row col
     | (row < 0 && col > matrColSize) = tilePosition ((tileMatrix !! 0) !! truncatedmatrColSize)
     | (row > matrRowSize && col < 0 ) = tilePosition ((tileMatrix !! truncatedmatrRowSize) !! 0)
     | (row > matrRowSize && col > matrColSize) = tilePosition ((tileMatrix !! truncatedmatrRowSize) !! truncatedmatrColSize)
-    | (row > matrRowSize) = tilePosition ((tileMatrix !! truncatedmatrRowSize) !! truncatedCol)
+    | (row > matrRowSize) = trace("Correct case!") (tilePosition ((tileMatrix !! truncatedmatrRowSize) !! truncatedCol))
     | (col > matrColSize) = tilePosition ((tileMatrix !! truncatedRow) !! truncatedmatrColSize)
     | (col < 0) = tilePosition ((tileMatrix !! truncatedRow) !! 0) 
     | otherwise = tilePosition ((tileMatrix !! truncatedRow) !! truncatedCol)
@@ -322,8 +347,11 @@ tankGravityNewPosition (Position x y) length width theta tileMap
 	|	otherwise = (Position x y)
 
 parabolaFunction :: Point -> Float -> Float -> Float -> Float
-parabolaFunction (Position sx sy) x velocity theta = {-trace ("PARABOLA+++++++ SX : " ++ show sx  ++ " , SY : " ++ show sy ++ " velocity : " ++ show velocity ++ " theta : " ++ show theta ++ " X : " ++  show x ++ " , Y : " ++ show (sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2)))-}
+parabolaFunction (Position sx sy) x velocity theta = 
+	if abs(theta - pi/2) > 0.1
+		then {-trace ("PARABOLA+++++++ SX : " ++ show sx  ++ " , SY : " ++ show sy ++ " velocity : " ++ show velocity ++ " theta : " ++ show theta ++ " X : " ++  show x ++ " , Y : " ++ show (sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2)))-}
 	(sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2))
+		else trace("THIS") (0)
 
 -- incomplete!
 checkIntermediateObstacleInPath :: GameState -> Point -> Point -> Point -> Float -> Float -> [[Tile]] -> Bool -> Point
@@ -333,17 +361,31 @@ checkIntermediateObstacleInPath gameState (Position x y) (Position ox oy) (Posit
         newVelocity = velocity {-sqrt(velocity^2 + 2*g)-}
         currentYP = (parabolaFunction (Position sx sy) (x+1) newVelocity newTheta)
         currentYN = (parabolaFunction (Position sx sy) (x-1) newVelocity newTheta) in
-    if (xIsLesser && x < ox)
+    if (xIsLesser && x < ox && abs(theta - pi/2) > 0.1)
         then (if getIsObstacle tileMap currentYP (x+1) || checkAllTanksForHit gameState (Position (x+1) currentYP)
                 then (Position (x+1) (parabolaFunction (Position sx sy) (x+1) newVelocity newTheta))
                 else checkIntermediateObstacleInPath gameState (Position (x+1) (parabolaFunction (Position sx sy) (x+1) newVelocity newTheta))
                       (Position ox oy) (Position sx sy) newVelocity newTheta tileMap xIsLesser)		
-        else (if ((not xIsLesser) && ox < x)
-                then (if getIsObstacle tileMap currentYN (x-1) || checkAllTanksForHit gameState (Position (x+1) currentYN)
+        else (if ((not xIsLesser) && ox < x && abs(theta - pi/2) > 0.1)
+                then (if getIsObstacle tileMap currentYN (x-1) || checkAllTanksForHit gameState (Position (x-1) currentYN)
                         then (Position (x-1) (parabolaFunction (Position sx sy) (x-1) newVelocity newTheta))
                         else checkIntermediateObstacleInPath gameState (Position (x-1) (parabolaFunction (Position sx sy) (x-1) newVelocity newTheta))
                               (Position ox oy) (Position sx sy) newVelocity newTheta tileMap xIsLesser)
-                else (Position ox oy))
+                else if (abs(theta - pi/2) < 0.1)
+                		then trace("GOING HERE!!!") (getPointFromYChecks gameState x y oy (y<oy) tileMap)
+                		else trace("GOING THERE!!!") (Position ox oy))
+
+getPointFromYChecks :: GameState -> Float -> Float -> Float -> Bool -> [[Tile]] -> Point
+getPointFromYChecks gameState x y oy yIsLesser tileMap = 
+	if (yIsLesser && y<oy)
+		then if (getIsObstacle tileMap (y+1) x || checkAllTanksForHit gameState (Position x (y+1)))
+				then (Position x (y+1))
+				else getPointFromYChecks gameState x (y+1) oy yIsLesser tileMap
+		else if ((not yIsLesser) && oy<y)
+				then if (getIsObstacle tileMap (y-1) x || checkAllTanksForHit gameState (Position x (y-1)))
+						then (Position x (y-1))
+						else getPointFromYChecks gameState x (y-1) oy yIsLesser tileMap
+				else (Position x oy)
 
 
 newPositionProjectile :: GameState -> Point -> Point -> Float -> Float -> Float -> Float -> [[Tile]] -> Point
@@ -387,10 +429,10 @@ checkAllTanksForHit gameState position = trace("CATCH : " ++ show (checkAllTanks
 											(checkAllTanksForHitHelper gameState position 0)
 
 minValid :: Float
-minValid = (-(3*pi)/5)
+minValid = (-(4*pi)/5)
 
 maxValid :: Float
-maxValid = ((3*pi)/5)
+maxValid = ((4*pi)/5)
 
 checkThetaValidRange :: Float -> Bool
 checkThetaValidRange theta = if (theta >= minValid && theta <= maxValid) then True else False
