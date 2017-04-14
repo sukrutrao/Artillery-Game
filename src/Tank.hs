@@ -4,10 +4,10 @@ import Types
 import Physics
 import Weapon
 import Input 
-import qualified Graphics.UI.GLUT
+import Common
+import qualified Graphics.Gloss
 import Data.IORef
 import Debug.Trace
-import qualified Graphics.Gloss
 
 initializeTankState :: Float -> Float -> TankState
 initializeTankState posX posY = TankState {direction = FacingRight, 
@@ -17,10 +17,9 @@ initializeTankState posX posY = TankState {direction = FacingRight,
                                      turret = Turret {angle = 0.7853981633974483 , power = 0}
                                     }
 
-initializeTank :: Float -> Float -> Float -> Graphics.Gloss.Color -> Int -> [Integer] -> Tank
-initializeTank posX posY score tankcol currweapon listweaponcount = Tank {tankState = (initializeTankState posX posY),
+initializeTank posX posY score tankcolor currweapon listweaponcount = Tank {tankState = (initializeTankState posX posY),
                                     score = score,
-                                    tankcolor = tankcol,
+                                    tankcolor = tankcolor,
                                     currentWeapon = currweapon,
                                     weaponCount = listweaponcount
                                    } 
@@ -191,13 +190,19 @@ updateTank
         score = s,
         tankcolor = c,
         currentWeapon = e,
-        weaponCount = f
-    }) key tileMatrix = Tank {
+        weaponCount = f 
+    }) key tileMatrix = let newTankPosition = updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank heightOfTank tileMatrix) key
+                            isPositionValid = checkIfNotValidPosition newTankPosition widthOfTank heightOfTank incline_theta tileMatrix
+                            newValidTankPosition = if (not isPositionValid) then newTankPosition else (Position (getPositionX newTankPosition) ((getPositionY newTankPosition)-1)) 
+                            newTheta = getAngleAt newValidTankPosition widthOfTank heightOfTank tileMatrix
+                            isThetaValid = checkThetaValidRange newTheta
+                            newValidValidTankPosition = if(isThetaValid) then newValidTankPosition else (Position x y) 
+                        in Tank {
         tankState = (TankState {
             direction = (updateDirection d key),
-            position = {-trace("x : " ++ show x ++ " y : " ++ show y ++ "\n") -}(updatePosition (Position x y) (getAngleAt (Position x y) widthOfTank tileMatrix) key),
+            position = newValidValidTankPosition ,
             velocity = (Velocity vx vy),
-            inclineAngle = (getAngleAt (Position x y) widthOfTank tileMatrix),--getAngleincline_theta,
+            inclineAngle = if(isThetaValid) then newTheta else incline_theta,
             turret = (Turret {
                 angle = (updateAngle turret_theta key), 
                 power = (updatePower turret_power key)
@@ -238,3 +243,20 @@ updateGameStateTank
     }) key = let temp = changeListElementAtIndex l c (updateTank (l !! c) key t)
         in GameState {tileMatrix = t , tankList =  temp, weapon = w , chance = c , noOfPlayers = n, isAcceptingInput = d}
 
+
+
+updateTankGravity :: GameState -> GameState
+updateTankGravity
+    (GameState {
+        tileMatrix = t,
+        tankList = l,
+        weapon = w,
+        chance = c,
+        noOfPlayers = n,
+        isAcceptingInput = d
+    }) = GameState {tileMatrix = t , 
+                    tankList =  (map (applyGravityOnAll t) l) , 
+                    weapon = w , chance = c , 
+                    noOfPlayers = n, 
+                    isAcceptingInput = d
+                  }

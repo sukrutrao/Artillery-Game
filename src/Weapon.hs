@@ -1,8 +1,9 @@
 module Weapon where
 
-import qualified Graphics.UI.GLUT
+import qualified Graphics.Gloss
 import Types
 import Physics
+import Common
 import Debug.Trace
 
 defaultStartVelocity :: Float
@@ -82,7 +83,7 @@ updatePositionWeapon     (WeaponGraphics {
                                         currentAngle = theta, 
                                         impactRadius = r,
                                         isLaunched = False,
-                                        hasImpacted = True,
+                                        hasImpacted = False,
                                         launchDirection = l
                                     }),
                                     bulletColor = bColor,
@@ -183,7 +184,8 @@ updateHealth  (GenericWeapon {
         tankcolor = c,
         currentWeapon = e,
         weaponCount = f
-    }) =  (Tank {
+    }) =  let scoreDiff =  trace ("SCORE DIFF : " ++ show (getAllPointsInRectangleHelper (Position x y) widthOfTank heightOfTank incline_theta 0) ++ " " ++ show incline_theta++ " " ++ show widthOfTank ++ " " ++ show heightOfTank ++ " " ++ show (Position x y)) (fromIntegral (length $ commonPointsBetweenLists (convertPointListToInteger $  getAllPointsInCircle (Position wx wy) impactradius) (convertPointListToInteger $ getAllPointsInRectangle (Position x y) widthOfTank heightOfTank incline_theta)) * weapon_velocity * 0.01)
+          in (Tank {
         tankState = (TankState {
             direction = d,
             position = (Position x y),
@@ -194,11 +196,10 @@ updateHealth  (GenericWeapon {
                 power = turret_power
             })
         }),
-        score = trace("Old score : " ++ show s ++ " New score : " ++ show (convertPointListToInteger $ getAllPointsInCircle (Position wx wy) impactradius) ++ " " ++ show (convertPointListToInteger $ getAllPointsInRectangle (Position x y) widthOfTank heightOfTank incline_theta))
-            (s - (fromIntegral (length $ commonPointsBetweenLists (convertPointListToInteger $  getAllPointsInCircle (Position wx wy) impactradius) (convertPointListToInteger $ getAllPointsInRectangle (Position x y) widthOfTank heightOfTank incline_theta)) * weapon_velocity * 0.001)),
-        tankcolor = c,
-        currentWeapon = e,
-        weaponCount = f
+        score = trace("Score set") (s - scoreDiff),
+        tankcolor = trace("colour") (if(s-scoreDiff<=0) then Graphics.Gloss.red  else c),
+        currentWeapon = trace("CW") (e),
+        weaponCount = trace("WC") (f)
     })
 
 
@@ -225,10 +226,30 @@ updateGameStateWeapon
              shouldWeBlast =  if(isLaunched $ weaponPhysics newWeapon) then t
                                 else makeTileNotObsAtPts t (getAllPointsInCircle (currentPosition (weaponPhysics newWeapon)) (impactRadius (weaponPhysics newWeapon)))
              newWeaponList = changeListElementAtIndex w weaponChoice newWeapon
-         in GameState { tileMatrix = shouldWeBlast, 
-                        tankList =  map (updateHealth (weaponPhysics newWeapon)) l,
-                        weapon = newWeaponList,
-                        chance = if (isLaunched $ weaponPhysics newWeapon) then c else ((c+1) `mod` 2) ,
+             updatedTankHealth = if(isLaunched $ weaponPhysics newWeapon) then l
+                                    else if(not $ hasImpacted $ weaponPhysics newWeapon) then l
+                                            else trace ("Inside GRAVITY : ") (map (applyGravityOnAll shouldWeBlast) (map (updateHealth (weaponPhysics newWeapon)) l))
+         in GameState { tileMatrix = trace ("Inside Should we blast : ") (shouldWeBlast), 
+                        tankList =  updatedTankHealth,
+                        weapon = trace("nwl") (newWeaponList),
+                        chance = trace("C") (if (isLaunched $ weaponPhysics newWeapon) then c else if(noOfPlayerWithNoHealth updatedTankHealth >= n-1) then 0 else (nextTankChance updatedTankHealth c n)),
                         noOfPlayers = n,
-                        isAcceptingInput = if (isLaunched $ weaponPhysics newWeapon) then False else True
+                        isAcceptingInput = if(noOfPlayerWithNoHealth updatedTankHealth >= n-1)
+                                                then  trace ("Inside isAcceptingInput condtion 1 ")  (False)
+                                                else if (isLaunched $ weaponPhysics newWeapon) 
+                                                        then  trace ("Inside isAcceptingInput condtion 2 ") (False)
+                                                        else  trace ("Inside isAcceptingInput condtion 3 ") (True)
                       }
+
+
+noOfPlayerWithNoHealth::[Tank] -> Int
+noOfPlayerWithNoHealth tankList = length $ filter checkScore tankList
+
+checkScore :: Tank -> Bool
+checkScore tank = if (score tank <= 0) then True else False
+
+nextTankChance::[Tank] -> Int -> Int -> Int
+nextTankChance tankList currChance noOfPlayers = let nextChance =(currChance+1) `mod` noOfPlayers
+                                             in if(score (tankList !! nextChance) <= 0)
+                                                    then nextTankChance tankList nextChance noOfPlayers
+                                                    else nextChance

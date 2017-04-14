@@ -1,11 +1,10 @@
 module Gamestate where
 
-import qualified Graphics.UI.GLUT
+import qualified Graphics.Gloss
 import Types
 import Tank
 import Weapon
 import System.IO.Unsafe
-import qualified Graphics.Gloss
 --import Tile
 
 
@@ -16,8 +15,8 @@ getWeaponList initialWeaponPosition = [(initializeWeapon a b c d e f g h i j) | 
 initializeGamestate::GameState
 initializeGamestate = GameState { tileMatrix = getTileMatrix, 
 -- position x , y , score ,color , currentWeapon , weaponCount ,
-                                  tankList = (getTankList [(10 , 150, 30 , Graphics.Gloss.green , 0 , [10,10,10]),
-                                                           (30 , 150, 30 , Graphics.Gloss.blue , 0 , [10,10,10])--,
+                                  tankList = (getTankList [(10 , 149, 30 , Graphics.Gloss.green , 0 , [10,10,10]),
+                                                           (30 , 149, 30 , Graphics.Gloss.blue , 0 , [10,10,10])--,
                                                         --   (67 , 149 , 30 , Graphics.Gloss.magenta , 0 , [10,10,10])
                                                           ]
                                                ),
@@ -31,7 +30,6 @@ initializeGamestate = GameState { tileMatrix = getTileMatrix,
                                   isAcceptingInput = True,
                                   noOfPlayers = 2
                                 }
-
 
 
 
@@ -52,7 +50,7 @@ readcolumn :: [String] -> Int -> [Tile] -> [Tile]
 readcolumn contents j startlist
   | contents!!j == "#" = startlist
   | otherwise = (readcolumn contents (j+3) tile )
-  where tile = ( startlist ++ [Tile{tilePosition = (Types.Position ((read ((contents!!j)) :: Float)/200) ((read (contents!!(j + 1)) :: Float)/100)), isObstacle = (tf (contents!!(j+2)) ) } ])
+  where tile = ( startlist ++ [Tile{tilePosition = (Types.Position ((read (contents!!j) :: Float)/200) ((read (contents!!(j + 1)) :: Float)/100)), isObstacle = (tf (contents!!(j+2)) ) } ])
 
   --readcolumn 
 
@@ -61,5 +59,4 @@ tf value
   | value == "0" = False
   | value == "1" = True
   | otherwise = False
-
 

@@ -80,6 +80,12 @@ tileMatrixRowSize = 201
 tileMatrixColumnSize :: Int
 tileMatrixColumnSize = 401
 
+widthOfScreen :: Float
+widthOfScreen = 1000
+heightOfScreen :: Float
+heightOfScreen = 500
+
+
 widthOfTile :: Float
 widthOfTile = 0.02
 
