@@ -1,3 +1,4 @@
+
 module Weapon where
 
 import qualified Graphics.UI.GLUT
@@ -6,13 +7,26 @@ import Physics
 import Common
 import Debug.Trace
 
+-- |The defaultStartVelocity function sets the default start velocity for the bullet.
 defaultStartVelocity :: Float
 defaultStartVelocity = 1
 
+-- |The genericImpactRadius function sets the default impact radius for the bullet.
 genericImpactRadius :: Float
 genericImpactRadius = 10
 
-initializeWeapon :: Float -> Float -> Float -> Float -> Float -> Graphics.UI.GLUT.Color4 Float -> Graphics.UI.GLUT.Color4 Float ->  Graphics.UI.GLUT.Vector3 Float -> Float -> Float -> WeaponGraphics
+-- |The initializeWeapon function initializes the data type WeaponGraphics with the given values
+initializeWeapon :: Float   -- ^ Initial Column Number in the tileMatrix
+                 -> Float   -- ^ Initial Row Number in the tileMatrix
+                 -> Float   -- ^ The Initial Velocity Multiplying Factor
+                 -> Float   -- ^ The Initial inclination angle of weapon
+                 -> Float   -- ^ Weapon's Impact Radius
+                 -> Graphics.UI.GLUT.Color4 Float   -- ^ Bullet Color
+                 -> Graphics.UI.GLUT.Color4 Float   -- ^ Bullet Color
+                 ->  Graphics.UI.GLUT.Vector3 Float   -- ^ Initial Column Number in the tileMatrix
+                 -> Float   -- ^ Initial Column Number in the tileMatrix
+                 -> Float   -- ^ Initial Column Number in the tileMatrix
+                 -> WeaponGraphics   -- ^ Initial Column Number in the tileMatrix
 initializeWeapon posX posY factor currAngle radius bullColor turrColor bullRotate turrThick turrLen =  
                                     WeaponGraphics { weaponPhysics = (GenericWeapon { currentPosition = (originPosition posX posY),
                                                                                       currentVelocity = defaultStartVelocity,

@@ -77,7 +77,7 @@ tileMatrixRowSize :: Int
 tileMatrixRowSize = 201
 
 tileMatrixColumnSize :: Int
-tileMatrixColumnSize = 201
+tileMatrixColumnSize = 401
 
 widthOfTile :: Float
 widthOfTile = 0.01

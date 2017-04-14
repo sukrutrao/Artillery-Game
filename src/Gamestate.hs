@@ -53,7 +53,7 @@ readcolumn :: [String] -> Int -> [Tile] -> [Tile]
 readcolumn contents j startlist
   | contents!!j == "#" = startlist
   | otherwise = (readcolumn contents (j+3) tile )
-  where tile = ( startlist ++ [Tile{tilePosition = (Types.Position ((read (contents!!j) :: Float)/100) ((read (contents!!(j + 1)) :: Float)/100)), isObstacle = (tf (contents!!(j+2)) ) } ])
+  where tile = ( startlist ++ [Tile{tilePosition = (Types.Position ((read (contents!!j) :: Float)/200) ((read (contents!!(j + 1)) :: Float)/100)), isObstacle = (tf (contents!!(j+2)) ) } ])
 
   --readcolumn 
 
