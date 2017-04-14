@@ -70,9 +70,15 @@ gravityNewPosition (Position x y) (Velocity vx vy) time =
      trace("vx component : " ++ show vx ++ " vy component : " ++ show vy ++ "\n")
     newPosition (Position x y) (Velocity vx vy) gAcceleration time
 
+-- | Function to return the new position in two dimensions given the position,
+--   magnitude of velocity, angle, and acceleration in the first dimenstion,
+--   with the acceleration in the other direction taken to be that of gravity
+--   and time taken to be the unit time
 newPositionVTheta :: Point -> Point -> Float -> Float -> Point
 newPositionVTheta position velocity acceleration theta = newPosition position velocity (Acceleration acceleration g) unitTime
 
+-- | Function to return the new position in two dimensions given position and time
+--   under gravity when starting from rest
 gravityNewPositionFromRest :: Point -> Float -> Point
 gravityNewPositionFromRest (Position x y) time = gravityNewPosition (Position x y) restVelocity time
 
@@ -341,8 +347,11 @@ tankGravityNewPosition (Position x y) length width theta tileMap
 	|	otherwise = (Position x y)
 
 parabolaFunction :: Point -> Float -> Float -> Float -> Float
-parabolaFunction (Position sx sy) x velocity theta = {-trace ("PARABOLA+++++++ SX : " ++ show sx  ++ " , SY : " ++ show sy ++ " velocity : " ++ show velocity ++ " theta : " ++ show theta ++ " X : " ++  show x ++ " , Y : " ++ show (sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2)))-}
+parabolaFunction (Position sx sy) x velocity theta = 
+	if abs(theta - pi/2) > 0.1
+		then {-trace ("PARABOLA+++++++ SX : " ++ show sx  ++ " , SY : " ++ show sy ++ " velocity : " ++ show velocity ++ " theta : " ++ show theta ++ " X : " ++  show x ++ " , Y : " ++ show (sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2)))-}
 	(sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2))
+		else trace("THIS") (0)
 
 -- incomplete!
 checkIntermediateObstacleInPath :: GameState -> Point -> Point -> Point -> Float -> Float -> [[Tile]] -> Bool -> Point
@@ -352,17 +361,31 @@ checkIntermediateObstacleInPath gameState (Position x y) (Position ox oy) (Posit
         newVelocity = velocity {-sqrt(velocity^2 + 2*g)-}
         currentYP = (parabolaFunction (Position sx sy) (x+1) newVelocity newTheta)
         currentYN = (parabolaFunction (Position sx sy) (x-1) newVelocity newTheta) in
-    if (xIsLesser && x < ox)
+    if (xIsLesser && x < ox && abs(theta - pi/2) > 0.1)
         then (if getIsObstacle tileMap currentYP (x+1) || checkAllTanksForHit gameState (Position (x+1) currentYP)
                 then (Position (x+1) (parabolaFunction (Position sx sy) (x+1) newVelocity newTheta))
                 else checkIntermediateObstacleInPath gameState (Position (x+1) (parabolaFunction (Position sx sy) (x+1) newVelocity newTheta))
                       (Position ox oy) (Position sx sy) newVelocity newTheta tileMap xIsLesser)		
-        else (if ((not xIsLesser) && ox < x)
-                then (if getIsObstacle tileMap currentYN (x-1) || checkAllTanksForHit gameState (Position (x+1) currentYN)
+        else (if ((not xIsLesser) && ox < x && abs(theta - pi/2) > 0.1)
+                then (if getIsObstacle tileMap currentYN (x-1) || checkAllTanksForHit gameState (Position (x-1) currentYN)
                         then (Position (x-1) (parabolaFunction (Position sx sy) (x-1) newVelocity newTheta))
                         else checkIntermediateObstacleInPath gameState (Position (x-1) (parabolaFunction (Position sx sy) (x-1) newVelocity newTheta))
                               (Position ox oy) (Position sx sy) newVelocity newTheta tileMap xIsLesser)
-                else (Position ox oy))
+                else if (abs(theta - pi/2) < 0.1)
+                		then trace("GOING HERE!!!") (getPointFromYChecks gameState x y oy (y<oy) tileMap)
+                		else trace("GOING THERE!!!") (Position ox oy))
+
+getPointFromYChecks :: GameState -> Float -> Float -> Float -> Bool -> [[Tile]] -> Point
+getPointFromYChecks gameState x y oy yIsLesser tileMap = 
+	if (yIsLesser && y<oy)
+		then if (getIsObstacle tileMap (y+1) x || checkAllTanksForHit gameState (Position x (y+1)))
+				then (Position x (y+1))
+				else getPointFromYChecks gameState x (y+1) oy yIsLesser tileMap
+		else if ((not yIsLesser) && oy<y)
+				then if (getIsObstacle tileMap (y-1) x || checkAllTanksForHit gameState (Position x (y-1)))
+						then (Position x (y-1))
+						else getPointFromYChecks gameState x (y-1) oy yIsLesser tileMap
+				else (Position x oy)
 
 
 newPositionProjectile :: GameState -> Point -> Point -> Float -> Float -> Float -> Float -> [[Tile]] -> Point
