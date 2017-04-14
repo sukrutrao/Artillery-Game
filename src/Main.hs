@@ -1,30 +1,31 @@
-import Graphics.UI.GLUT
+import Graphics.Gloss.Interface.Pure.Game
+import Graphics.Gloss
+import Graphics.Gloss.Data.ViewPort
 import System.IO.Unsafe
-import Data.IORef
-import qualified Types
+import Types
 import Gamestate
-import Callback
-import Physics
-
 
 main :: IO ()
-main = do
-    (_progName, _args) <- getArgsAndInitialize
-    initialDisplayMode $= [DoubleBuffered]
-    _window <- createWindow "Artillery Game"
-    windowSize $= Size 1280 720
-    let gameX = initializeGamestate
-    putStr "Tile Matrix Dimensions\n\tRows : "
-    print $ length (Types.tileMatrix gameX)
-    putStr "\tColumns : "
-    print $ length ((Types.tileMatrix gameX) !! 0)
-    gamestate <- newIORef gameX
-    bulletRotationAngle  <- newIORef 0.0
+main = play window background fps initializeGamestate disp handlekeys update
 
-    reshapeCallback $= Just reshape
-    displayCallback $= display gamestate bulletRotationAngle
-    keyboardMouseCallback $= Just (keyboardMouse gamestate bulletRotationAngle)
-    idleCallback $= Just (idle gamestate bulletRotationAngle)
-   -- putStrLn $ show gameX
-    print (show (getAngleAt (Types.Position 62 150) 9 (Types.tileMatrix gameX)))
-    mainLoop
+window :: Display
+window = InWindow "Tanki" (200, 200) (500, 500)
+
+background :: Color
+background = white
+
+disp :: GameState -> Picture
+disp game = rect 10 50
+
+fps :: Int
+fps = 60
+
+handlekeys :: Event -> Types.GameState -> Types.GameState
+handlekeys _ game = game
+
+update :: Float -> Types.GameState -> Types.GameState
+update _ game = game
+
+
+
+

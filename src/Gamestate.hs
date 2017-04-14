@@ -17,8 +17,8 @@ getWeaponList initialWeaponPosition = [(initializeWeapon a b c d e f g h i j) | 
 initializeGamestate::GameState
 initializeGamestate = GameState { tileMatrix = getTileMatrix, 
 -- position x , y , score ,color , currentWeapon , weaponCount ,
-                                  tankList = (getTankList [(10 , 149, 30 , Graphics.UI.GLUT.Color4 0.5 0.5 0.1 1 , 0 , [10,10,10]),
-                                                           (20 , 149, 30 , Graphics.UI.GLUT.Color4 0.8 0.4 0.6 1 , 0 , [10,10,10])--,
+                                  tankList = (getTankList [(10 , 149, 30 , pink , [10,10,10]),
+                                                           (20 , 149, 30 , blue , [10,10,10])--,
                                                           -- (62 , 150 , 30 , Graphics.UI.GLUT.Color4 0.123 0.03 0.24 1 , 0 , [10,10,10])
                                                           ]
                                                ),
@@ -53,7 +53,7 @@ readcolumn :: [String] -> Int -> [Tile] -> [Tile]
 readcolumn contents j startlist
   | contents!!j == "#" = startlist
   | otherwise = (readcolumn contents (j+3) tile )
-  where tile = ( startlist ++ [Tile{tilePosition = (Types.Position ((read (contents!!j) :: Float)/100) ((read (contents!!(j + 1)) :: Float)/100)), isObstacle = (tf (contents!!(j+2)) ) } ])
+  where tile = ( startlist ++ [Tile{tilePosition = (Types.Position ((read (contents!!j) :: Float)) ((read (contents!!(j + 1)) :: Float))), isObstacle = (tf (contents!!(j+2)) ) } ])
 
   --readcolumn 
 

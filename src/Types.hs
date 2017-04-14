@@ -1,9 +1,10 @@
 module Types where
 
 import qualified Graphics.UI.GLUT
+import qualified Graphics.Gloss
 
 --Input Keys
-data Key = Key Graphics.UI.GLUT.Key deriving (Eq)
+data Key = Key Graphics.Gloss Key deriving (Eq)
 
 --Physics Types
 data Point = Position Float Float | Velocity Float Float | Acceleration Float Float deriving (Show, Eq)
@@ -28,7 +29,7 @@ data TankState = TankState {
 data Tank = Tank {
     tankState :: TankState,
     score :: Float,
-    color :: Graphics.UI.GLUT.Color4 Float,
+    tankcolor :: Graphics.Gloss.Color,
     currentWeapon :: Int,
     weaponCount :: [Integer]
 } deriving (Show)
@@ -80,10 +81,10 @@ tileMatrixColumnSize :: Int
 tileMatrixColumnSize = 201
 
 widthOfTile :: Float
-widthOfTile = 0.01
+widthOfTile = 1
 
 heightOfTile :: Float
-heightOfTile = 0.01
+heightOfTile = 1
 
 widthOfTank :: Integer
 widthOfTank = 9

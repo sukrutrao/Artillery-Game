@@ -88,8 +88,8 @@ getPositionY:: Point -> Float
 getPositionY (Position _ y) = y
 
 getAngleProjectile :: Float -> Float -> Direction -> Float 
-getAngleProjectile velocity theta FacingRight = trace ("R+++++++++++++ theta: " ++ show theta ++ "  ,  velocity : " ++ show velocity ++ "\n") ((-1) * atan((-1) * tan(theta) + (g * unitTime)/(velocity * cos(theta))))
-getAngleProjectile velocity theta FacingLeft = trace ("L+++++++++++++ theta: " ++ show theta ++ "  ,  velocity : " ++ show velocity ++ "\n") (pi  + (-1) * atan((-1) * tan(theta) + (g * unitTime)/(velocity * cos(theta))))
+getAngleProjectile velocity theta FacingRight = {- trace ("R+++++++++++++ theta: " ++ show theta ++ "  ,  velocity : " ++ show velocity ++ "\n") -} ((-1) * atan((-1) * tan(theta) + (g * unitTime)/(velocity * cos(theta)))) 
+getAngleProjectile velocity theta FacingLeft = {- trace ("L+++++++++++++ theta: " ++ show theta ++ "  ,  velocity : " ++ show velocity ++ "\n") -} (pi  + (-1) * atan((-1) * tan(theta) + (g * unitTime)/(velocity * cos(theta)))) 
 
 getPositionProjectile :: Point -> Float -> Float -> Point 
 getPositionProjectile position velocity theta = getNewPositionUnderGravity position velocity theta unitTime
@@ -115,7 +115,7 @@ checkPointInRectangle point (Position lx ly) ilength iwidth theta =
         pointX = getPositionX point
         pointY = getPositionY point
     in
-	    trace("CPIR : " ++ show point ++ " " ++ show lx ++ " " ++ show ly ++ " " ++ show ilength ++ " " ++ show iwidth ++ " " ++ show theta ++ " " ++ show (not (theta == 0)))
+	    {- trace("CPIR : " ++ show point ++ " " ++ show lx ++ " " ++ show ly ++ " " ++ show ilength ++ " " ++ show iwidth ++ " " ++ show theta ++ " " ++ show (not (theta == 0))) -}
 	    (if (not (theta == 0))
 	    	then if ((checkOrientationPointLine point (Position lx ly) (Position (lx + length * cos(theta)) (ly - length * sin(theta)))) == AboveLine &&
 			        (checkOrientationPointLine point (Position lx ly) (Position (lx - width * sin(theta)) (ly - width * cos(theta)))) == AboveLine &&
@@ -331,7 +331,7 @@ checkAllTanksForHitHelper (GameState {
 	    tankList = tanks,
 	    chance = c
 	}) (Position x y) i
-	|	i < 2 = trace("CATFHH : " ++ show i) (checkPointInRectangle (Position x y) (position (tankState (tanks !! i))) widthOfTank
+	|	i < 2 = {- trace("CATFHH : " ++ show i) -} (checkPointInRectangle (Position x y) (position (tankState (tanks !! i))) widthOfTank
 					heightOfTank (inclineAngle (tankState (tanks !! i))) ||
 						checkAllTanksForHitHelper (GameState {
 				   						 tankList = tanks,
@@ -340,7 +340,7 @@ checkAllTanksForHitHelper (GameState {
 	|	otherwise = False
 
 checkAllTanksForHit :: GameState -> Point -> Bool
-checkAllTanksForHit gameState position = trace("CATFH : " ++ show (checkAllTanksForHitHelper gameState position 0))
+checkAllTanksForHit gameState position = {- trace("CATFH : " ++ show (checkAllTanksForHitHelper gameState position 0))-}
 											(checkAllTanksForHitHelper gameState position 0)
 
 minValid :: Float

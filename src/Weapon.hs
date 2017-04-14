@@ -181,7 +181,7 @@ updateHealth  (GenericWeapon {
             })
         }),
         score = s,
-        color = c,
+        tankcolor = c,
         currentWeapon = e,
         weaponCount = f
     }) =  (Tank {
@@ -197,7 +197,7 @@ updateHealth  (GenericWeapon {
         }),
         score = trace("Old score : " ++ show s ++ " New score : " ++ show (convertPointListToInteger $ getAllPointsInCircle (Position wx wy) impactradius) ++ " " ++ show (convertPointListToInteger $ getAllPointsInRectangle (Position x y) widthOfTank heightOfTank incline_theta))
             (s - (fromIntegral (length $ commonPointsBetweenLists (convertPointListToInteger $  getAllPointsInCircle (Position wx wy) impactradius) (convertPointListToInteger $ getAllPointsInRectangle (Position x y) widthOfTank heightOfTank incline_theta)) * weapon_velocity * 0.001)),
-        color = c,
+        tankcolor = c,
         currentWeapon = e,
         weaponCount = f
     })
