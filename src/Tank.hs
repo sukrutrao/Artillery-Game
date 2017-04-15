@@ -9,6 +9,7 @@ import qualified Graphics.UI.GLUT
 import Data.IORef
 import Debug.Trace
 
+-- | Function to initialize the state variables of the tank
 initializeTankState :: Float -> Float -> TankState
 initializeTankState posX posY = TankState {direction = FacingRight, 
                                      position = (originPosition posX posY),
@@ -17,6 +18,7 @@ initializeTankState posX posY = TankState {direction = FacingRight,
                                      turret = Turret {angle = 0.7853981633974483 , power = 0}
                                     }
 
+-- | Function to initialize all the properties of a tank
 initializeTank :: Float -> Float -> Float -> Graphics.UI.GLUT.Color4 Float -> Int -> [Integer] -> Tank
 initializeTank posX posY score tankcolor currweapon listweaponcount = Tank {tankState = (initializeTankState posX posY),
                                     score = score,
@@ -25,6 +27,8 @@ initializeTank posX posY score tankcolor currweapon listweaponcount = Tank {tank
                                     weaponCount = listweaponcount
                                    } 
 
+-- | Function responsible for launching a weapon. It takes a weapon, tank, the tile map
+--   and the start velocity and returns the launched weapon
 launchWeapon :: WeaponGraphics -> Tank -> [[Tile]] -> Float -> WeaponGraphics
 launchWeapon
     (WeaponGraphics {
@@ -72,6 +76,8 @@ launchWeapon
         lengthOfTurret = lTurr
     }
 
+-- | Function to change the weapon count of the tank. It accepts a tank and returns a tank
+--   with the modified weapon count
 decreaseWeaponCount :: Tank -> Tank
 decreaseWeaponCount (Tank {
         tankState = (TankState {
@@ -105,33 +111,43 @@ decreaseWeaponCount (Tank {
         weaponCount = changeListElementAtIndex f e ((f!!e)-1)
     }
 
+-- | To represent the velocity given to a tank on pressing a movement key
 tankVelocity :: Float
 tankVelocity = 1
-    
+
+-- | Function to accept the position, angle of inclination and key press and return
+--   the new position of the tank    
 updatePosition :: Point -> Float -> Key -> Point
 updatePosition position theta key
     | key == moveRight = constantVelocityNewPosition position tankVelocity theta
     | key == moveLeft = constantVelocityNewPosition position (-tankVelocity) theta
     | otherwise = position
 
+-- | Function to accept the power and key press and return the new power of the tank
 updatePower :: Float -> Key -> Float
 updatePower power key
     | (key == increasePower) = if(power+powerIncrement > 100) then 100 else power+powerIncrement
     | (key == decreasePower) = if(power-powerIncrement < 0) then 0 else power-powerIncrement
     | otherwise = power
 
+-- | Function to accept the angle of inclination and key press and return the new angle
+--   of inclination of the tank
 updateAngle :: Float -> Key -> Float
 updateAngle angle key 
     | key ==  decreaseAngle = if(angle+angleIncrement > pi) then pi else angle+angleIncrement
     | key == increaseAngle = if(angle-angleIncrement < 0) then 0 else angle-angleIncrement  -- check for negative
     | otherwise = angle
 
+-- | Function to accept the direction and key press and return the new direction
+--   of the tank
 updateDirection :: Direction -> Key -> Direction
 updateDirection direction key
     | key == moveRight = FacingRight 
     | key == moveLeft = FacingLeft
     | otherwise = direction
 
+-- | Function to accept the current weapon selected and the key press and return
+--   the new weapon to be selected for the tank
 updateWeaponChoice :: Int -> Key -> Int
 updateWeaponChoice currWeapon key
     | key == weapon0 = 0 
@@ -174,7 +190,7 @@ stopTank (Tank {
         weaponCount = f
     }
 
-
+-- | Function to update the parameters of a tank after a key press
 updateTank :: Tank -> Key -> [[Tile]] -> Tank
 updateTank
     (Tank {
@@ -215,7 +231,6 @@ updateTank
         weaponCount = f
     }
 
--- check for theta = pi/2 
 
 updateGameStateLaunchWeapon :: GameState -> GameState
 updateGameStateLaunchWeapon
@@ -245,7 +260,7 @@ updateGameStateTank
         in GameState {tileMatrix = t , tankList =  temp, weapon = w , chance = c , noOfPlayers = n, isAcceptingInput = d}
 
 
-
+-- | Function to update the game state after applying the effects of gravity on all the tanks
 updateTankGravity :: GameState -> GameState
 updateTankGravity
     (GameState {
