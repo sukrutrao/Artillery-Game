@@ -79,18 +79,6 @@ display gamestate bulletRotationAngle = do
                 tankWidthInGLUT = (fromIntegral Types.widthOfTank)*Types.widthOfTile
                 tankHeightInGLUT = (fromIntegral Types.heightOfTank)*Types.heightOfTile
 
-            putStr "\n*****\nX: "
-            print x
-            putStr "Y: "
-            print y
-            putStr "Theta : "
-            print incline_theta
-            putStr "Turret Theta : "
-            print turret_theta
-            putStr "TankCoordX : "
-            print tankCoordX
-            putStr "tankCoordY : "
-            print tankCoordY
             -- Drawing the tank rectangle
             loadIdentity
             currentColor $= tankcolor
@@ -201,7 +189,6 @@ keyboardMouse gamestate bulletRotationAngle key Down _ _ = do
                     gamestate $~! \x -> Tank.updateGameStateTank x Input.moveRight
                     postRedisplay Nothing
             Char '0' -> do
-                 --   putStrLn $ show (length $ Physics.commonPointsBetweenLists [(Types.Position 1 2), (Types.Position 2 3)] [(Types.Position 2 3)])
                     gamestate $~! \x -> Tank.updateGameStateTank x Input.weapon0
                     postRedisplay Nothing
             Char '1' -> do
