@@ -23,6 +23,14 @@ $ cd Artillery-Game
 $ cabal install
 ```
 
+* Copy the file `Level1.txt` from `src` folder to `dist/build/Artillery-Game` folder.
+* Execute
+
+```
+$ ./Artillery-Game
+```
+
+
 ### Playing the Game
 
 * The game is a multi-player turn based game. Currently, the number of players supported is three.

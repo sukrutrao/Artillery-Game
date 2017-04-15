@@ -1,5 +1,0 @@
-ghc: 8.0
-script:
-  - sudo apt-get install haskell-platform
-  - cabal build
-
