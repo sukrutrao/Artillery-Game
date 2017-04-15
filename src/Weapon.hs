@@ -47,7 +47,8 @@ initializeWeapon posX posY factor currAngle radius bullColor turrColor bullRotat
                                                     lengthOfTurret = turrLen
                                                    }
 
-
+-- | Function to take a weapon as input and return a new weapon with new position
+--   after next projectile motion
 updatePositionWeapon :: WeaponGraphics -> GameState -> [[Tile]] -> WeaponGraphics
 updatePositionWeapon     (WeaponGraphics {
         weaponPhysics = (GenericWeapon {
@@ -68,10 +69,10 @@ updatePositionWeapon     (WeaponGraphics {
         turretThickness = tTurr,
         lengthOfTurret = lTurr
     }) gameState tileMap = if islaunched then 
+                                -- handle if row index out of range
                                 if (truncate y>((length tileMap)-2) || y<0) then (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
-                                        currentPosition = {-trace("if if x : " ++ show x ++ " y : " ++ show y ++ "\n") -}{-getPositionProjectile (Position x y) velocity theta-}
-                                             newPositionProjectile gameState (getTurretPosition gameState lTurr) (Position x y) velocity theta lvelocity lAngle tileMap,
+                                        currentPosition = newPositionProjectile gameState (getTurretPosition gameState lTurr) (Position x y) velocity theta lvelocity lAngle tileMap,
                                         currentVelocity = getVelocityProjectile velocity theta,
                                         launchVelocity = lvelocity,
                                         launchAngle = lAngle,
@@ -88,9 +89,10 @@ updatePositionWeapon     (WeaponGraphics {
                                     turretThickness = tTurr,
                                     lengthOfTurret = lTurr
                                     })
+                                -- handle if column index out of range
                                 else if (truncate x>((length $ tileMap !! 0)-2) || x<0) then (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
-                                        currentPosition = {-trace("HOLA$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" ++ show x ++ "  ,  " ++ show y ++ "\n")-} (Position x y),
+                                        currentPosition = (Position x y),
                                         currentVelocity = velocity,
                                         velocityMultiplyingFactor = f,
                                         launchVelocity = lvelocity,
@@ -107,10 +109,11 @@ updatePositionWeapon     (WeaponGraphics {
                                     turretThickness = tTurr,
                                     lengthOfTurret = lTurr
                                     })
+                                    -- handle if obstacle or other tank in front of bullet
                                     else if getIsObstacle tileMap y x || checkAllTanksForHit gameState (Position x y)
                                         then (WeaponGraphics {
                                             weaponPhysics = (GenericWeapon {
-                                                currentPosition = trace("if else if x : " ++ show x ++ " y : " ++ show y ++ "\n") (Position x y),
+                                                currentPosition = (Position x y),
                                                 currentVelocity = velocity,
                                                 velocityMultiplyingFactor = f,
                                                 launchVelocity = lvelocity,
@@ -127,10 +130,10 @@ updatePositionWeapon     (WeaponGraphics {
                                             turretThickness = tTurr,
                                             lengthOfTurret = lTurr
                                             })
+                                    -- handle if bullet is free to move
                                     else (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
-                                        currentPosition = trace(" : " ++ show x ++ " y : " ++ show y ++ "\n") {-getPositionProjectile (Position x y) velocity theta-}
-                                                newPositionProjectile gameState (getTurretPosition gameState lTurr) (Position x y) velocity theta lvelocity lAngle tileMap,
+                                        currentPosition =  newPositionProjectile gameState (getTurretPosition gameState lTurr) (Position x y) velocity theta lvelocity lAngle tileMap,
                                         currentVelocity = getVelocityProjectile velocity theta,
                                         velocityMultiplyingFactor = f,
                                         launchVelocity = lvelocity,
@@ -150,7 +153,7 @@ updatePositionWeapon     (WeaponGraphics {
                                     })
                  else (WeaponGraphics {
                     weaponPhysics = (GenericWeapon {
-                        currentPosition = {-trace("else x : " ++ show x ++ " y : " ++ show y ++ "\n") -}(Position x y),
+                        currentPosition =(Position x y),
                         currentVelocity = velocity,
                         launchVelocity = lvelocity,
                         launchAngle = lAngle,
@@ -168,12 +171,13 @@ updatePositionWeapon     (WeaponGraphics {
                     lengthOfTurret = lTurr
                     })
 
+-- | helper function to call updatePositionWeapon if bullet has not impacted
 updateWeapon :: WeaponGraphics -> GameState -> [[Tile]] -> WeaponGraphics 
 updateWeapon weapon gameState tileMap = if hasImpacted (weaponPhysics weapon)
                                 then weapon
                                 else updatePositionWeapon weapon gameState tileMap 
 
-
+-- | function to quantify the damage
 updateHealth :: Weapon -> Tank -> Tank
 updateHealth  (GenericWeapon {
         currentPosition = (Position wx wy),
@@ -199,7 +203,7 @@ updateHealth  (GenericWeapon {
         color = c,
         currentWeapon = e,
         weaponCount = f
-    }) =  let scoreDiff =  trace ("SCORE DIFF : " ++ show (getAllPointsInRectangleHelper (Position x y) widthOfTank heightOfTank incline_theta 0) ++ " " ++ show incline_theta++ " " ++ show widthOfTank ++ " " ++ show heightOfTank ++ " " ++ show (Position x y)) (fromIntegral (length $ commonPointsBetweenLists (convertPointListToInteger $  getAllPointsInCircle (Position wx wy) impactradius) (convertPointListToInteger $ getAllPointsInRectangle (Position x y) widthOfTank heightOfTank incline_theta)) * weapon_velocity * 0.01)
+    }) =  let scoreDiff = (fromIntegral (length $ commonPointsBetweenLists (convertPointListToInteger $  getAllPointsInCircle (Position wx wy) impactradius) (convertPointListToInteger $ getAllPointsInRectangle (Position x y) widthOfTank heightOfTank incline_theta)) * weapon_velocity * 0.01)
           in (Tank {
         tankState = (TankState {
             direction = d,
@@ -211,14 +215,14 @@ updateHealth  (GenericWeapon {
                 power = turret_power
             })
         }),
-        score = trace("Score set") (s - scoreDiff),
-        color = trace("colour") (if(s-scoreDiff<=0) then Graphics.UI.GLUT.Color4 1 0 0 0  else c),
-        currentWeapon = trace("CW") (e),
-        weaponCount = trace("WC") (f)
+        score = (s - scoreDiff),
+        color = (if(s-scoreDiff<=0) then Graphics.UI.GLUT.Color4 1 0 0 0  else c),
+        currentWeapon = (e),
+        weaponCount = (f)
     })
 
 
-
+-- | Function to update the game state for bullet motion
 updateGameStateWeapon :: GameState -> GameState
 updateGameStateWeapon
     (GameState {
@@ -243,26 +247,28 @@ updateGameStateWeapon
              newWeaponList = changeListElementAtIndex w weaponChoice newWeapon
              updatedTankHealth = if(isLaunched $ weaponPhysics newWeapon) then l
                                     else if(not $ hasImpacted $ weaponPhysics newWeapon) then l
-                                            else trace ("Inside GRAVITY : ") (map (applyGravityOnAll shouldWeBlast) (map (updateHealth (weaponPhysics newWeapon)) l))
-         in GameState { tileMatrix = trace ("Inside Should we blast : ") (shouldWeBlast), 
+                                            else (map (applyGravityOnAll shouldWeBlast) (map (updateHealth (weaponPhysics newWeapon)) l))
+         in GameState { tileMatrix = (shouldWeBlast), 
                         tankList =  updatedTankHealth,
-                        weapon = trace("nwl") (newWeaponList),
-                        chance = trace("C") (if (isLaunched $ weaponPhysics newWeapon) then c else if(noOfPlayerWithNoHealth updatedTankHealth >= n-1) then 0 else (nextTankChance updatedTankHealth c n)),
+                        weapon = (newWeaponList),
+                        chance = (if (isLaunched $ weaponPhysics newWeapon) then c else if(noOfPlayerWithNoHealth updatedTankHealth >= n-1) then 0 else (nextTankChance updatedTankHealth c n)),
                         noOfPlayers = n,
                         isAcceptingInput = if(noOfPlayerWithNoHealth updatedTankHealth >= n-1)
-                                                then  trace ("Inside isAcceptingInput condtion 1 ")  (False)
+                                                then (False)
                                                 else if (isLaunched $ weaponPhysics newWeapon) 
-                                                        then  trace ("Inside isAcceptingInput condtion 2 ") (False)
-                                                        else  trace ("Inside isAcceptingInput condtion 3 ") (True)
+                                                        then (False)
+                                                        else (True)
                       }
 
-
+-- | no of player with no health
 noOfPlayerWithNoHealth::[Tank] -> Int
 noOfPlayerWithNoHealth tankList = length $ filter checkScore tankList
 
+-- | find if score is negative
 checkScore :: Tank -> Bool
 checkScore tank = if (score tank <= 0) then True else False
 
+-- | find next chance of player
 nextTankChance::[Tank] -> Int -> Int -> Int
 nextTankChance tankList currChance noOfPlayers = let nextChance =(currChance+1) `mod` noOfPlayers
                                              in if(score (tankList !! nextChance) <= 0)

@@ -10,17 +10,17 @@ import Data.IORef
 import Debug.Trace
 
 -- | Function to initialize the state variables of the tank
-initializeTankState :: Float -> Float -> TankState
-initializeTankState posX posY = TankState {direction = FacingRight, 
+initializeTankState :: Float -> Float -> Float -> TankState
+initializeTankState posX posY inclineangle = TankState {direction = FacingRight, 
                                      position = (originPosition posX posY),
                                      velocity = restVelocity,
-                                     inclineAngle = 0,
+                                     inclineAngle = inclineangle,
                                      turret = Turret {angle = 0.7853981633974483 , power = 0}
                                     }
 
 -- | Function to initialize all the properties of a tank
-initializeTank :: Float -> Float -> Float -> Graphics.UI.GLUT.Color4 Float -> Int -> [Integer] -> Tank
-initializeTank posX posY score tankcolor currweapon listweaponcount = Tank {tankState = (initializeTankState posX posY),
+initializeTank :: Float -> Float -> Float -> Float -> Graphics.UI.GLUT.Color4 Float -> Int -> [Integer] -> Tank
+initializeTank posX posY score  initialangle tankcolor currweapon listweaponcount = Tank {tankState = (initializeTankState posX posY initialangle),
                                     score = score,
                                     color = tankcolor,
                                     currentWeapon = currweapon,
@@ -155,41 +155,6 @@ updateWeaponChoice currWeapon key
     | key == weapon2 = 2
     | otherwise = currWeapon
 
-
-stopTank :: Tank -> Tank
-stopTank (Tank {
-        tankState = (TankState {
-            direction = d,
-            position = (Position x y),
-            velocity = (Velocity vx vy),
-            inclineAngle = incline_theta,
-            turret = (Turret {
-                angle = turret_theta, 
-                power = turret_power
-            })
-        }),
-        score = s,
-        color = c,
-        currentWeapon = e,
-        weaponCount = f
-        
-    }) = Tank {
-        tankState = (TankState {
-            direction = d,
-            position = (Position x y),
-            velocity = (Velocity 0 0),
-            inclineAngle = incline_theta,
-            turret = (Turret {
-                angle = turret_theta, 
-                power = turret_power
-            })
-        }),
-        score = s,
-        color = c,
-        currentWeapon = e,
-        weaponCount = f
-    }
-
 -- | Function to update the parameters of a tank after a key press
 updateTank :: Tank -> Key -> [[Tile]] -> Tank
 updateTank
@@ -231,7 +196,7 @@ updateTank
         weaponCount = f
     }
 
-
+-- | Function to update the game state after current player launches the weapon
 updateGameStateLaunchWeapon :: GameState -> GameState
 updateGameStateLaunchWeapon
     (GameState {
@@ -246,7 +211,7 @@ updateGameStateLaunchWeapon
              newTankList = changeListElementAtIndex l c (decreaseWeaponCount (l !! c))
          in GameState {tileMatrix = t , tankList = newTankList, weapon = newWeaponList , chance = c , noOfPlayers=n, isAcceptingInput= False}
 
-
+-- | Function to update the game state when player moves the tank
 updateGameStateTank :: GameState -> Key -> GameState
 updateGameStateTank
     (GameState {

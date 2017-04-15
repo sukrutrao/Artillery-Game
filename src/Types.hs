@@ -74,7 +74,7 @@ data WeaponGraphics = WeaponGraphics {
     weaponPhysics :: Weapon, -- ^ The state of the weapon
     bulletColor :: Graphics.UI.GLUT.Color4 Float, -- ^ The colour of the weapon
     turretColor :: Graphics.UI.GLUT.Color4 Float, -- ^ The colour of the turret when this weapon is launched
-    bulletRotation :: Graphics.UI.GLUT.Vector3 Float, -- ^
+    bulletRotation :: Graphics.UI.GLUT.Vector3 Float, -- ^ Bullets Current Rotation Angle For Display 
     turretThickness :: Float, -- ^ The thickness of the turret when this weapon is launched
     lengthOfTurret :: Float -- ^ The length of the turret when this weapon is launched
 } deriving (Show)

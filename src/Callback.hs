@@ -15,7 +15,7 @@ import Line
 import Triangle
 import Debug.Trace
 
-
+-- | GLUT's reshape callback function . To Be called on window resizing
 reshape :: ReshapeCallback
 reshape size = do
   viewport $= (Position 0 0, size)
@@ -24,13 +24,13 @@ reshape size = do
 
 
 
-
+-- | GLUT's display callback function . To Be called when postReDisplay is encountered
 display :: IORef Types.GameState -> IORef Float -> DisplayCallback
 display gamestate bulletRotationAngle = do
         clear [ColorBuffer, DepthBuffer]
         game <- get gamestate
+        
         --Drawing The Tiles
-
         forM_ (Types.tileMatrix game) $ \(tileList) -> do
             forM_ (tileList) $ \(Types.Tile {Types.tilePosition = (Types.Position x y), Types.isObstacle = w }) -> do
                 loadIdentity
@@ -38,15 +38,14 @@ display gamestate bulletRotationAngle = do
                 translate $ Vector3 x y 0
                 rectangle Types.widthOfTile Types.heightOfTile
                 flush
-        --Drawing The White power Bar
+        --Drawing The White power Bar at the botton
         loadIdentity
         currentColor $= Color4 1 1 1 1              -- white power background
         translate $ Vector3 (-0.375) (-0.9) (0::Float)
         rectangle 0.75 0.01
         flush
 
-        --Drawing The Red Power Bar
-
+        --Drawing The Red Power Bar at the bottom
         loadIdentity
         currentColor $= Color4 1 0 0 1              -- red power background
         translate $ Vector3 (-0.375) (-0.9) (0::Float)
@@ -56,7 +55,7 @@ display gamestate bulletRotationAngle = do
 
         tankcount <- newIORef (-1)
 
-        --Drawing The Tanks
+        --Drawing The Tanks Features
         forM_ (Types.tankList game) $ \(Types.Tank  { Types.tankState = (Types.TankState {
                                             Types.direction = d,
                                             Types.position = (Types.Position x y),
@@ -75,8 +74,8 @@ display gamestate bulletRotationAngle = do
 
             tankcount $~! (+1)
 
-            let tankCoordX =  {-trace ("INSIDE COORDX")-} (Physics.getTilePosX (Types.tileMatrix game) y x)
-                tankCoordY =  {-trace ("INSIDE COORDY")-} (Physics.getTilePosY (Types.tileMatrix game) y x)
+            let tankCoordX =  (Physics.getTilePosX (Types.tileMatrix game) y x)
+                tankCoordY =  (Physics.getTilePosY (Types.tileMatrix game) y x)
                 tankWidthInGLUT = (fromIntegral Types.widthOfTank)*Types.widthOfTile
                 tankHeightInGLUT = (fromIntegral Types.heightOfTank)*Types.heightOfTile
 
@@ -92,7 +91,7 @@ display gamestate bulletRotationAngle = do
             print tankCoordX
             putStr "tankCoordY : "
             print tankCoordY
-
+            -- Drawing the tank rectangle
             loadIdentity
             currentColor $= tankcolor
             translate $ Vector3 tankCoordX (tankCoordY) 0
@@ -112,26 +111,24 @@ display gamestate bulletRotationAngle = do
             let healthX =  (topCenterX-(cos(incline_theta)*(tankWidthInGLUT/3))) - (lengthOfTurret*0.35)*cos(perpendicularAngle)
                 healthY = (topCenterY-(sin(incline_theta)*(tankWidthInGLUT/3))) - (lengthOfTurret*1.25)*sin(perpendicularAngle)
 
-            --Drawing The White Health Of Tank
-            loadIdentity{-trace ("White Health")-} 
+            --Drawing The White Health On Top Of Tank
+            loadIdentity
             currentColor $= Color4 1 1 1 1              -- white health background
             translate $ Vector3 healthX healthY (0::Float)
             rotate (Physics.radianTodegree incline_theta) $ Vector3 0 0 1 
             rectangle (tankWidthInGLUT/1.5) 0.02
             flush
 
-            --Drawing The Health Of Tank
-            
-            loadIdentity{-trace ("Red Health") -}
+            --Drawing The Red Health On Top Of Tank Based on the score
+            loadIdentity
             currentColor $= if (s>20) then Color4 0 0.5019 0 1 else (if (s>10) then Color4 1 0.8196 0.10196 1 else Color4 1 0 0 1 )               -- tank color power
             translate $ Vector3 healthX healthY (0::Float)
             rotate (Physics.radianTodegree incline_theta) $ Vector3 0 0 1
             rectangle (max (0.0)  ((s*((tankWidthInGLUT/1.5)))/30)) 0.02
             flush
 
-            --Drawing The Turret
-            
-            loadIdentity{-trace ("Draw Turret")-}
+            --Drawing The Turret            
+            loadIdentity
             lineWidth $=  Types.turretThickness ((Types.weapon game) !! current_weapon)
             currentColor $= Types.turretColor ((Types.weapon game) !! current_weapon)     -- grey turret
             translate $ Vector3 topCenterX topCenterY 0
@@ -139,7 +136,7 @@ display gamestate bulletRotationAngle = do
             line lengthOfTurret
             flush
 
-            --Drawing The  Current Triangle
+            --Drawing The  Current Tank Player Chance Triangle
             tankcountIO <- get tankcount
             if( tankcountIO == (Types.chance game))
                 then do
@@ -155,7 +152,7 @@ display gamestate bulletRotationAngle = do
                             let currWeaponFromList =  (Types.weapon game) !! current_weapon
                                 weaponX = Physics.getPositionX $ Types.currentPosition $ Types.weaponPhysics currWeaponFromList
                                 weaponY = Physics.getPositionY $ Types.currentPosition $ Types.weaponPhysics currWeaponFromList
-                            if {-trace ("In Weapon Launced"++ show weaponX ++ " " ++ show weaponY )-} ((truncate weaponY>((length $ Types.tileMatrix game)-2)) || (weaponY<0))
+                            if ((truncate weaponY>((length $ Types.tileMatrix game)-2)) || (weaponY<0))
                                     then return()
                                     else do 
                                         loadIdentity
@@ -170,7 +167,7 @@ display gamestate bulletRotationAngle = do
         swapBuffers
         flush
 
-
+-- | GLUT's KeyboardMouse callback function . To Be called when user does a keypress
 keyboardMouse :: IORef Types.GameState -> IORef Float -> KeyboardMouseCallback
 keyboardMouse gamestate bulletRotationAngle key Down _ _ = do
         game <- get gamestate
@@ -226,6 +223,7 @@ keyboardMouse gamestate bulletRotationAngle key Down _ _ = do
                 return ()
 keyboardMouse _ _ _ _ _ _ = return ()
 
+-- | Function which checks if any weapon is launched or not
 checkifWeaponIsLaunched ::Types.GameState -> Bool
 checkifWeaponIsLaunched (Types.GameState {
         Types.tankList = l,
@@ -233,7 +231,7 @@ checkifWeaponIsLaunched (Types.GameState {
         Types.chance = c
     }) = Types.isLaunched $ Types.weaponPhysics $ (w !! (Types.currentWeapon (l !! c)))
 
-
+-- | Function which checks if any weapon has impacted or not
 checkifWeaponHAsImpacted ::Types.GameState -> Bool
 checkifWeaponHAsImpacted (Types.GameState {
         Types.tankList = l,
@@ -241,6 +239,7 @@ checkifWeaponHAsImpacted (Types.GameState {
         Types.chance = c
     }) = Types.hasImpacted $ Types.weaponPhysics $ (w !! (Types.currentWeapon (l !! c)))
 
+-- | Function which checks if current player has sufficient weapons
 checkifSufficientWeaponsAvailable ::Types.GameState -> Bool
 checkifSufficientWeaponsAvailable (Types.GameState {
         Types.tankList = l,
@@ -249,7 +248,8 @@ checkifSufficientWeaponsAvailable (Types.GameState {
     }) = if ((Types.weaponCount $ l !! c) !! (Types.currentWeapon $ l !! c)) > 0 then True else False
 
 
-
+-- | GLUT's idle callback function . To Be called indefinitley in each gameLoop
+--   Used for the bullet graphics
 idle ::IORef Types.GameState ->  IORef Float -> IdleCallback
 idle gamestate bulletRotationAngle = do
     game <- get gamestate
