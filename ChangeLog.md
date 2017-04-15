@@ -1,5 +1,5 @@
 # Revision history for Artillery-Game
 
-## 0.1.0.0  -- YYYY-mm-dd
+## 0.1.0.0  -- 2017-04-15
 
-* First version. Released on an unsuspecting world.
+* First version. Consists of the basic game features
