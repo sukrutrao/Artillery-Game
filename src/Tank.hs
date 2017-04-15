@@ -7,7 +7,7 @@ import Input
 import Common
 import qualified Graphics.UI.GLUT
 import Data.IORef
-import Debug.Trace
+
 
 -- | Function to initialize the state variables of the tank
 initializeTankState :: Float -> Float -> Float -> TankState
@@ -60,10 +60,10 @@ launchWeapon
         weaponPhysics = (GenericWeapon {
             currentPosition = (Position turretTopX turretTopY),
             currentVelocity = (turret_power*startVelocity*f),
-            launchVelocity = trace("TANK.hs : launchVelocity : " ++ show (turret_power*startVelocity*f) ) (turret_power*startVelocity*f),
-            launchAngle = trace("TANK.hs : launchAngle : " ++ show (incline_theta+turret_theta) ) (incline_theta+turret_theta),
+            launchVelocity =  (turret_power*startVelocity*f),
+            launchAngle = (incline_theta+turret_theta),
             velocityMultiplyingFactor = f,
-            currentAngle = trace("Angle of launch : " ++ show (incline_theta + turret_theta)) (incline_theta+turret_theta), 
+            currentAngle = (incline_theta+turret_theta), 
             impactRadius = radius,
             isLaunched = True,
             hasImpacted = False,

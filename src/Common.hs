@@ -2,7 +2,6 @@ module Common where
 
 import Types
 import Physics
-import Debug.Trace
 
 -- | Function to accept a tank and return a tank taking into account the influence
 --   of gravity on the input tank

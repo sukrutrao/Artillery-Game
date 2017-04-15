@@ -13,7 +13,7 @@ import Gamestate
 import Rectangle
 import Line
 import Triangle
-import Debug.Trace
+
 
 -- | GLUT's reshape callback function . To Be called on window resizing
 reshape :: ReshapeCallback

@@ -5,7 +5,6 @@ import qualified Graphics.UI.GLUT
 import Types
 import Physics
 import Common
-import Debug.Trace
 
 -- |The defaultStartVelocity function sets the default start velocity for the bullet.
 defaultStartVelocity :: Float
