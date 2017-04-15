@@ -20,9 +20,9 @@ restVelocity :: Point
 restVelocity = (Velocity 0 0)
 
 -- | Function to accept two floats and return a point corresponding to them
-originPosition :: Float --^ The x coordinate
-               -> Float --^ The y coordinate
-               -> Point --^ The equivalent point
+originPosition :: Float -- ^ The x coordinate
+               -> Float -- ^ The y coordinate
+               -> Point -- ^ The equivalent point
 originPosition x y = (Position x y)
 
 -- | Function to obtain the new position in two dimensions given the position,
@@ -287,7 +287,7 @@ convertPointListToInteger :: [Point] -> [(Integer,Integer)]
 convertPointListToInteger [] = []
 convertPointListToInteger (x:xs) = (((truncate $ getPositionX x), (truncate $ getPositionY x)) : (convertPointListToInteger xs))
 
---| Function to return a list of common points between a circle and a rectangle                              
+-- | Function to return a list of common points between a circle and a rectangle                              
 commonPointsBetweenCircleRectangle :: Point -> Float -> Point -> Float -> Float -> [(Integer,Integer)]
 commonPointsBetweenCircleRectangle (Position cx cy) radius (Position x y) length width = 
     (commonPointsBetweenLists (convertPointListToInteger(flattenList $ (getListOfPointsInRectangle (Position x y) (truncate length) (truncate width))))
@@ -420,7 +420,7 @@ parabolaFunction (Position sx sy) x velocity theta =
 	(sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2))
 		else trace("THIS") (0)
 
---| Function to check if the path between two points has any obstacle in it
+-- | Function to check if the path between two points has any obstacle in it
 --  so that weapons don't overshoot tanks or mountains in a unit time
 checkIntermediateObstacleInPath :: GameState -> Point -> Point -> Point -> Float -> Float -> [[Tile]] -> Bool -> Point
 checkIntermediateObstacleInPath gameState (Position x y) (Position ox oy) (Position sx sy) velocity theta tileMap xIsLesser =
