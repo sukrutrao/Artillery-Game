@@ -15,7 +15,7 @@ initializeTankState posX posY inclineangle = TankState {direction = FacingRight,
                                      position = (originPosition posX posY),
                                      velocity = restVelocity,
                                      inclineAngle = inclineangle,
-                                     turret = Turret {angle = 0.7853981633974483 , power = 0}
+                                     turret = Turret {angle = 0.7853981633974483 , power = 1}
                                     }
 
 -- | Function to initialize all the properties of a tank
@@ -127,7 +127,7 @@ updatePosition position theta key
 updatePower :: Float -> Key -> Float
 updatePower power key
     | (key == increasePower) = if(power+powerIncrement > 100) then 100 else power+powerIncrement
-    | (key == decreasePower) = if(power-powerIncrement < 0) then 0 else power-powerIncrement
+    | (key == decreasePower) = if(power-powerIncrement < 1) then 1 else power-powerIncrement
     | otherwise = power
 
 -- | Function to accept the angle of inclination and key press and return the new angle
