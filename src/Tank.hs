@@ -53,9 +53,9 @@ launchWeapon
                                    turretTopY = topCenterY-((lTurr*sin(incline_theta+turret_theta))/heightOfTile)
                                 in WeaponGraphics {
         weaponPhysics = (GenericWeapon {
-            currentPosition = (Position (turretTopX+5) (turretTopY-5)),
-            currentVelocity = (turret_power*startVelocity*f),
-            launchVelocity = trace("TANK.hs : launchVelocity : " ++ show (turret_power*startVelocity*f) ) (turret_power*startVelocity*f),
+            currentPosition = (Position (turretTopX+20) (turretTopY-20)),
+            currentVelocity = (turret_power*startVelocity*f*0.01),
+            launchVelocity = trace("TANK.hs : launchVelocity : " ++ show (turret_power*startVelocity*f) ) (turret_power*startVelocity*f*0.01),
             launchAngle = trace("TANK.hs : launchAngle : " ++ show (incline_theta+turret_theta) ) (incline_theta+turret_theta),
             velocityMultiplyingFactor = f,
             currentAngle = trace("Angle of launch : " ++ show (incline_theta + turret_theta)) (incline_theta+turret_theta), 

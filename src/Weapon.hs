@@ -55,8 +55,8 @@ updatePositionWeapon     (WeaponGraphics {
     }) gameState tileMap = if islaunched then 
                                 if (truncate y>((length tileMap)-2) || y<0) then (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
-                                        currentPosition = {-trace("if if x : " ++ show x ++ " y : " ++ show y ++ "\n") -}{-getPositionProjectile (Position x y) velocity theta-}
-                                             newPositionProjectile gameState (getTurretPosition gameState lTurr) (Position x y) velocity theta lvelocity lAngle tileMap,
+                                        currentPosition = trace("if if x : " ++ show x ++ " y : " ++ show y ++ "\n") {-getPositionProjectile (Position x y) velocity theta-}
+                                             (newPositionProjectile gameState (getTurretPosition gameState lTurr) (Position x y) velocity theta lvelocity lAngle tileMap),
                                         currentVelocity = getVelocityProjectile velocity theta,
                                         launchVelocity = lvelocity,
                                         launchAngle = lAngle,
@@ -75,7 +75,7 @@ updatePositionWeapon     (WeaponGraphics {
                                     })
                                 else if (truncate x>((length $ tileMap !! 0)-2) || x<0) then (WeaponGraphics {
                                     weaponPhysics = (GenericWeapon {
-                                        currentPosition = {-trace("HOLA$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" ++ show x ++ "  ,  " ++ show y ++ "\n")-} (Position x y),
+                                        currentPosition = trace("HOLA$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" ++ show x ++ "  ,  " ++ show y ++ "\n")  (Position x y),
                                         currentVelocity = velocity,
                                         velocityMultiplyingFactor = f,
                                         launchVelocity = lvelocity,
@@ -95,7 +95,7 @@ updatePositionWeapon     (WeaponGraphics {
                                     else if getIsObstacle tileMap y x || checkAllTanksForHit gameState (Position x y)
                                         then (WeaponGraphics {
                                             weaponPhysics = (GenericWeapon {
-                                                currentPosition = trace("if else if x : " ++ show x ++ " y : " ++ show y ++ "\n") (Position x y),
+                                                currentPosition = trace("if else if x : " ++ show x ++ " y : " ++ show y ++ "  getisobstavle : " ++ show (getIsObstacle tileMap y x) ++ "  checkAllTanksForHit : " ++ show (checkAllTanksForHit gameState (Position x y)) ++ "\n") (Position x y),
                                                 currentVelocity = velocity,
                                                 velocityMultiplyingFactor = f,
                                                 launchVelocity = lvelocity,

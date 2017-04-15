@@ -19,7 +19,7 @@ disp :: GameState -> Picture
 disp game = rectangleSolid 10 50
 
 fps :: Int
-fps = 60
+fps = 2
 
 
 

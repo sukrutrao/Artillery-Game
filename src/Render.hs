@@ -23,10 +23,10 @@ getIsObstacleTilesList tilemap = [ (Physics.getPositionX $ Types.tilePosition xs
 
 getTankListGraphics :: Types.GameState -> [[Picture]]
 
-getTankListGraphics game = [ [ trace ("*********************\n THETA : " ++ show incline_theta++ " " ++ show tankCoordX) (translate ((tankCoordX+(tankWidthInGLUT*0.5*cos(incline_theta))-(tankHeightInGLUT*0.5*sin(incline_theta)))*(Types.widthOfScreen/2)) ((tankCoordY+(tankWidthInGLUT*0.5*sin(incline_theta))+(tankHeightInGLUT*0.5*cos(incline_theta)))*(Types.heightOfScreen/2)) $ rotate (Physics.radianTodegree (-incline_theta)) $ color tankcolor  $ unsafePerformIO (loadBMP "bodys.bmp")), -- (tankWidthInGLUT*(Types.widthOfScreen/2)) (tankHeightInGLUT*(Types.heightOfScreen/2))),
-                               trace ("healthX : " ++ show healthY) (translate (healthX*(Types.widthOfScreen/2)) (healthY*(Types.heightOfScreen/2)) $ color white $ rotate (Physics.radianTodegree (-incline_theta)) $ rectangleSolid (tankWidthInGLUT*250/1.5) 2.5)  ,
-                             --  translate ((healthX*500)+(tankWidthInGLUT*125/1.5)) ((healthY*250)+1.25) $ color (getcolor s)  $ rotate (Physics.radianTodegree incline_theta) $ rectangleSolid ((max (0.0)  ((s*((tankWidthInGLUT/1.5)))/30))*5) 0.05,
-                               trace(show ((topCenterY))) (translate ((topCenterX + (lengthOfTurret*cos(incline_theta+turret_theta)/2))*(Types.widthOfScreen/2)) ((topCenterY + (lengthOfTurret*sin(incline_theta+turret_theta)/2))*(Types.heightOfScreen/2)) $ color red $ rotate (Physics.radianTodegree (-(turret_theta+incline_theta))) $ unsafePerformIO (loadBMP "turret.bmp")) ,--(lengthOfTurret*(Types.widthOfScreen/2)) 2.5)
+getTankListGraphics game = [ [ (translate ((tankCoordX+(tankWidthInGLUT*0.5*cos(incline_theta))-(tankHeightInGLUT*0.5*sin(incline_theta)))*(Types.widthOfScreen/2)) ((tankCoordY+(tankWidthInGLUT*0.5*sin(incline_theta))+(tankHeightInGLUT*0.5*cos(incline_theta)))*(Types.heightOfScreen/2)) $ rotate (Physics.radianTodegree (-incline_theta)) $ color tankcolor  $ rectangleSolid (tankWidthInGLUT*(Types.widthOfScreen/2)) (tankHeightInGLUT*(Types.heightOfScreen/2))), -- unsafePerformIO (loadBMP "bodys.bmp")), -- (tankWidthInGLUT*(Types.widthOfScreen/2)) (tankHeightInGLUT*(Types.heightOfScreen/2))),
+                               translate (healthX*(Types.widthOfScreen/2)) (healthY*(Types.heightOfScreen/2)) $ color white $ rotate (Physics.radianTodegree (-incline_theta)) $ rectangleSolid (tankWidthInGLUT*250/1.5) 2.5,
+                               translate ((healthX*(Types.widthOfScreen/2))-((tankWidthInGLUT*250/1.5)/2)+((s/60)*((tankWidthInGLUT*250/1.5)))) (healthY*(Types.heightOfScreen/2)) $ color (getcolor s)  $ rotate (Physics.radianTodegree (-incline_theta)) $ rectangleSolid (max (0.0)  (s*((tankWidthInGLUT*250/1.5))/30)) 2.5,
+                               translate ((topCenterX + (lengthOfTurret*cos(incline_theta+turret_theta)/2))*(Types.widthOfScreen/2)) ((topCenterY + (lengthOfTurret*sin(incline_theta+turret_theta)/2))*(Types.heightOfScreen/2)) $ color red $ rotate (Physics.radianTodegree (-(turret_theta+incline_theta))) $ rectangleSolid (lengthOfTurret*(Types.widthOfScreen/2)) 2.5 ,--unsafePerformIO (loadBMP "turret.bmp") ,--rectangleSolid(lengthOfTurret*(Types.widthOfScreen/2)) 2.5)
                                if checkifWeaponIsLaunched game
                                   then translate ((Physics.getTilePosX (Types.tileMatrix game) weaponY weaponX)*(Types.widthOfScreen/2)) ((Physics.getTilePosY (Types.tileMatrix game) weaponY weaponX)*(Types.heightOfScreen/2)) $ color (Types.bulletColor currWeaponFromList) $ rectangleSolid (0.02*(Types.widthOfScreen/2)) (0.02*(Types.heightOfScreen/2))
                                   else translate 0 0 $ rectangleSolid (0.02) (0.02)
@@ -95,8 +95,8 @@ handlekeys _ x = x
 
 update :: Float -> Types.GameState -> Types.GameState
 update _ game = if (checkifWeaponIsLaunched game)
-                then (Weapon.updateGameStateWeapon game)
-                else trace ("IN FALSE UPDATE : ") (game)
+                then trace("GAMESTATE : " ++ (show $ Types.tankList game) ++ " , Weapon : " ++ (show $ Types.weapon game) ++ " , Chance : " ++ (show $ Types.chance game) ) (Weapon.updateGameStateWeapon game)
+                else (game)
 
 checkifWeaponIsLaunched ::Types.GameState -> Bool
 checkifWeaponIsLaunched (Types.GameState {

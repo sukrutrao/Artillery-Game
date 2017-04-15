@@ -4,7 +4,7 @@ import Types
 import Debug.Trace
 
 g :: Float
-g = 10
+g = 5
 
 gAcceleration :: Point
 gAcceleration = (Acceleration 0 g)
@@ -328,7 +328,9 @@ parabolaFunction (Position sx sy) x velocity theta = {-trace ("PARABOLA+++++++ S
 -- incomplete!
 checkIntermediateObstacleInPath :: GameState -> Point -> Point -> Point -> Float -> Float -> [[Tile]] -> Bool -> Point
 checkIntermediateObstacleInPath gameState (Position x y) (Position ox oy) (Position sx sy) velocity theta tileMap xIsLesser =
-    let newTheta = theta {-if xIsLesser then atan(sqrt((tan theta)^2 + (2*g)*(velocity*(cos theta))))
+    let newTheta = trace ("checkIntermediateObstacleInPath : ox " ++ show ox ++ " oy " ++ show oy ++ " x : " ++ show x ++ " , y : " ++ show y ++ "\n " ) (theta)
+
+      {-if xIsLesser then atan(sqrt((tan theta)^2 + (2*g)*(velocity*(cos theta))))
                                 else pi + atan(sqrt((tan theta)^2 + (2*g)*(velocity*(cos theta))))-}
         newVelocity = velocity {-sqrt(velocity^2 + 2*g)-}
         currentYP = (parabolaFunction (Position sx sy) (x+1) newVelocity newTheta)
@@ -374,7 +376,7 @@ checkAllTanksForHitHelper (GameState {
         tankList = tanks,
         noOfPlayers = n
     }) (Position x y) i
-    |   i < n = trace("CATFHH : " ++ show i) (checkPointInRectangle (Position x y) (position (tankState (tanks !! i))) widthOfTank
+    |   i < n = (checkPointInRectangle (Position x y) (position (tankState (tanks !! i))) widthOfTank
                     heightOfTank (inclineAngle (tankState (tanks !! i))) ||
                         checkAllTanksForHitHelper (GameState {
                                          tankList = tanks,
@@ -383,8 +385,7 @@ checkAllTanksForHitHelper (GameState {
     |   otherwise = False
 
 checkAllTanksForHit :: GameState -> Point -> Bool
-checkAllTanksForHit gameState position = trace("CATCH : " ++ show (checkAllTanksForHitHelper gameState position 0))
-                                            (checkAllTanksForHitHelper gameState position 0)
+checkAllTanksForHit gameState position = (checkAllTanksForHitHelper gameState position 0)
 
 minValid :: Float
 minValid = (-(3*pi)/5)
