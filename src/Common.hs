@@ -26,7 +26,7 @@ applyGravityOnAll tileMatrix (Tank {
                         in Tank {
         tankState = (TankState {
             direction = d,
-            position =  trace("GRAVITY HERE , X : " ++ show x ++ " , Y : " ++ show y ++ " , grav : " ++ show gravityPosition)  (gravityPosition),
+            position = (gravityPosition),
             velocity = (Velocity vx vy),
             inclineAngle = getAngleAt gravityPosition widthOfTank heightOfTank tileMatrix,--getAngleincline_theta,
             turret = (Turret {
