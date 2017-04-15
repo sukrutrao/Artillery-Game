@@ -1,7 +1,6 @@
 module Physics where
 
 import Types
-import Debug.Trace
 
 -- | Acceleration due to gravity
 g :: Float
@@ -40,7 +39,6 @@ newPosition (Position x y) (Velocity vx vy) (Acceleration ax ay) time =
 --   acceleration, and time based on Newton's first kinematic equation
 newVelocity :: Point -> Point -> Float -> Point
 newVelocity (Velocity vx vy) (Acceleration ax ay) time = 
-   -- -- trace("vx in physics : " ++ show vx ++ "vy in physics : " ++ show vy ++ "\n")
     (Velocity (newOneDVelocity vx ax time) (newOneDVelocity (-vy) ay time))
 
 -- | Function to obtain the new position in one dimension given the position,
@@ -69,7 +67,6 @@ getComponentsVelocity quantity theta = (Velocity (cosComponent quantity theta) (
 --   new position under the influence of gravity
 gravityNewPosition :: Point -> Point -> Float -> Point
 gravityNewPosition (Position x y) (Velocity vx vy) time =
-     trace("vx component : " ++ show vx ++ " vy component : " ++ show vy ++ "\n")
     newPosition (Position x y) (Velocity vx vy) gAcceleration time
 
 -- | Function to return the new position in two dimensions given the position,
@@ -176,8 +173,8 @@ getPositionY (Position _ y) = y
 -- | Function to return the angle of a projectile given magnitude of velocity
 --   and current angle for change in unit time
 getAngleProjectile :: Float -> Float -> Direction -> Float 
-getAngleProjectile velocity theta FacingRight = trace ("R+++++++++++++ theta: " ++ show theta ++ "  ,  velocity : " ++ show velocity ++ "\n") ((-1) * atan((-1) * tan(theta) + (g * unitTime)/(velocity * cos(theta))))
-getAngleProjectile velocity theta FacingLeft = trace ("L+++++++++++++ theta: " ++ show theta ++ "  ,  velocity : " ++ show velocity ++ "\n") (pi  + (-1) * atan((-1) * tan(theta) + (g * unitTime)/(velocity * cos(theta))))
+getAngleProjectile velocity theta FacingRight = ((-1) * atan((-1) * tan(theta) + (g * unitTime)/(velocity * cos(theta))))
+getAngleProjectile velocity theta FacingLeft = (pi  + (-1) * atan((-1) * tan(theta) + (g * unitTime)/(velocity * cos(theta))))
 
 -- | Function to return the new position of a projectile given position, magnitude of velocity
 --   and current angle for change in unit time
@@ -212,7 +209,6 @@ checkPointInRectangle point (Position lx ly) ilength iwidth theta =
         pointX = getPositionX point
         pointY = getPositionY point
     in
-	   -- trace("CPIR : " ++ show point ++ " " ++ show lx ++ " " ++ show ly ++ " " ++ show ilength ++ " " ++ show iwidth ++ " " ++ show theta ++ " " ++ show (not (theta == 0)))
 	    (if (not (theta == 0))
 	    	then if ((checkOrientationPointLine point (Position lx ly) (Position (lx + length * cos(theta)) (ly - length * sin(theta)))) == AboveLine &&
 			        (checkOrientationPointLine point (Position lx ly) (Position (lx - width * sin(theta)) (ly - width * cos(theta)))) == AboveLine &&
@@ -228,15 +224,15 @@ checkPointInRectangle point (Position lx ly) ilength iwidth theta =
 --   the point lies in the circle or not
 checkPointInCircle :: Point -> Point -> Float -> Bool
 checkPointInCircle (Position x y) (Position cx cy) radius
-    |    (x-cx)^2 + (y-cy)^2 <= radius^2 = True -- trace("Tx,y,cx,cy,radius : " ++ show x ++ show y ++ show cx ++ show cy ++ show radius ++ "\n") True
-    |    otherwise = False -- trace("Fx,y,cx,cy,radius : " ++ show x ++ show y ++ show cx ++ show cy ++ show radius ++ "\n") 
+    |    (x-cx)^2 + (y-cy)^2 <= radius^2 = True
+    |    otherwise = False
     
 -- | Function to accept the center and radius of a circle, and the bounding
 --   square of the circle and return the list of points in it
 getListOfPointsInCircle :: Point -> Float -> [[Point]] -> [Point]
 getListOfPointsInCircle (Position cx cy) radius [] = []
 getListOfPointsInCircle (Position cx cy) radius [[]] = []
-getListOfPointsInCircle (Position cx cy) radius (x:xs) =  -- trace(show xs)
+getListOfPointsInCircle (Position cx cy) radius (x:xs) =
     ((checkCommonPointsCircleLine (Position cx cy) radius x) ++ (getListOfPointsInCircle (Position cx cy) radius xs))
 
 -- | Function to accept the center and radius of a circle and return
@@ -301,7 +297,6 @@ getOtherEndPoint (Position x y) length theta =
 -- | Function to help check if a given line contains a point with an obstacle in it
 checkLineIfObstacle :: Point -> Point -> Integer -> Float -> Integer -> [[Tile]] -> Bool
 checkLineIfObstacle (Position x y) (Position ox oy) i theta length tileMap =  
-    ---- trace ("i is : " ++ show i ++ " x is : " ++ show x ++ " y is : " ++ show y ++ " ox is : " ++ show ox ++ "oy is : " ++ show oy ++ "\n") 
     (if (i < length)
         then if not $ isIndexInRange tileMap (truncate (y - ((fromIntegral i) * sin(theta))))
                     then True
@@ -329,7 +324,6 @@ thetaMax = pi/2
 --   a given rectangle
 searchForAngle :: Point -> Integer -> Integer -> Float -> Float ->  [[Tile]] -> Float
 searchForAngle (Position x y) length width theta thetaMax tileMap = 
-    ---- trace("Theta is search for angle : " ++ show theta ++ "\n")
     (if theta < thetaMax
         then if not (checkIfNotValidPosition (Position x y) length width theta tileMap)
                 then (theta+thetaIncrement)
@@ -416,17 +410,16 @@ tankGravityNewPosition (Position x y) length width theta tileMap
 parabolaFunction :: Point -> Float -> Float -> Float -> Float
 parabolaFunction (Position sx sy) x velocity theta = 
 	if abs(theta - pi/2) > 0.1
-		then {-trace ("PARABOLA+++++++ SX : " ++ show sx  ++ " , SY : " ++ show sy ++ " velocity : " ++ show velocity ++ " theta : " ++ show theta ++ " X : " ++  show x ++ " , Y : " ++ show (sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2)))-}
-	(sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2))
-		else trace("THIS") (0)
+		then
+	       (sy - (x - sx) * (tan theta) + (0.5 * g * (x - sx)^2)/((velocity * (cos theta))^2))
+		else (0)
 
 --| Function to check if the path between two points has any obstacle in it
 --  so that weapons don't overshoot tanks or mountains in a unit time
 checkIntermediateObstacleInPath :: GameState -> Point -> Point -> Point -> Float -> Float -> [[Tile]] -> Bool -> Point
 checkIntermediateObstacleInPath gameState (Position x y) (Position ox oy) (Position sx sy) velocity theta tileMap xIsLesser =
-    let newTheta = theta {-if xIsLesser then atan(sqrt((tan theta)^2 + (2*g)*(velocity*(cos theta))))
-    							else pi + atan(sqrt((tan theta)^2 + (2*g)*(velocity*(cos theta))))-}
-        newVelocity = velocity {-sqrt(velocity^2 + 2*g)-}
+    let newTheta = theta     							
+        newVelocity = velocity
         currentYP = (parabolaFunction (Position sx sy) (x+1) newVelocity newTheta)
         currentYN = (parabolaFunction (Position sx sy) (x-1) newVelocity newTheta) in
     if (xIsLesser && x < ox && abs(theta - pi/2) > 0.1)
@@ -440,8 +433,8 @@ checkIntermediateObstacleInPath gameState (Position x y) (Position ox oy) (Posit
                         else checkIntermediateObstacleInPath gameState (Position (x-1) (parabolaFunction (Position sx sy) (x-1) newVelocity newTheta))
                               (Position ox oy) (Position sx sy) newVelocity newTheta tileMap xIsLesser)
                 else if (abs(theta - pi/2) < 0.1)
-                		then trace("GOING HERE!!!") (getPointFromYChecks gameState x y oy (y<oy) tileMap)
-                		else trace("GOING THERE!!!") (Position ox oy))
+                		then (getPointFromYChecks gameState x y oy (y<oy) tileMap)
+                		else (Position ox oy))
 
 -- | Function to check the path for obstacles when the object is moving in
 --   a vertical line, where the parabola function fails as theta will be pi/2
@@ -490,7 +483,7 @@ checkAllTanksForHitHelper (GameState {
 	    tankList = tanks,
         noOfPlayers = n
 	}) (Position x y) i
-	|	i < n = trace("CATFHH : " ++ show i) (checkPointInRectangle (Position x y) (position (tankState (tanks !! i))) widthOfTank
+	|	i < n = (checkPointInRectangle (Position x y) (position (tankState (tanks !! i))) widthOfTank
 					heightOfTank (inclineAngle (tankState (tanks !! i))) ||
 						checkAllTanksForHitHelper (GameState {
 				   						 tankList = tanks,
@@ -500,8 +493,7 @@ checkAllTanksForHitHelper (GameState {
 
 -- | Function to check if any tank has been hit by a weapon
 checkAllTanksForHit :: GameState -> Point -> Bool
-checkAllTanksForHit gameState position = trace("CATCH : " ++ show (checkAllTanksForHitHelper gameState position 0))
-											(checkAllTanksForHitHelper gameState position 0)
+checkAllTanksForHit gameState position = (checkAllTanksForHitHelper gameState position 0)
 
 -- | The minimum allowed angle for a tank
 minValid :: Float
