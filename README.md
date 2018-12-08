@@ -26,7 +26,7 @@ $ cabal install
 $ cp src/Level1.txt dist/build/Artillery-Game/
 ```
 
-### Starting the game
+## Playing the game
 
 Use
 
@@ -35,7 +35,7 @@ $ ./Artillery-Game
 ```
 
 
-## Playing the Game
+### About the game
 
 * The game is a multi-player turn based game. Currently, the number of players supported is three.
 * Each player has one tank. Tanks can shoot weapons on opponent tanks.
@@ -53,7 +53,7 @@ $ ./Artillery-Game
 Code documentation can be found [here](https://gooddeeds.github.io/Artillery-Game).
 
 ## Authors
-* [Sukrut Rao](https://github.com/GoodDeeds)
+* [Sukrut Rao](https://sukrutrao.github.io)
 * [Harsh Agarwal](https://github.com/sipian)
 * [Atul Raj](https://github.com/atulraj297)
 
