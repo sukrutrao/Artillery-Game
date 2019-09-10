@@ -11,7 +11,7 @@ A three-player turn based Artillery Game written in Haskell. Each player control
 * Clone the repository
 
  ```bash
- $ git clone https://github.com/GoodDeeds/Artillery-Game.git
+ $ git clone https://github.com/sukrutrao/Artillery-Game.git
  $ cd Artillery-Game
  ```
 
@@ -50,7 +50,7 @@ $ ./Artillery-Game
 * To launch the weapon, use the Space key.
 
 ## Documentation
-Code documentation can be found [here](https://gooddeeds.github.io/Artillery-Game).
+Code documentation can be found [here](https://sukrutrao.github.io/Artillery-Game).
 
 ## Authors
 * [Sukrut Rao](https://sukrutrao.github.io)
